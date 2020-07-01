@@ -1,4 +1,3 @@
-
 /* regex to identify what should be selected */
 number = "(-?\\d+(\\d+)*(\\.\\d+)?)";
 miscmatch = "((?<![A-Za-z]|['\"\\-])([△∇∂π]|Pi|[B-H]|[J-Z]|[b-h]|[j-z])(?![A-Za-z]|['\"\\-]))";
@@ -169,7 +168,12 @@ function endNow(){
 	isOpen = false;
 }
 
-alert("Auto CCM is beginning");
+if (isOpen){
+	alert("Auto CCM is usurping another instance of itself.");
+}
+else{
+	alert("Auto CCM is beginning");
+}
 var isOpen = true;
 /* these are all of the tabs open in courseware */
 potentialFrames = document.getElementsByClassName("x-panel x-tabpanel-child x-panel-default x-closable x-panel-closable x-panel-default-closable");
