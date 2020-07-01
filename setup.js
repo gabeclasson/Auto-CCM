@@ -1,6 +1,7 @@
-var bodyChangeObserver = new MutationObserver(onBodyChange);
-var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange);
-var tryItUpdatedObserver = new MutationObserver(onTryItUpdated);
+// These mutation observers exist to deliver a final payload to each iFrame: code that allow Ctrl+' to deformat math.
+var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page 
+var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
+var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
 
 bodyChangeObserver.observe(document.body, {
 	attributes: false,
@@ -60,6 +61,7 @@ function onTryItUpdated(mutationList, observer) {
 	});
 }
 
+// The final payload: a keyup listener that will deformat math with Ctrl+'
 function onDocumentKeyUp(e) {
 	if (e.key == "'" && e.ctrlKey) {
 		var win = e.target.ownerDocument.parentWindow || e.target.ownerDocument.defaultView;

@@ -1,12 +1,15 @@
 /* regex to identify what should be selected */
 var number = "(\\w*-?\\d+(\\d+)*(\\.\\d+)?\\w*)";
-var miscmatch = "((?<![A-Za-z]|['\"\\-])([△∇∂π]|Pi|[B-H]|[J-Z]|[b-h]|[j-z])(?![A-Za-z]|['\"\\-]))";
+var miscmatch = "((?<!([A-Za-z])|(['\"]))([△∇∂π]|Pi|[B-H]|[J-Z]|[b-h]|[j-z])(?!([A-Za-z])|(['\"])))";
 var definitebinaryoperator = "([+*^=<>≤≥]|\\\\\\.|@@|&&|<=|>=)";
-var matchifadjacent = "(" + "[\\w\\d]*" + ")";
-var possibleprefixoperators = "([\\-\\\\])";
-var possiblepostfixoperators = "([!])";
+var matchifadjacent = "(" + "[\\w\\d\\(\\)]*" + ")";
+var possibleprefixoperators = "([\\-\\\\\\(])";
+var possiblepostfixoperators = "([!\\)])";
 var possiblebinaryoperators = "([\\/\\-])";
+// regex to identify what should not be selected specifically
+var blockRegExp = /(^\dD$)|(^\([A-Za-z]\)$)|(^[A-Za-z]\)$)|(^\([A-Za-z]$)/g;
 
+// Match is a custom class that is used to process square brackets and curly braces
 if (typeof Match !== ' function') {
 	window.Match = class {
 		constructor(string, start, end, isSquare) {
@@ -18,10 +21,16 @@ if (typeof Match !== ' function') {
 	}
 }
 
+//Takes a string and returns a sanitized version of that string, ready for RegExp
 function escapeRegExp(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/*
+content: A string
+length: The desired length of an excerpt.
+return: An excerpt of the given string of the desired length
+*/
 function excerpt(content, length) {
 	if (content.length > length) {
 		return content.substring(0, length) + "...";
@@ -29,10 +38,34 @@ function excerpt(content, length) {
 	return content;
 }
 
-function floatingAlert(string, color, displayTime, fadeTime, showCloseButton) {
-	var div = doc.createElement("div");
+/*
+ content: A string or element, representing the content of the floating alert
+ color: A string representing the background color of the floating alert
+ displayTime: The number of milliseconds to display the floating alert
+ fadeTime: The number of milliseconds to fade out of the floating alert
+ showCloseButton: A boolean representing whether or not to show a close button
+ This will show a floating alert notifying the user of some piece of information
+*/
+function floatingAlert(content, color, displayTime, fadeTime, showCloseButton) {
+	var div = doc.createElement("div"); // div encapsulating the entire alert
+	var span1 = doc.createElement("span"); // first span within the div; contains the close button
+	span1.className = "closebtn";
+	span1.onclick = function () {
+		this.parentElement.style.display = 'none';
+		this.parentNode.parentNode.removeChild(this.parentNode);
+	}; // onclick will close div and delete it
+	span1.style = "margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;transition: 0.3s;" + (showCloseButton ? "" : "display:none;");
+	span1.textContent = "×";
+	div.appendChild(span1);
+	var span2 = doc.createElement("span"); // second span within the div: contains the content of the alert
+	span2.style = "font-size: 16px; font-weight:bold";
+	if (typeof content == "string") {
+		span2.textContent = content;
+	} else {
+		span2.appendChild(content);
+	}
 	div.style = "width: 800px; margin-top: 10px; padding: 30px; font-family: sans-serif; color: white; opacity: 1; transition: opacity " + fadeTime + "ms ease 0s; background-color: " + color;
-	div.innerHTML = "<span class='closebtn' onclick=\"this.parentElement.style.display='none'; this.parentNode.parentNode.removeChild(this.parentNode);\" style='margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;transition: 0.3s;" + (showCloseButton ? "'" : "display:none'") + ">&times;</span><span style='font-size: 16px; font-weight:bold'>" + string + "</span>";
+	div.appendChild(span2);
 	notesDiv.insertBefore(div, notesDiv.childNodes[0]);
 	setTimeout(function () {
 		div.style.opacity = 0;
@@ -43,12 +76,20 @@ function floatingAlert(string, color, displayTime, fadeTime, showCloseButton) {
 	}, displayTime);
 }
 
+// This array contains elements describing any instances where invalid square bracket or curly brace syntax may have affected performance.
 var invalidBrackets = Array(0);
+
+/*
+textContent: A string to examine for matches: this should be a single line of innerStringCell
+innerStringCell: The string cell from which textContent was extracted
+return: Returns a match iterator that gives all the found instances of math within textContent. 
+*/
 function getMatchesFromTextContent(textContent, innerStringCell) {
-	var counterSquare = 0;
-	var counterCurly = 0;
-	var matches = [];
-	var everNegative = false;
+	var counterSquare = 0; // Keeps track of the number square brackets: positive means an excess of open square brackets, negative an excess of closed square brackets
+	var counterCurly = 0; // coutnerSquare but for curly braces
+	var matches = []; // Represents the various matches of complete delimited strings
+	var everNegative = false; // Represents whether any counter goes negative: this is a violation of syntax
+	//loop through and gather all the information 
 	for (var i = 0; i < textContent.length; i++) {
 		if (textContent.charAt(i) === "[") {
 			counterSquare += 1;
@@ -79,15 +120,28 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 			everNegative = true;
 		}
 	}
+	// If there's a syntax error, add an alert to invalidBrackets so the user can be notified
 	if (everNegative || counterCurly != 0 || counterSquare != 0) {
-		invalidBrackets.push("<li style='display: list-item;margin-left: 4ch;list-style-type: disc;'>at <u><a style='cursor: pointer ' onclick='document.location.hash = \"\"; document.location.hash = \"" + innerStringCell.id + "\";'>\"" + excerpt(textContent, 100) + "\"</a></u></li>");
+		// Various HTML to notify people
+		var u = doc.createElement("u");
+		u.style = 'cursor: pointer';
+		u.onclick = function () {
+			doc.location.hash = "";
+			doc.location.hash = innerStringCell.id;
+		};
+		u.textContent = '"' + excerpt(textContent, 100) + '"';
+		var li = doc.createElement("li");
+		li.style = 'display: list-item;margin-left: 4ch;list-style-type: disc;';
+		li.textContent = "at ";
+		li.appendChild(u);
+		invalidBrackets.push(li);
 	}
-	var brackets;
+	var brackets; // brackets will contain RegExp that matches any bracket phrases in the selection. This is kind of ugly, but unfortunately regex doesn't have recursive formulas to make this nice
 	if (matches.length < 1) {
 		brackets = "";
 	} else {
 		var added = false;
-		brackets = "([\\w\\d']*(";
+		brackets = "([\\w\\d']*("; // This expression permits words to precede any bracketed phrase: a function
 		for (var i = matches.length - 1; i >= 0; i--) {
 			if (matches[i].string != null) {
 				brackets += "(" + escapeRegExp(matches[i].string) + ")|";
@@ -100,18 +154,22 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 			brackets = "";
 		}
 	}
-	var group1 = "(" + brackets + number + "|" + miscmatch + ")";
+	//Building up the regex formulas
+	var group1 = "(" + brackets + number + "|" + miscmatch + ")"; 
 	var group2 = "(" + group1 + "|" + "(" + group1 + "|" + matchifadjacent + ")\\s*" + definitebinaryoperator + "\\s*(" + group1 + "|" + matchifadjacent + ")" + ")";
-	var group3 = "(" + "(" + "(" + possibleprefixoperators + "|(" + matchifadjacent + "|" + group2 + ")" + possiblebinaryoperators + ")\\s*" + ")*" + group2 + "(\\s*(" + possiblebinaryoperators + "(" + matchifadjacent + "|" + group2 + "))|" + possiblepostfixoperators + ")*" + ")";
-	var group4 = "(" + group3 +"|\\(" + group3 + "\\))";
-	var group5 = group4 + "(\\s*" + group4 + ")*";
-	var group6 = "(" + group5 +"|\\(" + group5 + "\\))";
-	var interest = RegExp(group6, 'g');
+	var group3 = "(" + "(" + "(" + possibleprefixoperators + "|(" + group2 + ")" + possiblebinaryoperators + ")\\s*" + ")*" + group2 + "(\\s*(" + possiblebinaryoperators + "(" + group2 + "))|" + possiblepostfixoperators + ")*" + ")";
+	var group4 = group3 + "(\\s*" + group3 + ")*";
+	var interest = RegExp(group4, 'g');
 	console.log(interest);
 	return textContent.matchAll(interest);
 }
 
+/*
+innerStringCell: The string cell to find math within
+return: An iterator that gives all instances of math found within the string cell
+*/
 function getMatches(innerStringCell) {
+	// First break the innerStringCell into lines. This is done to ensure that no match is made across a line break
 	var childNodeArray = getChildNodesWithoutChildren(innerStringCell);
 	var textContentWithBreaks = "";
 	for (var i = 0; i < childNodeArray.length; i++) {
@@ -122,17 +180,18 @@ function getMatches(innerStringCell) {
 		}
 	}
 	var textContentArray = textContentWithBreaks.split("\n");
-	var iteratorArray = Array(textContentArray.length);
+	var iteratorArray = Array(textContentArray.length); // contains the various match iterators returned by each line
 	for (var i = 0; i < iteratorArray.length; i++) {
 		iteratorArray[i] = getMatchesFromTextContent(textContentArray[i], innerStringCell);
 	}
+	// A super iterator takes smaller iterators and combines them to provide a seamless experience
 	var superIterator = {
-		"textContents": textContentArray,
-		"iterators": iteratorArray,
-		"previousLength": 0,
-		"currentIterator": 0,
-		"done": false,
-		"next": function () {
+		"textContents": textContentArray, // an array of the textContent of each line, parallel to the iteratorArray
+		"iterators": iteratorArray, // an array of the iterators to pull from
+		"previousLength": 0, // the length of the previous lines
+		"currentIterator": 0, // the index of the current iterator
+		"done": false, // is the superIterator done?
+		"next": function () { // gets the next match
 			if (this.currentIterator >= this.iterators.length) {
 				return undefined;
 			}
@@ -160,6 +219,10 @@ function getMatches(innerStringCell) {
 	return superIterator;
 }
 
+/*
+target: A node
+return: All the descendant nodes of target that do not have any children
+*/
 function getChildNodesWithoutChildren(target) {
 	var nodes = target.childNodes;
 	if (nodes == undefined || nodes.length === 0 || target.classList.contains("Inline")) {
@@ -172,6 +235,7 @@ function getChildNodesWithoutChildren(target) {
 	return nodesArray;
 }
 
+// Gets the inner string cell or text cell of an element
 function getInnerStringCellOrText(element) {
 	var out = element.getElementsByClassName("StringCell").item(0);
 	if (out == null) {
@@ -180,15 +244,18 @@ function getInnerStringCellOrText(element) {
 	return out;
 }
 
+// A key up listener that listens for all the different keyboard events
 function keyUpListener(e) {
-	if (e.key == '/' && e.ctrlKey) {
+	if (e.key == '/' && e.ctrlKey) { // Ctrl+/ will end Auto CCM
 		if (isOpen) {
 			endNow();
 			return;
 		}
 	}
-	if (!isOpen)
+	if (!isOpen){  // Do not proceed unless Auto CCM is running
 		return;
+	}
+	// Ctrl+M and Ctrl+, are treated the same by Auto CCM: both advance the highlighted portion to the next instance of unformatted math
 	if (e.key === 'm' && e.ctrlKey || e.key == ',' && e.ctrlKey) {
 		bounds = controlMNext();
 		if (bounds == undefined) {
@@ -202,6 +269,7 @@ function keyUpListener(e) {
 		}
 		selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
 	}
+	// Ctrl+. rehighlights the current selection of unformatted math
 	if (e.key == '.' && e.ctrlKey) {
 		nodeBounds = determineNodeOffsetBound(currentBounds);
 		doc.location.hash = "";
@@ -210,7 +278,10 @@ function keyUpListener(e) {
 	}
 }
 
+// The current match iterator that is being used
 var matches;
+
+// Highlights the next instance of unformatted math: the primary driving function of this operation
 function controlMNext() {
 	var match;
 	var innerStringCell;
@@ -219,7 +290,8 @@ function controlMNext() {
 	}
 	do {
 		match = matches.next();
-	} while (match != undefined && match.value != undefined && match.value[0].match(/^\dD$/g) != null); // filter through undesirable options
+
+	} while (match != undefined && match.value != undefined && match.value[0].match(blockRegExp) != null); // filter through undesirable options
 	while (match == undefined || match.value == undefined) {
 		if (i === allStudents.length - 1) {
 			endNow();
@@ -228,32 +300,39 @@ function controlMNext() {
 		i++;
 		innerStringCell = getInnerStringCellOrText(allStudents[i]);
 		matches = getMatches(innerStringCell);
-		match = matches.next();
+		do {
+			match = matches.next();
+		} while (match != undefined && match.value != undefined && match.value[0].match(blockRegExp) != null); // filter through undesirable options
 	}
 	innerStringCell = getInnerStringCellOrText(allStudents[i]);
+	var matchText = match.value[0];
+	var matchLength = matchText.length;
 	currentBounds =
 		[innerStringCell,
-		match.value.index, match.value.index + match.value[0].length];
+		match.value.index, match.value.index + matchLength];
 	return currentBounds;
 }
 
-/**
-Given an array containing a string cell and the bounds of the desired selection, it will determine the bounds relative to a node
- **/
+/*
+array: An array in the form of [stringCell, firstIndex, lastIndex], where stringCell represents the cell containing the math and firstIndex and lastIndex describe the bounds of the math
+return: An array containing the bounds of the math relative to the descendent nodes of the string cell. This is necessary to select the text for the user. The form of the output is [startElement, startOffset, endElement, endOffset]
+ */
 function determineNodeOffsetBound(array) {
 	if (!isOpen) {
 		return;
 	}
-	var stringCell = array[0];
-	var childNodeArray = getChildNodesWithoutChildren(stringCell);
-	var currentLength = 0;
-	var start = array[1];
-	var startElement = undefined;
-	var startOffset = 0;
-	var end = array[2];
-	var endElement = undefined;
-	var endOffset = 0;
+	var stringCell = array[0]; // The string cell containing the selection
+	var childNodeArray = getChildNodesWithoutChildren(stringCell); // All the childless descendant nodes of the stringCell
+	var currentLength = 0; // The current length we have processed
+	var start = array[1]; // The starting index of the selection within the stringCell
+	var startElement = undefined; // The node that the start of the selection lies in
+	var startOffset = 0; // The starting index of the selection relative to startElement
+	var end = array[2]; // see above
+	var endElement = undefined; // see above
+	var endOffset = 0; // see above
+	// Loop through the childless descendant nodes and determine where the node offset bounds are
 	for (j = 0; j < childNodeArray.length; j++) {
+		// Add the length of the node to currentLength
 		if (childNodeArray[j].textContent != undefined) {
 			currentLength += childNodeArray[j].textContent.length;
 		}
@@ -265,7 +344,7 @@ function determineNodeOffsetBound(array) {
 				return determineNodeOffsetBound(controlMNext());
 		}
 		if (startElement != undefined && childNodeArray[j].classList != undefined && childNodeArray[j].classList.contains("Inline")) {
-			return determineNodeOffsetBound(controlMNext());			
+			return determineNodeOffsetBound(controlMNext());
 		}
 		if (endElement === undefined && end < currentLength + 1) {
 			endElement = childNodeArray[j];
@@ -278,6 +357,9 @@ function determineNodeOffsetBound(array) {
 	return undefined;
 }
 
+/*
+Selects text given nodes and node offsets, based on the output from determineNodeOffsetBound
+*/
 function selectText(startElement, startOffset, endElement, endOffset) {
 	if (!isOpen) {
 		return;
@@ -301,6 +383,9 @@ function selectText(startElement, startOffset, endElement, endOffset) {
 	}
 }
 
+/*
+Ends the current session of Auto CCM
+*/
 function endNow() {
 	if (isOpen) {
 		frame.contentWindow.removeEventListener('keyup', frame.previousListener);
@@ -310,16 +395,27 @@ function endNow() {
 			console.log("Terminating Auto CCM");
 			floatingAlert("Auto CCM has ended.", "#2196F3", 2000, 600, false);
 			if (invalidBrackets.length > 0) {
-				floatingAlert("Invalid curly brace/square bracket syntax may have affected performance:</br><ul>" + invalidBrackets.join("") + "</ul>", "#f44336", 30000, 600, true);
+				var textElement = doc.createElement("text");
+				var br = doc.createElement("br");
+				var ul = doc.createElement("ul");
+				for (var q = 0; q < invalidBrackets.length; q++) {
+					ul.appendChild(invalidBrackets[q]);
+				}
+				textElement.textContent = "Invalid curly brace/square bracket syntax may have affected performance: ";
+				textElement.appendChild(br);
+				textElement.appendChild(ul);
+				floatingAlert(textElement, "#f44336", 30000, 600, true);
 			}
 		}
 	}
 	isOpen = false;
 }
 
-//gets all of the panels open: each one corresponds to a different course
+// Gets all of the panels open
 var panels = document.getElementsByClassName("x-panel-body x-panel-body-default x-layout-fit x-panel-body-default");
+// represents the student panel, which contains the various courses and enrollments
 var studentPanel;
+// Loop to get the student panel
 for (var i = 0; i < panels.length; i++) {
 	if (panels[i].id.includes("studentpanel")) {
 		studentPanel = panels[i];
@@ -327,6 +423,7 @@ for (var i = 0; i < panels.length; i++) {
 	}
 }
 var studentPanelChildren = studentPanel.children;
+// Get currentCourse: the current course that the user has open
 var currentCourse;
 for (var i = 0; i < studentPanelChildren.length; i++) {
 	if (!studentPanelChildren[i].classList.contains("x-hide-offsets")) {
@@ -337,47 +434,52 @@ console.log(currentCourse);
 /* these are all of the tabs open in courseware */
 potentialFrames = currentCourse.getElementsByClassName("x-panel x-tabpanel-child x-panel-default x-closable x-panel-closable x-panel-default-closable");
 frame = undefined;
-/*finds the open frame*/
+// find the open frame
 var q = undefined;
-var doc = undefined;
+var doc = undefined; // The document of the iFrame
 var notesDiv;
-var i = 0;
-var hasNotifiedOn = false;
+var i = 0; // An index representing which text cell we are on
+var hasNotifiedOn = false; // Representing whether or not the user has been notified that Auto CCM is starting. If this is false and Auto CCM ends, then the user will be notified that there is nothing to format.
 for (q = 0; q < potentialFrames.length; q++) {
 	if (!(potentialFrames[q].classList.contains("x-hide-offsets")))
 		frame = potentialFrames[q];
 }
 frame = frame.getElementsByTagName('iframe')[0];
+// get the document
 doc = frame.contentDocument;
+// create a notesDiv: a section where floating alerts can be given to the user
 notesDiv = doc.getElementById("notesDiv");
-		if (notesDiv == undefined) {
-			notesDiv = doc.createElement("div");
-			notesDiv.id = "notesDiv";
-			doc.body.insertBefore(notesDiv, doc.body.childNodes[0]);
-		}
-		notesDiv.style = "position: fixed;z-index: 99;margin-right: calc(50% - 430px);margin-left: calc(50% - 430px);margin-top: 50px;width: fit-content;";
-var isUsurping = false;
+if (notesDiv == undefined) {
+	notesDiv = doc.createElement("div");
+	notesDiv.id = "notesDiv";
+	doc.body.insertBefore(notesDiv, doc.body.childNodes[0]);
+}
+notesDiv.style = "position: fixed;z-index: 99;margin-right: calc(50% - 430px);margin-left: calc(50% - 430px);margin-top: 50px;width: fit-content;";
+var isUsurping = false; // isUsurping: is there already an instance of AutoCCM open?
 if (isOpen === true) {
 	isUsurping = true;
 }
-var isOpen = true;
-allStudents = doc.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student");
+var isOpen = true; // isOpen: A variable representing whether "things" are allowed to run. This is set to false by endNow();
+var allStudents = doc.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student"); // Every student cell, or text cell, in the document
 if (allStudents.length === 0) {
 	endNow();
 } else {
+	// Get matches for math in the first string cell
 	matches =
-		getMatches(getInnerStringCellOrText(allStudents[i]));
+		getMatches(getInnerStringCellOrText(allStudents[i])); 
 	currentBounds = undefined;
+	// Each frame has its own listener. Listeners cannot be doubled up, so we make sure that there is only one listener at a time
 	if (frame.previousListener != undefined) {
 		frame.contentWindow.removeEventListener('keyup', frame.previousListener);
 	}
 	frame.contentWindow.addEventListener('keyup', keyUpListener);
 	frame.previousListener = keyUpListener;
-
+	// Get the bounds of the next selection
 	bounds = controlMNext();
 	if (bounds == undefined) {
 		endNow();
 	}
+	// Get the node offset bounds of the next selection
 	nodeBounds = determineNodeOffsetBound(bounds);
 	if (nodeBounds == undefined) {
 		endNow();
@@ -387,14 +489,16 @@ if (allStudents.length === 0) {
 		} else {
 			floatingAlert("Auto CCM is starting.", "#2196F3", 2000, 600, false);
 		}
-		hasNotifiedOn = true;
-		var menuItems = doc.getElementsByClassName("x-menu-item");
+		hasNotifiedOn = true; 
+		// Make sure that all cells are expanded and visible.
+		var menuItems = doc.getElementsByClassName("x-menu-item"); 
 		for (var k = 0; k < menuItems.length; k++) {
-			if (menuItems[k].textContent.match(/Expand/i) != null){
+			if (menuItems[k].textContent.match(/Expand/i) != null) {
 				console.log("Expanded groups");
 				menuItems[k].click();
 			}
 		}
+		// Select the first instance of unformatted math: subsequent instances of unformatted math can be brought about by using Ctrl+M or Ctrl+,
 		selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
 	}
 }
