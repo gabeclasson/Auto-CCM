@@ -182,43 +182,48 @@ for (q = 0; q < potentialFrames.length; q++) {
 frame = frame.getElementsByTagName('iframe')[0];
 doc = frame.contentDocument;
 allStudents = doc.getElementsByClassName("Text Student");
-i = 0;
-matches =
-	getMatches(allStudents[i].getElementsByClassName("StringCell").item(0).textContent);
-doc.location.hash =
-	allStudents[i].getElementsByClassName("StringCell").item(0).id;
-currentBounds = undefined;
-
-frame.contentWindow.onkeyup = function (e) {
-	if (e.key == '/' && e.ctrlKey) {
-		if (isOpen) {
-			endNow();
-			return;
-		}
-	}
-	if (!isOpen)
-		return;
-	if (e.key === 'm' && e.ctrlKey || e.key == ',' && e.ctrlKey) {
-		bounds = controlMNext();
-		if (bounds == undefined) {
-			endNow();
-			return;
-		}
-		nodeBounds = determineNodeOffsetBound(bounds);
-		selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
-	}
-	if (e.key == '.' && e.ctrlKey) {
-		nodeBounds = determineNodeOffsetBound(currentBounds);
-		selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
-	}
-};
-
-bounds = controlMNext();
-if (bounds == undefined) {
+if (allStudents.length === 0){
 	endNow();
 }
-nodeBounds = determineNodeOffsetBound(bounds);
-if (nodeBounds == undefined) {
-	endNow();
+else {
+	i = 0;
+	matches =
+		getMatches(allStudents[i].getElementsByClassName("StringCell").item(0).textContent);
+	doc.location.hash =
+		allStudents[i].getElementsByClassName("StringCell").item(0).id;
+	currentBounds = undefined;
+
+	frame.contentWindow.onkeyup = function (e) {
+		if (e.key == '/' && e.ctrlKey) {
+			if (isOpen) {
+				endNow();
+				return;
+			}
+		}
+		if (!isOpen)
+			return;
+		if (e.key === 'm' && e.ctrlKey || e.key == ',' && e.ctrlKey) {
+			bounds = controlMNext();
+			if (bounds == undefined) {
+				endNow();
+				return;
+			}
+			nodeBounds = determineNodeOffsetBound(bounds);
+			selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+		}
+		if (e.key == '.' && e.ctrlKey) {
+			nodeBounds = determineNodeOffsetBound(currentBounds);
+			selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+		}
+	};
+
+	bounds = controlMNext();
+	if (bounds == undefined) {
+		endNow();
+	}
+	nodeBounds = determineNodeOffsetBound(bounds);
+	if (nodeBounds == undefined) {
+		endNow();
+	}
+	selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
 }
-selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);

@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Auto CCM",
-	"version": "0.1",
+	"version": "0.2",
 	"description":"Auto CCM is a tool that streamlines formatting in CAS-ILE, a website that is used by University of Illinois Netmath students.",
 	"content_scripts": [
 	{

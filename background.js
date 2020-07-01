@@ -36,6 +36,12 @@ chrome.tabs.onActivated.addListener(function (tabs) {
 	});
 });
 
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
+	if (tab.url.includes("courseware.illinois.edu")){
+		chrome.pageAction.show(tabId);
+	}
+});
+
 chrome.pageAction.onClicked.addListener(function(tab) {
    chrome.tabs.executeScript(null, {file: "autoctrlm.js"});
 }
