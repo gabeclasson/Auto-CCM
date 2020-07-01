@@ -73,6 +73,19 @@ function getMatches(textContent){
 	interest = RegExp(group4, 'g');
 	return textContent.matchAll(interest);
 }
+
+function getChildNodesWithoutChildren(target){
+	var nodes = target.childNodes;
+	if (nodes == undefined || nodes.length === 0 || target.classList.contains("Inline")){
+		return [target];
+	}
+	var nodesArray = Array.prototype.slice.call(target.childNodes);
+	for (var g = nodesArray.length - 1; g >= 0; g--){
+		nodesArray.splice.apply(nodesArray,[g, 1].concat(getChildNodesWithoutChildren(nodesArray[g])));
+	}
+	return nodesArray;
+}
+
 function controlMNext() {
 	if (!isOpen){
 		return;
@@ -86,6 +99,9 @@ function controlMNext() {
 		i++;
 		innerStringCell =
 			allStudents[i].getElementsByClassName("StringCell").item(0);
+		if (innerStringCell == null){
+			innerStringCell = allStudents[i].getElementsByClassName("Text").item(0);
+		}
 		doc.location.hash = innerStringCell.id;
 		matches = getMatches(innerStringCell.textContent);
 		match = matches.next();
@@ -105,7 +121,7 @@ function determineNodeOffsetBound(array) {
 	}
 	console.log(array);
 	stringCell = array[0];
-	childNodeArray = stringCell.childNodes;
+	childNodeArray = getChildNodesWithoutChildren(stringCell);
 	currentLength = 0;
 	start = array[1];
 	startElement = undefined;
