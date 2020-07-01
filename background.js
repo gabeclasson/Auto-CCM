@@ -9,6 +9,11 @@ chrome.runtime.onInstalled.addListener(function() {
       "title": "CAS-ILE",
       "contexts": ["page_action"]
     });
+	chrome.contextMenus.create({
+      "id": "doc",
+      "title": "Mathematica Documentation",
+      "contexts": ["page_action"]
+    });
   });
   
 chrome.contextMenus.onClicked.addListener(function (info, tab){
@@ -17,9 +22,14 @@ chrome.contextMenus.onClicked.addListener(function (info, tab){
 			url: "https://ospiro.com/products-services/auto-ccm/"
 		});
 	}
-	else {
+	else if (info.menuItemId === "courseware"){
 		chrome.tabs.create({  
 			url: "https://courseware.illinois.edu"
+		});
+	}
+	else if (info.menuItemId === "doc"){
+		chrome.tabs.create({  
+			url: "https://reference.wolfram.com/language/"
 		});
 	}
 });
