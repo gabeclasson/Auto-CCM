@@ -6,6 +6,7 @@ matchifadjacent = "(" + "[\\w\\d\\)\\(]*" + ")";
 possibleprefixoperators = "([\\(\\-\\\\])";
 possiblepostfixoperators = "([\\)])";
 possiblebinaryoperators = "([\\/\\-])";
+
 if(typeof Match !==' function'){ 
 	window.Match = class {
 		constructor(string, start, end, isSquare){
@@ -86,6 +87,14 @@ function getChildNodesWithoutChildren(target){
 	return nodesArray;
 }
 
+function getInnerStringCellOrText(element){
+	var out = element.getElementsByClassName("StringCell").item(0);
+	if (out == null){
+		out = element.getElementsByClassName("Text").item(0);
+	}
+	return out;
+}
+
 function controlMNext() {
 	if (!isOpen){
 		return;
@@ -97,17 +106,13 @@ function controlMNext() {
 			return;
 		}
 		i++;
-		innerStringCell =
-			allStudents[i].getElementsByClassName("StringCell").item(0);
-		if (innerStringCell == null){
-			innerStringCell = allStudents[i].getElementsByClassName("Text").item(0);
-		}
+		innerStringCell = getInnerStringCellOrText(allStudents[i]);
 		doc.location.hash = innerStringCell.id;
 		matches = getMatches(innerStringCell.textContent);
 		match = matches.next();
 	}
 	currentBounds =
-		[allStudents[i].getElementsByClassName("StringCell").item(0),
+		[getInnerStringCellOrText(allStudents[i]),
 		match.value.index, match.value.index + match.value[0].length];
 	return currentBounds;
 }
@@ -213,9 +218,9 @@ else {
 	else {
 		i = 0;
 		matches =
-			getMatches(allStudents[i].getElementsByClassName("StringCell").item(0).textContent);
+			getMatches(getInnerStringCellOrText(allStudents[i]).textContent);
 		doc.location.hash =
-			allStudents[i].getElementsByClassName("StringCell").item(0).id;
+			getInnerStringCellOrText(allStudents[i]).id;
 		currentBounds = undefined;
 
 		frame.contentWindow.onkeyup = function (e) {
