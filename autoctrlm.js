@@ -48,6 +48,7 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 	var counterSquare = 0;
 	var counterCurly = 0;
 	var matches = [];
+	var everNegative = false;
 	for (var i = 0; i < textContent.length; i++) {
 		if (textContent.charAt(i) === "[") {
 			counterSquare += 1;
@@ -74,8 +75,11 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 				thisMatch.string = textContent.substring(thisMatch.start, thisMatch.end);
 			}
 		}
+		if (!everNegative && (counterSquare < 0 || counterCurly < 0)) {
+			everNegative = true;
+		}
 	}
-	if (counterCurly != 0 || counterSquare != 0) {
+	if (everNegative || counterCurly != 0 || counterSquare != 0) {
 		invalidBrackets.push("<li style='display: list-item;margin-left: 4ch;list-style-type: disc;'>at <u><a style='cursor: pointer ' onclick='document.location.hash = \"\"; document.location.hash = \"" + innerStringCell.id + "\";'>\"" + excerpt(textContent, 100) + "\"</a></u></li>");
 	}
 	var brackets;
