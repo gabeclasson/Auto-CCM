@@ -8,6 +8,8 @@ var possiblepostfixoperators = "([!\\)])";
 var possiblebinaryoperators = "([\\/\\-])";
 // regex to identify what should not be selected specifically
 var blockRegExp = /(^\dD$)|(^\([A-Za-z]\)$)|(^[A-Za-z]\)$)|(^\([A-Za-z]$)/g;
+var requestedFormatAll = false;
+var formatAll = false;
 
 // Match is a custom class that is used to process square brackets and curly braces
 if (typeof Match !== ' function') {
@@ -30,7 +32,7 @@ function escapeRegExp(string) {
 content: A string
 length: The desired length of an excerpt.
 return: An excerpt of the given string of the desired length
-*/
+ */
 function excerpt(content, length) {
 	if (content.length > length) {
 		return content.substring(0, length) + "...";
@@ -39,16 +41,16 @@ function excerpt(content, length) {
 }
 
 /*
- content: A string or element, representing the content of the floating alert
- color: A string representing the background color of the floating alert
- displayTime: The number of milliseconds to display the floating alert
- fadeTime: The number of milliseconds to fade out of the floating alert
- showCloseButton: A boolean representing whether or not to show a close button
- This will show a floating alert notifying the user of some piece of information
-*/
+content: A string or element, representing the content of the floating alert
+color: A string representing the background color of the floating alert
+displayTime: The number of milliseconds to display the floating alert
+fadeTime: The number of milliseconds to fade out of the floating alert
+showCloseButton: A boolean representing whether or not to show a close button
+This will show a floating alert notifying the user of some piece of information
+ */
 function floatingAlert(content, color, displayTime, fadeTime, showCloseButton) {
-	var div = doc.createElement("div"); // div encapsulating the entire alert
-	var span1 = doc.createElement("span"); // first span within the div; contains the close button
+	var div = document.createElement("div"); // div encapsulating the entire alert
+	var span1 = document.createElement("span"); // first span within the div; contains the close button
 	span1.className = "closebtn";
 	span1.onclick = function () {
 		this.parentElement.style.display = 'none';
@@ -57,7 +59,7 @@ function floatingAlert(content, color, displayTime, fadeTime, showCloseButton) {
 	span1.style = "margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;transition: 0.3s;" + (showCloseButton ? "" : "display:none;");
 	span1.textContent = "×";
 	div.appendChild(span1);
-	var span2 = doc.createElement("span"); // second span within the div: contains the content of the alert
+	var span2 = document.createElement("span"); // second span within the div: contains the content of the alert
 	span2.style = "font-size: 16px; font-weight:bold";
 	if (typeof content == "string") {
 		span2.textContent = content;
@@ -82,14 +84,14 @@ var invalidBrackets = Array(0);
 /*
 textContent: A string to examine for matches: this should be a single line of innerStringCell
 innerStringCell: The string cell from which textContent was extracted
-return: Returns a match iterator that gives all the found instances of math within textContent. 
-*/
+return: Returns a match iterator that gives all the found instances of math within textContent.
+ */
 function getMatchesFromTextContent(textContent, innerStringCell) {
 	var counterSquare = 0; // Keeps track of the number square brackets: positive means an excess of open square brackets, negative an excess of closed square brackets
 	var counterCurly = 0; // coutnerSquare but for curly braces
 	var matches = []; // Represents the various matches of complete delimited strings
 	var everNegative = false; // Represents whether any counter goes negative: this is a violation of syntax
-	//loop through and gather all the information 
+	//loop through and gather all the information
 	for (var i = 0; i < textContent.length; i++) {
 		if (textContent.charAt(i) === "[") {
 			counterSquare += 1;
@@ -123,14 +125,14 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 	// If there's a syntax error, add an alert to invalidBrackets so the user can be notified
 	if (everNegative || counterCurly != 0 || counterSquare != 0) {
 		// Various HTML to notify people
-		var u = doc.createElement("u");
+		var u = document.createElement("u");
 		u.style = 'cursor: pointer';
 		u.onclick = function () {
-			doc.location.hash = "";
-			doc.location.hash = innerStringCell.id;
+			document.location.hash = "";
+			document.location.hash = innerStringCell.id;
 		};
 		u.textContent = '"' + excerpt(textContent, 100) + '"';
-		var li = doc.createElement("li");
+		var li = document.createElement("li");
 		li.style = 'display: list-item;margin-left: 4ch;list-style-type: disc;';
 		li.textContent = "at ";
 		li.appendChild(u);
@@ -155,9 +157,9 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 		}
 	}
 	//Building up the regex formulas
-	var group1 = "(" + brackets + number + "|" + miscmatch + ")"; 
+	var group1 = "(" + brackets + number + "|" + miscmatch + ")";
 	var group2 = "(" + group1 + "|" + "(" + group1 + "|" + matchifadjacent + ")\\s*" + definitebinaryoperator + "\\s*(" + group1 + "|" + matchifadjacent + ")" + ")";
-	var group3 = "(" + "(" + "(" + possibleprefixoperators + "|(" + group2 + ")" + possiblebinaryoperators + ")\\s*" + ")*" + group2 + "(\\s*(" + possiblebinaryoperators + "(" + group2 + "))|" + possiblepostfixoperators + ")*" + ")";
+	var group3 = "(" + "(" + "(" + possibleprefixoperators + "|(" + group2 + ")\\s*" + possiblebinaryoperators + ")\\s*" + ")*" + group2 + "(\\s*(" + possiblebinaryoperators + "(" + group2 + "))|" + possiblepostfixoperators + ")*" + ")";
 	var group4 = group3 + "(\\s*" + group3 + ")*";
 	var interest = RegExp(group4, 'g');
 	console.log(interest);
@@ -167,7 +169,7 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 /*
 innerStringCell: The string cell to find math within
 return: An iterator that gives all instances of math found within the string cell
-*/
+ */
 function getMatches(innerStringCell) {
 	// First break the innerStringCell into lines. This is done to ensure that no match is made across a line break
 	var childNodeArray = getChildNodesWithoutChildren(innerStringCell);
@@ -222,7 +224,7 @@ function getMatches(innerStringCell) {
 /*
 target: A node
 return: All the descendant nodes of target that do not have any children
-*/
+ */
 function getChildNodesWithoutChildren(target) {
 	var nodes = target.childNodes;
 	if (nodes == undefined || nodes.length === 0 || target.classList.contains("Inline")) {
@@ -244,37 +246,60 @@ function getInnerStringCellOrText(element) {
 	return out;
 }
 
+function controlComma() {
+	if (!document.isOpen) { // Do not proceed unless Auto CCM is running
+		return;
+	}
+	var bounds = controlMNext();
+	if (bounds == undefined) {
+		endNow();
+		return;
+	}
+	nodeBounds = determineNodeOffsetBound(bounds);
+	if (nodeBounds == undefined) {
+		endNow();
+		return;
+	}
+	selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+}
+
+// returns true if it closed Auto CCM; returns false if Auto CCM was already closed
+function controlSlash() {
+	if (document.isOpen) {
+		endNow();
+		return true;
+	}
+	return false;
+}
+
+function controlPeriod() {
+	nodeBounds = determineNodeOffsetBound(currentBounds);
+	document.location.hash = "";
+	document.location.hash = currentBounds[0].id;
+	selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+}
+
 // A key up listener that listens for all the different keyboard events
 function keyUpListener(e) {
+	if (!document.isOpen) { // Do not proceed unless Auto CCM is running
+		return;
+	}
 	if (e.key == '/' && e.ctrlKey) { // Ctrl+/ will end Auto CCM
-		if (isOpen) {
-			endNow();
+		if (controlSlash()) {
 			return;
 		}
-	}
-	if (!isOpen){  // Do not proceed unless Auto CCM is running
-		return;
 	}
 	// Ctrl+M and Ctrl+, are treated the same by Auto CCM: both advance the highlighted portion to the next instance of unformatted math
 	if (e.key === 'm' && e.ctrlKey || e.key == ',' && e.ctrlKey) {
-		bounds = controlMNext();
-		if (bounds == undefined) {
-			endNow();
-			return;
-		}
-		nodeBounds = determineNodeOffsetBound(bounds);
-		if (nodeBounds == undefined) {
-			endNow();
-			return;
-		}
-		selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+		controlComma();
 	}
 	// Ctrl+. rehighlights the current selection of unformatted math
 	if (e.key == '.' && e.ctrlKey) {
-		nodeBounds = determineNodeOffsetBound(currentBounds);
-		doc.location.hash = "";
-		doc.location.hash = currentBounds[0].id;
-		selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+		controlPeriod();
+	}
+	// Ctrl+; will format everything
+	if (e.key == ';' && e.ctrlKey) {
+		controlSemicolon();
 	}
 }
 
@@ -285,7 +310,7 @@ var matches;
 function controlMNext() {
 	var match;
 	var innerStringCell;
-	if (!isOpen) {
+	if (!document.isOpen) {
 		return;
 	}
 	do {
@@ -318,7 +343,7 @@ array: An array in the form of [stringCell, firstIndex, lastIndex], where string
 return: An array containing the bounds of the math relative to the descendent nodes of the string cell. This is necessary to select the text for the user. The form of the output is [startElement, startOffset, endElement, endOffset]
  */
 function determineNodeOffsetBound(array) {
-	if (!isOpen) {
+	if (!document.isOpen) {
 		return;
 	}
 	var stringCell = array[0]; // The string cell containing the selection
@@ -349,8 +374,8 @@ function determineNodeOffsetBound(array) {
 		if (endElement === undefined && end < currentLength + 1) {
 			endElement = childNodeArray[j];
 			endOffset = childNodeArray[j].textContent.length + end - currentLength;
-			doc.location.hash = "";
-			doc.location.hash = stringCell.id;
+			document.location.hash = "";
+			document.location.hash = stringCell.id;
 			return [startElement, startOffset, endElement, endOffset];
 		}
 	}
@@ -359,45 +384,47 @@ function determineNodeOffsetBound(array) {
 
 /*
 Selects text given nodes and node offsets, based on the output from determineNodeOffsetBound
-*/
+ */
 function selectText(startElement, startOffset, endElement, endOffset) {
-	if (!isOpen) {
+	if (!document.isOpen) {
 		return;
 	}
-	win = frame.contentWindow;
-	var doc = win.document,
-	sel,
-	range;
-	if (win.getSelection && doc.createRange) {
-		sel = win.getSelection();
-		range = doc.createRange();
+	if (window.getSelection && document.createRange) {
+		sel = window.getSelection();
+		range = document.createRange();
 		range.setStart(startElement, startOffset);
 		range.setEnd(endElement, endOffset);
 		sel.removeAllRanges();
 		sel.addRange(range);
-	} else if (doc.body.createTextRange) {
-		range = doc.body.createTextRange();
+	} else if (document.body.createTextRange) {
+		range = document.body.createTextRange();
 		range.setStart(startElement, startOffset);
 		range.setEnd(endElement, endOffset);
 		range.select();
+	}
+	if (formatAll) {
+		setTimeout(simulateControlMandSkip, 333);
 	}
 }
 
 /*
 Ends the current session of Auto CCM
-*/
+ */
 function endNow() {
-	if (isOpen) {
-		frame.contentWindow.removeEventListener('keyup', frame.previousListener);
+	if (document.isOpen) {
+		window.removeEventListener('keyup', document.previousListener);
 		if (!hasNotifiedOn) {
 			floatingAlert("Auto CCM has nothing to format.", "#2196F3", 2000, 600, false);
 		} else {
 			console.log("Terminating Auto CCM");
+			endMenu();
+			formatAll = false;
+			requestedFormatAll = false;
 			floatingAlert("Auto CCM has ended.", "#2196F3", 2000, 600, false);
 			if (invalidBrackets.length > 0) {
-				var textElement = doc.createElement("text");
-				var br = doc.createElement("br");
-				var ul = doc.createElement("ul");
+				var textElement = document.createElement("text");
+				var br = document.createElement("br");
+				var ul = document.createElement("ul");
 				for (var q = 0; q < invalidBrackets.length; q++) {
 					ul.appendChild(invalidBrackets[q]);
 				}
@@ -407,73 +434,164 @@ function endNow() {
 				floatingAlert(textElement, "#f44336", 30000, 600, true);
 			}
 		}
+		var scripts = document.querySelectorAll("script.AutoCCM");
+		for (var j = 0; j < scripts.length; j++) {
+			scripts[j].parentElement.removeChild(scripts[j]);
+		}
 	}
-	isOpen = false;
+	document.isOpen = false;
 }
 
-// Gets all of the panels open
-var panels = document.getElementsByClassName("x-panel-body x-panel-body-default x-layout-fit x-panel-body-default");
-// represents the student panel, which contains the various courses and enrollments
-var studentPanel;
-// Loop to get the student panel
-for (var i = 0; i < panels.length; i++) {
-	if (panels[i].id.includes("studentpanel")) {
-		studentPanel = panels[i];
-		console.log("Got student panel");
+function endMenu() {
+	if (originalMenuSettings.formatButtonOnClick != null) {
+		var formatButton = document.getElementById("formatButton");
+		formatButton.onclick = originalMenuSettings.formatButtonOnClick;
+	}
+	var skipButton = document.getElementById("skipButton");
+	var returnButton = document.getElementById("returnButton");
+	var multiformatButton = document.getElementById("multiformatButton");
+	var stopButton = document.getElementById("stopButton");
+	skipButton.onclick = null;
+	returnButton.onclick = null;
+	multiformatButton.onclick = null;
+	skipButton.disabled = true;
+	returnButton.disabled = true;
+	multiformatButton.disabled = true;
+	var stopButtonImage = stopButton.getElementsByTagName("img")[0];
+	stopButtonImage.src = originalMenuSettings.stopButtonImage;
+	stopButton.onclick = originalMenuSettings.stopButtonOnClick;
+	stopButton.title = originalMenuSettings.stopButtonTitle;
+}
+
+var originalMenuSettings = new Object();
+function startMenu() {
+	var formatButton = document.getElementById("formatButton");
+	originalMenuSettings.formatButtonOnClick = formatButton.onclick;
+	formatButton.onclick = simulateControlMandSkip;
+	var skipButton = document.getElementById("skipButton");
+	var returnButton = document.getElementById("returnButton");
+	var multiformatButton = document.getElementById("multiformatButton");
+	var stopButton = document.getElementById("stopButton");
+	skipButton.onclick = controlComma;
+	returnButton.onclick = controlPeriod;
+	multiformatButton.onclick = controlSemicolon;
+	skipButton.disabled = false;
+	returnButton.disabled = false;
+	multiformatButton.disabled = false;
+	var stopButtonImage = stopButton.getElementsByTagName("img")[0];
+	originalMenuSettings.stopButtonImage = stopButtonImage.src;
+	stopButtonImage.src = stopButtonImage.src.replace("start", "stop");
+	originalMenuSettings.stopButtonOnClick = stopButton.onclick;
+	stopButton.onclick = controlSlash;
+	originalMenuSettings.stopButtonTitle = stopButton.title;
+	stopButton.title = "Start Auto CCM (Ctrl+/)";
+}
+
+function controlSemicolon() {
+	if (formatAll || !document.isOpen) {
+		return;
+	}
+	if (requestedFormatAll) {
+		formatAll = true;
+		controlPeriod();
+		simulateControlMandSkip();
+	} else {
+		floatingAlert("You have entered Ctrl+; or clicked \"Format All.\" Performing this function will format every instance of unformatted math in the document. It is highly recommended that you save before proceeding. You will not have an opportunity to intervene if Auto CCM formats something that should not be formatted. If there is a large quantity of math to be formatted or high strain on the Courseware servers, your browser tab may freeze or crash. To confirm that you would like to execute this function, enter Ctrl+; or click \"Format All\" again. If you would not like to proceed, close this notification.", "rgb(255,127,39)", 60000, 600, true);
+		requestedFormatAll = true;
 	}
 }
-var studentPanelChildren = studentPanel.children;
-// Get currentCourse: the current course that the user has open
-var currentCourse;
-for (var i = 0; i < studentPanelChildren.length; i++) {
-	if (!studentPanelChildren[i].classList.contains("x-hide-offsets")) {
-		currentCourse = studentPanelChildren[i];
+
+function simulateControlMandSkip() {
+	if (!document.isOpen) {
+		return;
+	}
+	var keyDown = new KeyboardEvent("keydown", {
+			"key": "m",
+			"code": "KeyM",
+			"location": 0,
+			"ctrlKey": true,
+			"shiftKey": false,
+			"altKey": false,
+			"metaKey": false,
+			"repeat": false,
+			"isComposing": false,
+			"charCode": 109,
+			"keyCode": 77,
+			"which": 77
+		});
+	var keyPress = new KeyboardEvent("keypress", {
+			"key": "m",
+			"code": "KeyM",
+			"location": 0,
+			"ctrlKey": true,
+			"shiftKey": false,
+			"altKey": false,
+			"metaKey": false,
+			"repeat": false,
+			"isComposing": false,
+			"charCode": 109,
+			"keyCode": 77,
+			"which": 77
+		});
+	var keyUp = new KeyboardEvent("keyup", {
+			"key": "m",
+			"code": "KeyM",
+			"location": 0,
+			"ctrlKey": true,
+			"shiftKey": false,
+			"altKey": false,
+			"metaKey": false,
+			"repeat": false,
+			"isComposing": false,
+			"charCode": 109,
+			"keyCode": 77,
+			"which": 77
+		});
+	console.log(window.getSelection());
+	if (window.getSelection != null) {
+		var anchorNode = window.getSelection().anchorNode;
+		console.log(anchorNode);
+		if (anchorNode != null) {
+			var dispatchNode = anchorNode.parentElement.closest("li.UserText");
+			console.log(dispatchNode);
+			dispatchNode.dispatchEvent(keyDown);
+			dispatchNode.dispatchEvent(keyPress);
+			dispatchNode.dispatchEvent(keyUp);
+			controlComma();
+		}
 	}
 }
-console.log(currentCourse);
-/* these are all of the tabs open in courseware */
-potentialFrames = currentCourse.getElementsByClassName("x-panel x-tabpanel-child x-panel-default x-closable x-panel-closable x-panel-default-closable");
-frame = undefined;
-// find the open frame
-var q = undefined;
-var doc = undefined; // The document of the iFrame
-var notesDiv;
+
 var i = 0; // An index representing which text cell we are on
 var hasNotifiedOn = false; // Representing whether or not the user has been notified that Auto CCM is starting. If this is false and Auto CCM ends, then the user will be notified that there is nothing to format.
-for (q = 0; q < potentialFrames.length; q++) {
-	if (!(potentialFrames[q].classList.contains("x-hide-offsets")))
-		frame = potentialFrames[q];
-}
-frame = frame.getElementsByTagName('iframe')[0];
-// get the document
-doc = frame.contentDocument;
 // create a notesDiv: a section where floating alerts can be given to the user
-notesDiv = doc.getElementById("notesDiv");
+var notesDiv = document.getElementById("notesDiv");
+var matches;
 if (notesDiv == undefined) {
-	notesDiv = doc.createElement("div");
+	notesDiv = document.createElement("div");
 	notesDiv.id = "notesDiv";
-	doc.body.insertBefore(notesDiv, doc.body.childNodes[0]);
+	document.body.insertBefore(notesDiv, document.body.childNodes[0]);
 }
 notesDiv.style = "position: fixed;z-index: 99;margin-right: calc(50% - 430px);margin-left: calc(50% - 430px);margin-top: 50px;width: fit-content;";
 var isUsurping = false; // isUsurping: is there already an instance of AutoCCM open?
-if (isOpen === true) {
+if (document.isOpen === true) {
 	isUsurping = true;
 }
-var isOpen = true; // isOpen: A variable representing whether "things" are allowed to run. This is set to false by endNow();
-var allStudents = doc.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student"); // Every student cell, or text cell, in the document
+document.isOpen = true; // isOpen: A variable representing whether "things" are allowed to run. This is set to false by endNow();
+var allStudents = document.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student"); // Every student cell, or text cell, in the document
 if (allStudents.length === 0) {
 	endNow();
 } else {
 	// Get matches for math in the first string cell
 	matches =
-		getMatches(getInnerStringCellOrText(allStudents[i])); 
+		getMatches(getInnerStringCellOrText(allStudents[i]));
 	currentBounds = undefined;
 	// Each frame has its own listener. Listeners cannot be doubled up, so we make sure that there is only one listener at a time
-	if (frame.previousListener != undefined) {
-		frame.contentWindow.removeEventListener('keyup', frame.previousListener);
+	if (document.previousListener != undefined) {
+		window.removeEventListener('keyup', document.previousListener);
 	}
-	frame.contentWindow.addEventListener('keyup', keyUpListener);
-	frame.previousListener = keyUpListener;
+	window.addEventListener('keyup', keyUpListener);
+	document.previousListener = keyUpListener;
 	// Get the bounds of the next selection
 	bounds = controlMNext();
 	if (bounds == undefined) {
@@ -489,16 +607,23 @@ if (allStudents.length === 0) {
 		} else {
 			floatingAlert("Auto CCM is starting.", "#2196F3", 2000, 600, false);
 		}
-		hasNotifiedOn = true; 
+		hasNotifiedOn = true;
+		startMenu();
 		// Make sure that all cells are expanded and visible.
-		var menuItems = doc.getElementsByClassName("x-menu-item"); 
-		for (var k = 0; k < menuItems.length; k++) {
-			if (menuItems[k].textContent.match(/Expand/i) != null) {
-				console.log("Expanded groups");
-				menuItems[k].click();
+		document.getElementsByClassName("bmenu")[1].click()
+		setTimeout(function () {
+			var menuItems = document.getElementsByClassName("x-menu-item");
+			console.log(menuItems);
+			var k;
+			for (k = 0; k < menuItems.length; k++) {
+				if (menuItems[k].textContent.match(/Expand/i) != null) {
+					break
+				}
 			}
-		}
-		// Select the first instance of unformatted math: subsequent instances of unformatted math can be brought about by using Ctrl+M or Ctrl+,
-		selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+			console.log("Expanded groups");
+			menuItems[k].click();
+			// Select the first instance of unformatted math: subsequent instances of unformatted math can be brought about by using Ctrl+M or Ctrl+,
+			selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+		}, 100);
 	}
 }

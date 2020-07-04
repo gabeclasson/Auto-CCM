@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:cc="http://creativecommons.org/ns#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  width="200mm"
+  height="200mm"
+  viewBox="0 0 200 200"
+  version="1.1"
+  id="svg8"
+  sodipodi:docname="skipicon.svg"
+  inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+ <defs
+   id="defs2" />
+ <sodipodi:namedview
+   id="base"
+   pagecolor="#000000"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:zoom="1.4"
+   inkscape:cx="-57.354"
+   inkscape:cy="338.72"
+   inkscape:document-units="mm"
+   inkscape:current-layer="text817"
+   showgrid="false"
+   inkscape:window-width="3840"
+   inkscape:window-height="2035"
+   inkscape:window-x="-13"
+   inkscape:window-y="-13"
+   inkscape:window-maximized="1" />
+ <metadata
+   id="metadata5">
+  <rdf:RDF>
+   <cc:Work
+     rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type
+      rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:title></dc:title>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g
+   inkscape:label="Layer 1"
+   inkscape:groupmode="layer"
+   id="layer1"
+   transform="translate(0,-97)">
+  <g
+    aria-label="π"
+    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.4762"
+    id="text817">
+   <g
+     aria-label="↷"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:212.12425px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:34.34391"
+     id="text816">
+    <path
+      d="M 18.744,233.3 Q 18.744,201.5 41.22,179.13 63.697,156.66 95.391,156.66 119.01,156.66 137.55,169.08 156.09,181.41 166.24,203.99 L 181.26,186.69 174.52,237.34 134.02,206.27 Q 152.36,210.2 156.81,207.93 L 154.02,202.02 Q 134.23,166.81 95.494,166.81 67.943,166.81 48.471,186.28 28.998,205.75 28.998,233.3 Z"
+      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Jokerman;-inkscape-font-specification:'Jokerman Bold';fill:#ffffff;stroke-width:34.34391"
+      id="path821" />
+   </g>
+  </g>
+ </g>
+</svg>

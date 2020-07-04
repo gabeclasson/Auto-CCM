@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:cc="http://creativecommons.org/ns#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  width="200mm"
+  height="200mm"
+  viewBox="0 0 200 200"
+  version="1.1"
+  id="svg8"
+  sodipodi:docname="deformaticon.svg"
+  inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+ <defs
+   id="defs2" />
+ <sodipodi:namedview
+   id="base"
+   pagecolor="#000000"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:zoom="0.7"
+   inkscape:cx="212.8"
+   inkscape:cy="189.96"
+   inkscape:document-units="mm"
+   inkscape:current-layer="text817"
+   showgrid="false"
+   inkscape:window-width="3840"
+   inkscape:window-height="2035"
+   inkscape:window-x="-13"
+   inkscape:window-y="-13"
+   inkscape:window-maximized="1" />
+ <metadata
+   id="metadata5">
+  <rdf:RDF>
+   <cc:Work
+     rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type
+      rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:title></dc:title>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g
+   inkscape:label="Layer 1"
+   inkscape:groupmode="layer"
+   id="layer1"
+   transform="translate(0,-97)">
+  <g
+    aria-label="π"
+    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.4762"
+    id="text817">
+   <path
+     d="M 161.79,137.3 V 155.76 H 132.44 L 129.91,194.22 Q 129.16,204.21 129.16,211.55 129.16,229.13 133.2,233.05 137.38,236.84 143.2,236.84 155.34,236.84 157.62,221.54 H 162.17 Q 157.99,256.7 134.09,256.7 122.96,256.7 116.13,249.87 109.42,243.04 109.42,229.63 109.42,220.78 112.08,192.19 L 115.49,155.76 H 88.679 Q 86.023,201.81 82.228,223.06 78.56,244.31 74.007,250.5 69.58,256.7 61.864,256.7 56.045,256.7 51.998,253.29 48.077,249.87 48.077,244.31 48.077,238.99 54.907,229.76 64.899,216.35 69.833,201.93 74.766,187.39 77.295,155.76 H 68.694 Q 58.322,155.76 52.757,160.44 47.318,165 42.385,173.6 H 37.831 Q 41.499,160.06 47.318,151.34 53.136,142.61 59.208,139.95 65.405,137.3 81.09,137.3 Z"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:6.4762;fill:#ffffff"
+     id="path819" />
+   <path
+     transform="matrix(-0.70711,0.70711,0.70711,0.70711,0,0)"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.34842;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:49.25284;stroke-opacity:1;paint-order:markers stroke fill"
+     d="M 57.104,63.81 H 80.075 V 356.21 H 57.104 Z"
+     id="rect814" />
+  </g>
+ </g>
+</svg>

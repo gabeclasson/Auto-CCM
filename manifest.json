@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Auto CCM",
-	"version": "1.3",
+	"version": "1.4",
 	"description": "Auto CCM is a tool that streamlines formatting in CAS-ILE, a website used by University of Illinois Netmath students.",
 
 	"background": {
@@ -15,13 +15,20 @@
 			"js": ["setup.js"]
 		}
 	],
-	"page_action": {
-		"default_icon": "icon.png",
-		"default_title": "Auto CCM"
-	},
 	"icons": {
 		"128": "storeicon.png"
 	},
+	"web_accessible_resources": [
+		"icons/deformaticon.svg",
+		"icons/formaticon.svg",
+		"icons/multiformaticon.svg",
+		"icons/returnicon.svg",
+		"icons/skipicon.svg",
+		"icons/stopicon.svg",
+		"icons/starticon.svg",
+		"menusetup.js",
+		"autoctrlm.js"
+	],
 	"permissions": ["activeTab", "contextMenus", "tabs"],
 	"browser_specific_settings": {
 		"gecko": {

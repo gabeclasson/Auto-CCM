@@ -1,5 +1,5 @@
 // These mutation observers exist to deliver a final payload to each iFrame: code that allow Ctrl+' to deformat math.
-var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page 
+var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page
 var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
 var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
 
@@ -54,71 +54,18 @@ function onTryItUpdated(mutationList, observer) {
 			console.log("Try It Updated");
 			for (var i = 0; i < addedNodes.length; i++) {
 				var frame1 = addedNodes[i].getElementsByTagName('iframe')[0];
+				frame1.onload = function () {
+					injectFrame(frame1);
+				};
 				console.log(frame1);
-				frame1.contentWindow.addEventListener('keyup', onDocumentKeyUp);
 			}
 		}
 	});
 }
 
-// The final payload: a keyup listener that will deformat math with Ctrl+'
-function onDocumentKeyUp(e) {
-	if (e.key == "'" && e.ctrlKey) {
-		var win = e.target.ownerDocument.parentWindow || e.target.ownerDocument.defaultView;
-		var selectedNodes = getSelectedNodes(win);
-		for (var i = 0; i < selectedNodes.length; i++) {
-			if (selectedNodes[i].classList != null && selectedNodes[i].classList.contains("Inline")) {
-				selectedNodes[i].replaceWith(selectedNodes[i].textContent);
-			}
-		}
-	}
-}
-
-function nextNode(node) {
-	if (node.hasChildNodes()) {
-		return node.firstChild;
-	} else {
-		while (node && !node.nextSibling) {
-			node = node.parentNode;
-		}
-		if (!node) {
-			return null;
-		}
-		return node.nextSibling;
-	}
-}
-
-function getRangeSelectedNodes(range) {
-	var node = range.startContainer;
-	var endNode = range.endContainer;
-
-	// Special case for a range that is contained within a single node
-	if (node == endNode) {
-		return [node];
-	}
-
-	// Iterate nodes until we hit the end container
-	var rangeNodes = [];
-	while (node && node != endNode) {
-		rangeNodes.push(node = nextNode(node));
-	}
-
-	// Add partially selected nodes at the start of the range
-	node = range.startContainer;
-	while (node && node != range.commonAncestorContainer) {
-		rangeNodes.unshift(node);
-		node = node.parentNode;
-	}
-
-	return rangeNodes;
-}
-
-function getSelectedNodes(win) {
-	if (win.getSelection) {
-		var sel = win.getSelection();
-		if (!sel.isCollapsed) {
-			return getRangeSelectedNodes(sel.getRangeAt(0));
-		}
-	}
-	return [];
+function injectFrame(frame1) {
+	var doc = frame1.contentDocument;
+	var script = doc.createElement("script");
+	script.src = chrome.runtime.getURL("menusetup.js");
+	doc.body.appendChild(script);
 }
