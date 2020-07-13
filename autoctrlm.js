@@ -484,7 +484,7 @@ function startMenu() {
 	originalMenuSettings.stopButtonOnClick = stopButton.onclick;
 	stopButton.onclick = controlSlash;
 	originalMenuSettings.stopButtonTitle = stopButton.title;
-	stopButton.title = "Start Auto CCM (Ctrl+/)";
+	stopButton.title = "Terminate Auto CCM (Ctrl+/)";
 }
 
 function controlSemicolon() {
