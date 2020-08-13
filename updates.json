@@ -1,0 +1,24 @@
+{
+  "addons": {
+    "{a083c994-6801-4dc2-91ab-b8abbc2db6c5}": {
+      "updates": [
+        {
+          "version": "1.2",
+          "update_link": "https://ospiro.com/auto-ccm-for-firefox/auto_ccm-1.2-fx.xpi"
+        },
+        {
+          "version": "1.3",
+          "update_link": "https://ospiro.com/auto-ccm-for-firefox/auto_ccm-1.3-fx.xpi"
+        },
+        {
+          "version": "2.0",
+          "update_link": "https://ospiro.com/auto-ccm-for-firefox/auto_ccm-2.0-fx.xpi"
+        },
+        {
+          "version": "2.1",
+          "update_link": "https://github.com/mr-yman/Auto-CCM/releases/download/v2.1/auto_ccm-2.1-fx.xpi"
+        }
+      ]
+    }
+  }
+}
