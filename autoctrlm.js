@@ -66,7 +66,7 @@ function floatingAlert(content, color, displayTime, fadeTime, showCloseButton) {
 	} else {
 		span2.appendChild(content);
 	}
-	div.style = "width: 800px; margin-top: 10px; padding: 30px; font-family: sans-serif; color: white; opacity: 1; transition: opacity " + fadeTime + "ms ease 0s; background-color: " + color;
+	div.style = "width: calc(100% - 2*30px); margin-top: 10px; padding: 30px; font-family: sans-serif; color: white; opacity: 1; transition: opacity " + fadeTime + "ms ease 0s; background-color: " + color;
 	div.appendChild(span2);
 	notesDiv.insertBefore(div, notesDiv.childNodes[0]);
 	setTimeout(function () {
@@ -572,7 +572,7 @@ if (notesDiv == undefined) {
 	notesDiv.id = "notesDiv";
 	document.body.insertBefore(notesDiv, document.body.childNodes[0]);
 }
-notesDiv.style = "position: fixed;z-index: 99;margin-right: calc(50% - 430px);margin-left: calc(50% - 430px);margin-top: 50px;width: fit-content;";
+notesDiv.style = "position: fixed;z-index: 99;margin-right: 20%;margin-left: 20%;margin-top: 50px;width:60%";
 var isUsurping = false; // isUsurping: is there already an instance of AutoCCM open?
 if (document.isOpen === true) {
 	isUsurping = true;
