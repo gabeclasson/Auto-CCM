@@ -135,13 +135,35 @@ function createButton(url, id, iconname, title, onclickFunction, isEnd) {
 	return buttonA;
 }
 
+// Deformats selected cells
 function controlApostrophe() {
 	var selectedNodes = getSelectedNodes(window);
+	var previousNode = null;
 	for (var i = 0; i < selectedNodes.length; i++) {
+		console.log(selectedNodes[i]);
 		if (selectedNodes[i].classList != null && selectedNodes[i].classList.contains("Inline")) {
-			selectedNodes[i].replaceWith(selectedNodes[i].textContent);
+			var newNode = document.createTextNode(selectedNodes[i].textContent);
+			selectedNodes[i].replaceWith(newNode);
+			selectedNodes[i] = newNode;
+		}
+		try {
+			selectedNodes[i].parentNode.normalize();
+		}
+		catch (e) {
 		}
 	}
+}
+
+// Saves the Try-It
+function controlS() {
+	var buttons = document.getElementsByClassName("x-btn-text");
+	for (var w = 0; w < buttons.length; w++) {
+		if (buttons[w].textContent == "Save") {
+			buttons[w].click();
+			return;
+		}
+	}
+	console.log("Failed to find save button");
 }
 
 // The final payload: a keyup listener that will deformat math with Ctrl+'
@@ -150,6 +172,14 @@ function onDocumentKeyUp(e) {
 		controlApostrophe();
 	} else if (!document.isOpen && e.key == "/" && e.ctrlKey) {
 		startAutoCCM();
+	}
+}
+
+// A keydown listener to prevent Ctrl+S from saving the page
+function onDocumentKeyDown(e) {
+	if (e.key == "s" && e.ctrlKey) {
+		e.preventDefault();
+		controlS();
 	}
 }
 
@@ -215,3 +245,4 @@ srcSplit[srcSplit.length - 1] = "";
 var url = srcSplit.join("/");
 createMouseMenu(url);
 window.addEventListener('keyup', onDocumentKeyUp);
+window.addEventListener('keydown', onDocumentKeyDown, true);

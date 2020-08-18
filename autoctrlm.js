@@ -1,11 +1,11 @@
 /* regex to identify what should be selected */
-var number = "(\\w*-?\\d+(\\d+)*(\\.\\d+)?\\w*)";
-var miscmatch = "((?<!([A-Za-z])|(['\"]))([△∇∂π]|Pi|[B-H]|[J-Z]|[b-h]|[j-z])(?!([A-Za-z])|(['\"])))";
+var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)))?)";
+var miscmatch = "((?<!([A-Za-z])|(['\"]))\\-?([△∇∂π]|Pi|[B-H]|[J-Z]|[b-h]|[j-z])(?!([A-Za-z])|(['\"])))";
 var definitebinaryoperator = "([+*^=<>≤≥]|\\\\\\.|@@|&&|<=|>=)";
-var matchifadjacent = "(" + "[\\w\\d\\(\\)]*" + ")";
+var matchifadjacent = "(" + "([\\(\\s]*\\([\\(\\s]*)?[\\w\\d\\(\\)]*([\\(\\s]*\\([\\(\\s]*)?" + ")";
 var possibleprefixoperators = "([\\-\\\\\\(])";
 var possiblepostfixoperators = "([!\\)])";
-var possiblebinaryoperators = "([\\/\\-])";
+var possiblebinaryoperators = "([\\/\\-\\.])";
 // regex to identify what should not be selected specifically
 var blockRegExp = /(^\dD$)|(^\([A-Za-z]\)$)|(^[A-Za-z]\)$)|(^\([A-Za-z]$)/g;
 var requestedFormatAll = false;
@@ -157,9 +157,9 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 		}
 	}
 	//Building up the regex formulas
-	var group1 = "(" + brackets + number + "|" + miscmatch + ")";
+	var group1 = "(" + matchifadjacent + "(" + brackets + number + "|" + miscmatch + ")" + matchifadjacent + ")";
 	var group2 = "(" + group1 + "|" + "(" + group1 + "|" + matchifadjacent + ")\\s*" + definitebinaryoperator + "\\s*(" + group1 + "|" + matchifadjacent + ")" + ")";
-	var group3 = "(" + "(" + "(" + possibleprefixoperators + "|(" + group2 + ")\\s*" + possiblebinaryoperators + ")\\s*" + ")*" + group2 + "(\\s*(" + possiblebinaryoperators + "(" + group2 + "))|" + possiblepostfixoperators + ")*" + ")";
+	var group3 = "(" + "(" + "(" + possibleprefixoperators + "(" + group2 + ")\\s*" + possiblebinaryoperators + ")\\s*" + ")*" + group2 + "(\\s*(" + possiblebinaryoperators + "(" + group2 + "))" + possiblepostfixoperators + ")*" + ")";
 	var group4 = group3 + "(\\s*" + group3 + ")*";
 	var interest = RegExp(group4, 'g');
 	console.log(interest);
@@ -329,6 +329,7 @@ function controlMNext() {
 			match = matches.next();
 		} while (match != undefined && match.value != undefined && match.value[0].match(blockRegExp) != null); // filter through undesirable options
 	}
+	allStudents[i].normalize();
 	innerStringCell = getInnerStringCellOrText(allStudents[i]);
 	var matchText = match.value[0];
 	var matchLength = matchText.length;
@@ -496,7 +497,7 @@ function controlSemicolon() {
 		controlPeriod();
 		simulateControlMandSkip();
 	} else {
-		floatingAlert("You have entered Ctrl+; or clicked \"Format All.\" Performing this function will format every instance of unformatted math in the document. It is highly recommended that you save before proceeding. You will not have an opportunity to intervene if Auto CCM formats something that should not be formatted. If there is a large quantity of math to be formatted or high strain on the Courseware servers, your browser tab may freeze or crash. To confirm that you would like to execute this function, enter Ctrl+; or click \"Format All\" again. If you would not like to proceed, close this notification.", "rgb(255,127,39)", 60000, 600, true);
+		floatingAlert("You have entered Ctrl+; or clicked \"Format All.\" Performing this function will format every instance of unformatted math in the document. It is highly recommended that you save before proceeding. You will not have an opportunity to intervene if Auto CCM formats something that should not be formatted. If there is a large quantity of math to be formatted or high strain on the CAS-ILE servers, your browser tab may freeze or crash. To confirm that you would like to execute this function, enter Ctrl+; or click \"Format All\" again. If you would not like to proceed, close this notification.", "rgb(255,127,39)", 60000, 600, true);
 		requestedFormatAll = true;
 	}
 }

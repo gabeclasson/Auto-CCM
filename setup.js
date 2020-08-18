@@ -69,3 +69,30 @@ function injectFrame(frame1) {
 	script.src = chrome.runtime.getURL("menusetup.js");
 	doc.body.appendChild(script);
 }
+
+// Deals with Ctrl+S keys pressed outside of Try-It windows
+function onDocumentKeyDown(e) {
+	if (e.key == 's' && e.ctrlKey) {
+		e.preventDefault();
+		var currentFrame = document.querySelector("[id^='popuptabpanel']:not(.x-hide-offsets):not([id*='body'])").querySelector("iframe");
+		console.log(currentFrame);
+		var currentWindow = currentFrame.contentWindow;
+		var keyDown = new KeyboardEvent("keydown", {
+			"key": "s",
+			"code": "KeyS",
+			"location": 0,
+			"ctrlKey": true,
+			"shiftKey": false,
+			"altKey": false,
+			"metaKey": false,
+			"repeat": false,
+			"isComposing": false,
+			"charCode": 83,
+			"keyCode": 83,
+			"which": 83
+		});
+		currentWindow.dispatchEvent(keyDown);
+	}
+}
+
+document.addEventListener("keydown", onDocumentKeyDown)
