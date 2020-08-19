@@ -163,7 +163,6 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 	var group4 = "(" + group3 + "(\\s*" + "(" + possiblebinaryoperators + "|" + definitebinaryoperator + ")?\\s*" + group3 + ")*" + ")"
 	var group5 = group4 + "(\\s*" + group4 + ")*";
 	var interest = RegExp(group5, 'g');
-	console.log(interest);
 	return textContent.matchAll(interest);
 }
 
