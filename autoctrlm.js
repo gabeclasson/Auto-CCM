@@ -1,6 +1,6 @@
 /* regex to identify what should be selected */
-var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)))?)";
-var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]|[J-Z]|[b-h]|[j-z])(?!([A-Za-z])|([\"])))";
+var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)?))?)";
+var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?)(?!([A-Za-z])|([\"])))";
 var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|@+|&&|<=|>=|=+)";
 var matchifadjacent = "(" + "([\\(\\s]*\\([\\(\\s]*)?[\\w\\d\\(\\)]*([\\(\\s]*\\([\\(\\s]*)?" + ")";
 var possibleprefixoperators = "([\\-\\\\\\(])";
@@ -163,6 +163,7 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 	var group4 = "(" + group3 + "(\\s*" + "(" + possiblebinaryoperators + "|" + definitebinaryoperator + ")?\\s*" + group3 + ")*" + ")"
 	var group5 = group4 + "(\\s*" + group4 + ")*";
 	var interest = RegExp(group5, 'g');
+	console.log(interest);
 	return textContent.matchAll(interest);
 }
 
