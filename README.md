@@ -15,6 +15,13 @@ Auto CCM has been released into the public domain under the CC0 license. As a ma
 "Ospiro," "Auto CCM," and the Auto CCM logo are unregistered trademarks of Ospiro Enterprises. While Ospiro has forfeited its copyright over its employees' contributions to Auto CCM, Ospiro has reserved its trademarks under the terms of the CC0 license. You are free to modify Auto CCM in any way, shape, or form, but you should not use the Auto CCM name or logo to distribute significantly modified programs in a fashion that implies endorsement by, or association with, the original Auto CCM project. 
 
 ## Version Information
+### Version 2.5
+August 28, 2020
+* Added various IP statements. 
+* To prevent potential violation of trademark law, Auto CCM is no longer officially named "Automatic CAS-ILE Control+M". "Auto CCM" is the official name of this project. 
+* Fixed bug where periods at the ends of numbers were sometimes erroneously selected.
+* Allowed prime derivative notation to be selected without the use function notation in certain cases.
+
 ### Version 2.4
 August 19, 2020
 * Fixed error where common English abbreviations would be selected as math.
