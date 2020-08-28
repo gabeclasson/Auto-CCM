@@ -9,5 +9,5 @@ Auto CCM is not associated with, nor endorsed by, the University of Illinois. Ne
 ## Copyright Status of Contributions
 Auto CCM has been released into the public domain under the CC0 license. As a matter of policy, all contributors to this project are expected to forfeit the copyright to their contributions under the terms of the same license. 
 
-## Trademark information
+## Trademark Information
 "Ospiro," "Auto CCM," and the Auto CCM logo are unregistered trademarks of Ospiro Enterprises. While Ospiro has forfeited its copyright over its employees' contributions to Auto CCM, Ospiro has reserved its trademarks under the terms of the CC0 license. You are free to modify Auto CCM in any way, shape, or form, but you should not use the Auto CCM name or logo to distribute significantly modified programs in a fashion that implies endorsement by, or association with, the original Auto CCM project. 
