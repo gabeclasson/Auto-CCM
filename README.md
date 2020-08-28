@@ -29,7 +29,7 @@ August 18, 2020
 
 ### Version 2.1
 August 13, 2020
-Fixed typo in button title
+* Fixed typo in button title
 * Made floating alert widths more dynamic.
 
 ### Version 2.0
