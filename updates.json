@@ -25,6 +25,10 @@
         { 
           "version": "2.4",
           "update_link": "https://github.com/mr-yman/Auto-CCM/releases/download/v2.4/auto_ccm-2.4-fx.xpi"
+        },
+        { 
+          "version": "2.5",
+          "update_link": "https://github.com/mr-yman/Auto-CCM/releases/download/v2.5/auto_ccm-2.5-fx.xpi"
         }
       ]
     }
