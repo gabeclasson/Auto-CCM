@@ -87,6 +87,7 @@ innerStringCell: The string cell from which textContent was extracted
 return: Returns a match iterator that gives all the found instances of math within textContent.
  */
 function getMatchesFromTextContent(textContent, innerStringCell) {
+	console.log(innerStringCell);
 	var counterSquare = 0; // Keeps track of the number square brackets: positive means an excess of open square brackets, negative an excess of closed square brackets
 	var counterCurly = 0; // coutnerSquare but for curly braces
 	var matches = []; // Represents the various matches of complete delimited strings
@@ -163,7 +164,6 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 	var group4 = "(" + group3 + "(\\s*" + "(" + possiblebinaryoperators + "|" + definitebinaryoperator + ")?\\s*" + group3 + ")*" + ")"
 	var group5 = group4 + "(\\s*" + group4 + ")*";
 	var interest = RegExp(group5, 'g');
-	console.log(interest);
 	return textContent.matchAll(interest);
 }
 
@@ -325,6 +325,9 @@ function controlMNext() {
 		}
 		i++;
 		innerStringCell = getInnerStringCellOrText(allStudents[i]);
+		if (innerStringCell == null || innerStringCell.textContent == null || innerStringCell.textContent == ""){
+			continue;
+		}
 		matches = getMatches(innerStringCell);
 		do {
 			match = matches.next();
