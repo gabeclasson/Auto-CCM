@@ -1,8 +1,16 @@
-function createMouseMenu(url) {
+console.log(browser);
+var chrome;
+var browser = browser || chrome;
+var hasChanged = false;
+var detectChanges = true;
+var unsavedIndicator = true;
+var warningDialog = true;
+
+function createMouseMenu(url, color) {
 	var imageWidth = 25;
 	var totalWidth = (imageWidth + 1) * 6 + 1;
 	var div = document.createElement("div");
-	div.style = "white-space: nowrap; position: absolute; top:0;z-index: 99;margin-right: calc(50% - " + totalWidth / 2 + "px);margin-left: calc(50% - " + totalWidth / 2 + "px);margin-top: 0px;width: auto;height: auto;font-family: sans-serif; color: white; opacity: 1; transition: opacity 600 ms ease 0s; background-color: DodgerBlue";
+	div.style = "white-space: nowrap; position: absolute; top:0;z-index: 99;margin-right: calc(50% - " + totalWidth / 2 + "px);margin-left: calc(50% - " + totalWidth / 2 + "px);margin-top: 0px;width: auto;height: auto;font-family: sans-serif; color: white; opacity: 1; transition: opacity 600 ms ease 0s; background-color: " + color;
 	var formatButton = createButton(url, "formatButton", "formaticon.svg", "Format (Ctrl+M)", simulateControlM, false);
 	div.appendChild(formatButton);
 	var deformatButton = createButton(url, "deformatButton", "deformaticon.svg", "Deformat (Ctrl+')", controlApostrophe, false);
@@ -13,49 +21,113 @@ function createMouseMenu(url) {
 	div.appendChild(returnButton);
 	var multiformatButton = createButton(url, "multiformatButton", "multiformaticon.svg", "Format All (Ctrl+;)", null, false);
 	div.appendChild(multiformatButton);
+	div.appendChild(multiformatButton);
 	var stopButton = createButton(url, "stopButton", "starticon.svg", "Start Auto CCM (Ctrl+/)", startAutoCCM, true);
 	div.appendChild(stopButton);
 	skipButton.disabled = true;
 	returnButton.disabled = true;
 	multiformatButton.disabled = true;
 	var style = document.createElement("style"); // style for buttons
+	style.id = "menuSetupStyle";
 	style.textContent =
-		`.mouseButton {
-							background-color: DodgerBlue; /* Blue background */
+		`
+						.buttonBackground {
+							background-color: ${color}; 
+						}
+						
+						.mouseButton {
 							border: none; /* Remove borders */
 							color: white; /* White text */
 							padding:0px;
 							text-align: center;
 							font-size: 11px; /* Set a font size */
+						}
+						
+						.mouseButton .buttonBackground {
 							cursor: pointer; /* Mouse pointer on hover */
 						}
 
 							/* Darker background on mouse-over */
-						.mouseButton:hover {
-							background-color: RoyalBlue;
+						.mouseButton:hover .buttonBackground {
+							filter: brightness(90%);
 						}
 						
-						.mouseButton:hover img {
+						.mouseButton:active .buttonBackground {
 							filter: brightness(75%);
 						}
 						
-						.mouseButton:disabled {
-							background-color: RoyalBlue;
+						.mouseButton:disabled .buttonBackground {
+							filter: brightness(75%);
+							cursor: not-allowed;
 						}
 						
-						.mouseButton:disabled img {
-							filter: brightness(75%);
-						}
 						
 						.mouseButtonImage {
-							width:` + imageWidth + `px;
-							height:` + imageWidth + `px;
+						width:${imageWidth}px;
+						height:${imageWidth}px;
+						}
+						
+						.unsavedDot{
+							background: #ed2939;
+							 border-radius: 5em;
+							 display: inline-block;
+							 height: 8px;
+							 width: 8px;
+							 margin-right: 3px;
+						}
+						
+						.closebtn {
+							margin-left: 15px;
+							color: white;
+							font-weight: bold;
+							float: right;
+							font-size: 22px;
+							line-height: 20px;
+							cursor: pointer;
+							transition: 0.3s;
+						}
+						
+						.floatingAlertInside {
+							font-size: 16px; 
+							font-weight:bold;
+						}
+						
+						.floatingAlertContainer {
+							width: calc(100% - 2*30px); 
+							margin-top: 10px; 
+							padding: 30px; 
+							font-family: sans-serif; 
+							color: white; 
+							opacity: 1;
 						}
 						`;
-	if (document.body != null) {
-		document.body.insertBefore(div, document.body.childNodes[0]);
-		document.body.insertBefore(style, div);
+	if (document.head != null && document.body != null) {
+		document.body.insertBefore(div, document.body.children[0])
+		document.head.appendChild(style);
 	}
+}
+
+function createButton(url, id, iconname, title, onclickFunction, isEnd) {
+	var img = document.createElement("img");
+	img.src = url + "icons/" + iconname;
+	img.className = "mouseButtonImage";
+	var buttonA = document.createElement("button");
+	buttonA.className = "mouseButton";
+	buttonA.id = id;
+	buttonA.title = title;
+	buttonA.onclick = onclickFunction;
+	var background = document.createElement("div");
+	background.className = "buttonBackground";
+	background.appendChild(img);
+	buttonA.appendChild(background);
+	if (isEnd) {
+		buttonA.style.border = "1px solid white";
+	} else {
+		buttonA.style.borderLeft = "1px solid white";
+		buttonA.style.borderTop = "1px solid white";
+		buttonA.style.borderBottom = "1px solid white";
+	}
+	return buttonA;
 }
 
 function simulateControlM() {
@@ -115,26 +187,6 @@ function simulateControlM() {
 	}
 }
 
-function createButton(url, id, iconname, title, onclickFunction, isEnd) {
-	var img = document.createElement("img");
-	img.src = url + "icons/" + iconname;
-	img.className = "mouseButtonImage";
-	var buttonA = document.createElement("button");
-	buttonA.className = "mouseButton";
-	buttonA.id = id;
-	buttonA.title = title;
-	buttonA.onclick = onclickFunction;
-	buttonA.appendChild(img);
-	if (isEnd) {
-		buttonA.style.border = "1px solid white";
-	} else {
-		buttonA.style.borderLeft = "1px solid white";
-		buttonA.style.borderTop = "1px solid white";
-		buttonA.style.borderBottom = "1px solid white";
-	}
-	return buttonA;
-}
-
 // Deformats selected cells
 function controlApostrophe() {
 	var selectedNodes = getSelectedNodes(window);
@@ -148,9 +200,7 @@ function controlApostrophe() {
 		}
 		try {
 			selectedNodes[i].parentNode.normalize();
-		}
-		catch (e) {
-		}
+		} catch (e) {}
 	}
 }
 
@@ -184,10 +234,18 @@ function onDocumentKeyDown(e) {
 }
 
 function startAutoCCM() {
+	browser.runtime.sendMessage({
+		className: "injectAutoCtrlM"
+	},
+		function () {
+		console.log("injectAutoCtrlMReceived");
+	});
+	/*
 	var script = document.createElement("script");
 	script.src = url + "autoctrlm.js";
 	script.className = "AutoCCM";
 	document.body.appendChild(script);
+	 */
 }
 
 function nextNode(node) {
@@ -239,10 +297,169 @@ function getSelectedNodes(win) {
 	return [];
 }
 
-var src = document.currentScript.getAttribute('src');
-var srcSplit = src.split("/");
-srcSplit[srcSplit.length - 1] = "";
-var url = srcSplit.join("/");
-createMouseMenu(url);
+function setChangedState(onOff) {
+	if (onOff != hasChanged) {
+		if (unsavedIndicator) {
+			if (onOff) {
+				document.getElementById("unsavedIcon").style.visibility = "visible";
+			} else {
+				document.getElementById("unsavedIcon").style.visibility = "hidden";
+			}
+		}
+		if (warningDialog) {
+			if (onOff) {
+				mockButtonEnable();
+			} else {
+				mockButtonDisable();
+			}
+		}
+	}
+	hasChanged = onOff;
+}
+
+function onNotebookChange(mutationsList, observer) {
+	for (var g = 0; g < mutationsList.length; g++) {
+		if (mutationsList[g].type == "childList" || mutationsList[g].type == "subtree") {
+			for (var h = 0; h < mutationsList[g].addedNodes.length; h++) {
+				var classList = mutationsList[g].addedNodes[h].classList;
+				if (classList == null || (!classList.contains("CellMenu"))) {
+					setChangedState(true);
+					return;
+				}
+			}
+			for (var h = 0; h < mutationsList[g].removedNodes.length; h++) {
+				var classList = mutationsList[g].removedNodes[h].classList;
+				if (classList == null || (!classList.contains("CellMenu"))) {
+					setChangedState(true);
+					return;
+				}
+			}
+		} else if (mutationsList[g].type == "characterData") {
+			setChangedState(true);
+			return;
+		}
+	}
+}
+
+function saveOnClick() {
+	setChangedState(false);
+}
+
+function handInOnClick() {
+	setChangedState(false);
+	unsavedIndicator = false;
+	warningDialog = false;
+	detectChanges = false;
+}
+
+function detectChangesSetup(saveButton, handInButton) {
+	setChangedState(false);
+	var notebookChangeObserver = new MutationObserver(onNotebookChange); // Observes the notebook
+	notebookChangeObserver.observe(document.getElementById("Notebook").getElementsByClassName("Notebook")[0], {
+		attributes: false,
+		childList: true,
+		subtree: true,
+		characterData: true
+	});
+	saveButton.addEventListener("click", saveOnClick);
+	handInButton.addEventListener("click", handInOnClick);
+}
+
+function unsavedIndicatorSetup() {
+	var unsavedDot = document.createElement("span");
+	unsavedDot.className = "unsavedDot";
+	unsavedDot.title = "You may have unsaved work.";
+	unsavedIcon = document.createElement("td");
+	unsavedIcon.appendChild(unsavedDot);
+	unsavedIcon.style.visibility = "hidden";
+	unsavedIcon.id = "unsavedIcon";
+	document.getElementsByClassName("x-toolbar-right-row")[0].prepend(unsavedIcon);
+}
+
+function warningDialogSetup() {
+	window.addEventListener("beforeunload", function (e) {
+		if (hasChanged === true) {
+			event.returnValue = "string";
+		}
+	});
+}
+
+function mockButtonEnable() {
+	browser.runtime.sendMessage({
+		className: "mockButtonEnable"
+	},
+		function () {
+		console.log("mockButtonEnableReceived");
+	});
+}
+
+function mockButtonDisable() {
+	browser.runtime.sendMessage({
+		className: "mockButtonDisable"
+	},
+		function () {
+		console.log("mockButtonDisableReceived");
+	});
+}
+
+// Do various things that required the sync storage
+browser.runtime.sendMessage({
+	className: "getSyncStorage"
+},
+	function (response) {
+	var items = response.items;
+	var url = response.url;
+	console.log(items);
+	console.log(url);
+	createMouseMenu(url, items.menubackgroundcolor);
+	if (items.spellCheck) {
+		console.log(document);
+		var allStudents = document.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student"); // Every student cell, or text cell, in the document
+		for (var k = 0; k < allStudents.length; k++) {
+			allStudents[k].spellcheck = "true";
+		}
+		window.allowlist = items.allowlist;
+		window.blocklist = items.blocklist;
+	}
+	// Unsaved changes stuff
+	// Find the save button
+	var buttons = document.getElementsByClassName("x-btn-text");
+	var saveButton;
+	var handInButton;
+	for (var k = 0; k < buttons.length; k++) {
+		if (buttons[k].textContent.includes("Save")) {
+			saveButton = buttons[k];
+		} else if (buttons[k].textContent.includes("Hand In")) {
+			handInButton = buttons[k];
+		}
+	}
+	if (saveButton == null || saveButton.offsetParent == null) {
+		unsavedIndicator = false;
+		warningDialog = false;
+		detectChanges = false;
+		hasChanged = false;
+	} else {
+		unsavedIndicator = items.unsavedIndicator;
+		warningDialog = items.warningDialog;
+		detectChanges = unsavedIndicator || warningDialog;
+		if (unsavedIndicator) {
+			unsavedIndicatorSetup();
+		} else {
+			var style = document.createElement("style");
+			style.textContent =
+				`#unsavedIcon {
+						display: none;
+					}`;
+			document.head.appendChild(style);
+		}
+		if (items.warningDialog) {
+			warningDialogSetup();
+		}
+		if (detectChanges) {
+			detectChangesSetup(saveButton, handInButton);
+		}
+	}
+});
+
 window.addEventListener('keyup', onDocumentKeyUp);
 window.addEventListener('keydown', onDocumentKeyDown, true);

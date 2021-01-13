@@ -1,13 +1,26 @@
+// user defined blocklist/allowlist
+var blockList = window.blocklist;
+var allowList = window.allowlist;
+var blockListStr = "";
+if (blockList != null && blockList.length > 0) {
+	blockListStr = "|(^" + blockList.join("$)|(^") + "$)";
+}
+var allowListStr = "";
+if (allowList != null && allowList.length > 0) {
+	allowListStr = "|(" + allowList.join(")|(") + ")";
+}
 /* regex to identify what should be selected */
 var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)?))?)";
-var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?)(?!([A-Za-z])|([\"])))";
+var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?" + allowListStr + ")(?!([A-Za-z])|([\"])))";
 var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|@+|&&|<=|>=|=+)";
 var matchifadjacent = "(" + "([\\(\\s]*\\([\\(\\s]*)?[\\w\\d\\(\\)]*([\\(\\s]*\\([\\(\\s]*)?" + ")";
 var possibleprefixoperators = "([\\-\\\\\\(])";
 var possiblepostfixoperators = "([!\\)])";
 var possiblebinaryoperators = "([\\/\\-\\.])";
 // regex to identify what should not be selected specifically
-var blockRegExp = /(^\dD$)|(^\([A-Za-z]\)$)|(^[A-Za-z]\)$)|(^\([A-Za-z]$)/g;
+var blockRegExpStr = "(^\\dD$)|(^\\([A-Za-z]\\)$)|(^[A-Za-z]\\)$)|(^\\([A-Za-z]$)" + blockListStr;
+var blockRegExp = RegExp(blockRegExpStr, "g");
+//Other
 var requestedFormatAll = false;
 var formatAll = false;
 
@@ -50,23 +63,26 @@ This will show a floating alert notifying the user of some piece of information
  */
 function floatingAlert(content, color, displayTime, fadeTime, showCloseButton) {
 	var div = document.createElement("div"); // div encapsulating the entire alert
+	div.className = "floatingAlertContainer";
 	var span1 = document.createElement("span"); // first span within the div; contains the close button
 	span1.className = "closebtn";
 	span1.onclick = function () {
 		this.parentElement.style.display = 'none';
 		this.parentNode.parentNode.removeChild(this.parentNode);
 	}; // onclick will close div and delete it
-	span1.style = "margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;transition: 0.3s;" + (showCloseButton ? "" : "display:none;");
+	if (!showCloseButton) {
+		span1.style.display = "none";
+	}
 	span1.textContent = "×";
 	div.appendChild(span1);
 	var span2 = document.createElement("span"); // second span within the div: contains the content of the alert
-	span2.style = "font-size: 16px; font-weight:bold";
+	span2.className = "floatingAlertInside";
 	if (typeof content == "string") {
 		span2.textContent = content;
 	} else {
 		span2.appendChild(content);
 	}
-	div.style = "width: calc(100% - 2*30px); margin-top: 10px; padding: 30px; font-family: sans-serif; color: white; opacity: 1; transition: opacity " + fadeTime + "ms ease 0s; background-color: " + color;
+	div.style = "transition: opacity " + fadeTime + "ms ease 0s; background-color: " + color;
 	div.appendChild(span2);
 	notesDiv.insertBefore(div, notesDiv.childNodes[0]);
 	setTimeout(function () {
@@ -162,7 +178,7 @@ function getMatchesFromTextContent(textContent, innerStringCell) {
 	var group2 = "(" + group1 + "|" + "(" + group1 + "|" + matchifadjacent + ")\\s*" + definitebinaryoperator + "\\s*(" + group1 + "|" + matchifadjacent + ")" + ")";
 	var group3 = "(" + "(" + possibleprefixoperators + "\\s*)*" + group2 + "(\\s*" + possiblepostfixoperators + ")*" + ")";
 	var group4 = "(" + group3 + "(\\s*" + "(" + possiblebinaryoperators + "|" + definitebinaryoperator + ")?\\s*" + group3 + ")*" + ")"
-	var group5 = group4 + "(\\s*" + group4 + ")*";
+		var group5 = group4 + "(\\s*" + group4 + ")*";
 	var interest = RegExp(group5, 'g');
 	return textContent.matchAll(interest);
 }
@@ -325,7 +341,7 @@ function controlMNext() {
 		}
 		i++;
 		innerStringCell = getInnerStringCellOrText(allStudents[i]);
-		if (innerStringCell == null || innerStringCell.textContent == null || innerStringCell.textContent == ""){
+		if (innerStringCell == null || innerStringCell.textContent == null || innerStringCell.textContent == "") {
 			continue;
 		}
 		matches = getMatches(innerStringCell);

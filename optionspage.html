@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Auto CCM options</title>
+<style id="style">
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 25px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 17px;
+  width: 17px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #1E90FF;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #1E90FF;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(25px);
+  -ms-transform: translateX(25px);
+  transform: translateX(25px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 100px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+ }
+ 
+button {
+	margin-left:10px;
+	border-radius:10em;
+	border: solid 0px;
+	background: #1E90FF;
+	color: white;
+	font-family: Dejavu Sans, Segoe UI, sans-serif;
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	outline: none;
+	padding: 0px 7px 2px 7px;
+}
+
+button:active {
+	filter: brightness(75%);
+}
+
+h1, h2, h3, h4, h5, h6, h7, h8 {
+	font-family:Gontserrat,Montserrat,sans-serif;
+}
+
+h1 {
+	font-size: 30px;
+}
+
+h2 {
+	margin-top: 30px;
+	font-size: 25px;
+}
+
+p {
+	font-size: 13px
+}
+
+img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.sidetext {
+	display:inline-block;
+}
+
+body {
+	display: none;
+	background:#1E90FF;
+	font-family: Dajavu Sans, Segoe UI, sans-serif;
+}
+
+.innerPanel {
+	display:inline-block;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	margin-left: calc((100% - 900px)/2);
+	margin-right: calc((100% - 900px)/2);
+	padding: 50px;
+	padding-top: 30px;
+	background: #ffffff;
+	height:100%;
+	width: 800px;
+	border-radius: 3em;
+}
+
+.indent {
+	margin-left:30px;
+}
+
+.preview {
+	background:#1E90FF;
+	border:1px solid #FFFFFF;
+}
+
+.preview:hover {
+	filter: brightness(75%);
+}
+
+.largeButton {
+	font-size: 30px;
+	padding: 0px 15px 3px 15px;
+}
+
+</style>
+</head>
+<body id="body">
+<span class="innerPanel">
+<img src= "/autoccm.svg" width=150px/>
+<h1 style="text-align:center;padding-bottom:10px">Auto CCM options</h1>
+<div style="margin-top:20px;margin-left:auto;margin-right:auto; width:300px">
+<span>
+<button id="save" class="largeButton" style="margin-left:0">Save</button>
+<span id="status" style="margin-left:10px"></span>
+</span>
+<span style="margin-top:30px">
+<button id="reset" class="largeButton" style="float:right">Reset</button>
+</span>
+</span>
+</div>
+<h2>Unsaved work</h2>
+<h3>Potential unsaved work indicator</h3>
+<p>When this setting is enabled, a red, circular indicator will appear next to the save button in each Try-It if you may have unsaved work.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="unsavedIndicator" checked>
+  <span class="slider round"></span>
+</label></div>
+<h3>Warning dialog</h3>
+<p>When this setting is enabled, a warning dialog will ask you to confirm your decision to close a Try-It or to leave CAS-ILE if you may have unsaved work in any open Try-Its.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="warningDialog" checked>
+  <span class="slider round"></span>
+</label></div>
+<h2>Spell check</h2>
+<p>When this setting is enabled, spell check will be turned on for student text input cells. Please note that your browser settings will also have to have spell check enabled in order for this feature to work. </p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="spellCheck" checked>
+  <span class="slider round"></span>
+</label></div>
+<h2>Colors</h2>
+<h3>Menu background color</h3>
+<input type="color" class="indent" id="menubackgroundcolor" name="head" value="#1E90FF">
+<h3>Preview</h3>
+<img src="/icons/formaticon.svg" class="indent preview" id="preview" width="25px"/>
+<h2>User-defined selection criteria</h2>
+<p>These settings are for advanced users who want to specifically instruct Auto CCM to select certain allowed terms or to specifically forbid Auto CCM from selecting certain blocked terms. The entries in these lists must be in the form of <a href="https://www.rexegg.com/regex-quickstart.html">regular expressions</a>. Do not enter a regular expression in the form of <tt>/grog/g</tt>; leave out the surrounding forward slashes, the expression flag, anchors, and boundaries. If you are generally disappointed that Auto CCM is overselecting or underselecting certain expressions, consider <a href="https://ospiro.com/contact">contacting Ospiro Enterprises</a> with your issue so that we can continue to improve the quality of Auto CCM.</p>
+<h3>Allowlist</h3>
+<p>Add terms to this list to instruct Auto CCM to always select them. For example, adding <tt>grog\d?</tt> to the allowlist would result in Auto CCM selecting <tt>grog</tt>, <tt>grog14!</tt>, and <tt>54 - grog1</tt>, but not <tt>fgrog</tt>, <tt>grog5.4</tt>, or <tt>I like to eat grogs</tt>. </p>
+<ul id="allowlist" class="indent"></ul>
+<input id="allowinput" class="indent"></input><button id="allowadd">Add</button>
+<h3>Blocklist</h3>
+<p>Add terms to this list to instruct Auto CCM to never select them, even if they appear on the allowlist. For example, adding "grog\d?" would prevent grog and grog6 from being selected, but it would not prevent grog34, grog!, or 67^grog from being selected. If the allowlist is "greedy" in how it gobbles up terms around it, the blocklist is reserved in how it almost always requires an exact match. </p>
+<ul id="blocklist" class="indent"></ul>
+<input id="blockinput" class="indent"></input><button id="blockadd">Add</button>
+<script src="optionspage.js"></script>
+</body>
+</html>
