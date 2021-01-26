@@ -1,10 +1,9 @@
-console.log(browser);
-var chrome;
 var browser = browser || chrome;
 var hasChanged = false;
-var detectChanges = true;
+var detectUnsavedChanges = true;
 var unsavedIndicator = true;
 var warningDialog = true;
+var spellCheck = true;
 
 function createMouseMenu(url, color) {
 	var imageWidth = 25;
@@ -69,7 +68,7 @@ function createMouseMenu(url, color) {
 						
 						.unsavedDot{
 							background: #ed2939;
-							 border-radius: 5em;
+							 border-radius: 50em;
 							 display: inline-block;
 							 height: 8px;
 							 width: 8px;
@@ -179,7 +178,6 @@ function simulateControlM() {
 		console.log(anchorNode);
 		if (anchorNode != null) {
 			var dispatchNode = anchorNode.parentElement.closest("li.TextCell");
-			console.log(dispatchNode);
 			dispatchNode.dispatchEvent(keyDown);
 			dispatchNode.dispatchEvent(keyPress);
 			dispatchNode.dispatchEvent(keyUp);
@@ -317,30 +315,6 @@ function setChangedState(onOff) {
 	hasChanged = onOff;
 }
 
-function onNotebookChange(mutationsList, observer) {
-	for (var g = 0; g < mutationsList.length; g++) {
-		if (mutationsList[g].type == "childList" || mutationsList[g].type == "subtree") {
-			for (var h = 0; h < mutationsList[g].addedNodes.length; h++) {
-				var classList = mutationsList[g].addedNodes[h].classList;
-				if (classList == null || (!classList.contains("CellMenu"))) {
-					setChangedState(true);
-					return;
-				}
-			}
-			for (var h = 0; h < mutationsList[g].removedNodes.length; h++) {
-				var classList = mutationsList[g].removedNodes[h].classList;
-				if (classList == null || (!classList.contains("CellMenu"))) {
-					setChangedState(true);
-					return;
-				}
-			}
-		} else if (mutationsList[g].type == "characterData") {
-			setChangedState(true);
-			return;
-		}
-	}
-}
-
 function saveOnClick() {
 	setChangedState(false);
 }
@@ -349,20 +323,107 @@ function handInOnClick() {
 	setChangedState(false);
 	unsavedIndicator = false;
 	warningDialog = false;
-	detectChanges = false;
+	detectUnsavedChanges = false;
+	if (!spellCheck) {
+		notebookChangeObserver.disconnect();
+	}
+	bodyChangeObserver.disconnect();
 }
 
-function detectChangesSetup(saveButton, handInButton) {
-	setChangedState(false);
-	var notebookChangeObserver = new MutationObserver(onNotebookChange); // Observes the notebook
-	notebookChangeObserver.observe(document.getElementById("Notebook").getElementsByClassName("Notebook")[0], {
+var notebookChangeObserver = new MutationObserver(onNotebookChange);
+function onNotebookChange(mutationsList, observer) {
+	for (var g = 0; g < mutationsList.length; g++) {
+		if (mutationsList[g].type == "childList" || mutationsList[g].type == "subtree") {
+			for (var h = 0; h < mutationsList[g].addedNodes.length; h++) {
+				console.log(mutationsList[g].addedNodes[h]);
+				var classList = mutationsList[g].addedNodes[h].classList;
+				if (detectUnsavedChanges && (classList == null || (!classList.contains("CellMenu")))) {
+					setChangedState(true);
+				}
+				if (spellCheck && classList != null && classList.contains("UserText")) {
+					var studentTextCells = mutationsList[g].addedNodes[h].getElementsByClassName("Student Text UserText");
+					if (studentTextCells != null && studentTextCells.length > 0) {
+						studentTextCells[0].spellcheck = "true";
+					}
+				}
+			}
+			if (detectUnsavedChanges) {
+				for (var h = 0; h < mutationsList[g].removedNodes.length; h++) {
+					var classList = mutationsList[g].removedNodes[h].classList;
+					if (classList == null || (!classList.contains("CellMenu"))) {
+						setChangedState(true);
+					}
+				}
+			}
+		} else if (detectUnsavedChanges && mutationsList[g].type == "characterData") {
+			setChangedState(true);
+		}
+		else if (spellCheck && mutationsList[g].type == "attributes" && mutationsList[g].attributeName == "class") {
+			if (mutationsList[g].target.spellcheck && mutationsList[g].target.classList.contains("Input")) {
+				mutationsList[g].target.spellcheck = false;
+			}
+			else if (!mutationsList[g].target.spellcheck && mutationsList[g].target.classList.contains("UserText") && mutationsList[g].target.classList.contains("Student") && mutationsList[g].target.classList.contains("Text")) {
+				mutationsList[g].target.spellcheck = true;
+			}
+		}
+	}
+}
+
+function observeNotebookChanges() {
+	var noteBookObserveOptions = {
 		attributes: false,
+		attributeOldValue: false,
 		childList: true,
 		subtree: true,
-		characterData: true
-	});
-	saveButton.addEventListener("click", saveOnClick);
-	handInButton.addEventListener("click", handInOnClick);
+		characterData: false
+	};
+	if (unsavedIndicator || warningDialog) {
+		noteBookObserveOptions.characterData = true;
+	}
+	if (spellCheck) {
+		noteBookObserveOptions.attributes = true;
+		noteBookObserveOptions.attributeFilter = ["class"];
+		noteBookObserveOptions.attributeOldValue = true;
+	}
+	 // Observes the notebook
+	notebookChangeObserver.observe(document.getElementById("Notebook").getElementsByClassName("Notebook")[0], noteBookObserveOptions);
+}
+
+var bodyChangeObserver = new MutationObserver(onBodyChange);
+function onBodyChange(mutationsList, observer) {
+	for (var g = 0; g < mutationsList.length; g++) {
+		if (mutationsList[g].type == "childList") {
+			for (var h = 0; h < mutationsList[g].addedNodes.length; h++) {
+				var classList = mutationsList[g].addedNodes[h].classList;
+				if (detectUnsavedChanges && classList.contains("x-window-dlg")) {
+					console.log(mutationsList[g].addedNodes[h]);
+					var buttons = mutationsList[g].addedNodes[h].getElementsByTagName("button");
+					if (buttons != null) {
+						for (var j = 0; j < buttons.length; j++) {
+							console.log("DIALOGCHECK");
+							if (buttons[j].textContent == "Yes") {
+								console.log(buttons[j]);
+								buttons[j].addEventListener("click", handInOnClick);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+function observeBodyChanges() {
+	console.log("Observe body changes");
+	var bodyObserveOptions = {
+		attributes: false,
+		attributeOldValue: false,
+		childList: true,
+		subtree: false,
+		characterData: false
+	};
+	 // Observes the body
+	bodyChangeObserver.observe(document.body, bodyObserveOptions);
 }
 
 function unsavedIndicatorSetup() {
@@ -409,11 +470,12 @@ browser.runtime.sendMessage({
 	function (response) {
 	var items = response.items;
 	var url = response.url;
-	console.log(items);
-	console.log(url);
 	createMouseMenu(url, items.menubackgroundcolor);
+	spellCheck = items.spellCheck;
+	unsavedIndicator = items.unsavedIndicator;
+	warningDialog = items.warningDialog;
+	detectUnsavedChanges = unsavedIndicator || warningDialog;
 	if (items.spellCheck) {
-		console.log(document);
 		var allStudents = document.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student"); // Every student cell, or text cell, in the document
 		for (var k = 0; k < allStudents.length; k++) {
 			allStudents[k].spellcheck = "true";
@@ -425,23 +487,18 @@ browser.runtime.sendMessage({
 	// Find the save button
 	var buttons = document.getElementsByClassName("x-btn-text");
 	var saveButton;
-	var handInButton;
 	for (var k = 0; k < buttons.length; k++) {
 		if (buttons[k].textContent.includes("Save")) {
 			saveButton = buttons[k];
-		} else if (buttons[k].textContent.includes("Hand In")) {
-			handInButton = buttons[k];
-		}
+			break;
+		} 
 	}
 	if (saveButton == null || saveButton.offsetParent == null) {
 		unsavedIndicator = false;
 		warningDialog = false;
-		detectChanges = false;
+		detectUnsavedChanges = false;
 		hasChanged = false;
 	} else {
-		unsavedIndicator = items.unsavedIndicator;
-		warningDialog = items.warningDialog;
-		detectChanges = unsavedIndicator || warningDialog;
 		if (unsavedIndicator) {
 			unsavedIndicatorSetup();
 		} else {
@@ -452,11 +509,16 @@ browser.runtime.sendMessage({
 					}`;
 			document.head.appendChild(style);
 		}
-		if (items.warningDialog) {
+		if (warningDialog) {
 			warningDialogSetup();
 		}
-		if (detectChanges) {
-			detectChangesSetup(saveButton, handInButton);
+		if (detectUnsavedChanges) {
+			saveButton.addEventListener("click", saveOnClick);
+			setChangedState(false);
+		}
+		if (unsavedIndicator || warningDialog || spellCheck) {
+			observeNotebookChanges();
+			observeBodyChanges();
 		}
 	}
 });

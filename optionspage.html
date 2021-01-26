@@ -150,6 +150,15 @@ body {
 	padding: 0px 15px 3px 15px;
 }
 
+li {
+	margin-bottom: 5px;
+}
+
+#status {
+	margin-left:10px;
+	font-size:10px;
+}
+
 </style>
 </head>
 <body id="body">
@@ -159,7 +168,7 @@ body {
 <div style="margin-top:20px;margin-left:auto;margin-right:auto; width:300px">
 <span>
 <button id="save" class="largeButton" style="margin-left:0">Save</button>
-<span id="status" style="margin-left:10px"></span>
+<span id="status"></span>
 </span>
 <span style="margin-top:30px">
 <button id="reset" class="largeButton" style="float:right">Reset</button>
@@ -197,7 +206,7 @@ body {
 <ul id="allowlist" class="indent"></ul>
 <input id="allowinput" class="indent"></input><button id="allowadd">Add</button>
 <h3>Blocklist</h3>
-<p>Add terms to this list to instruct Auto CCM to never select them, even if they appear on the allowlist. For example, adding "grog\d?" would prevent grog and grog6 from being selected, but it would not prevent grog34, grog!, or 67^grog from being selected. If the allowlist is "greedy" in how it gobbles up terms around it, the blocklist is reserved in how it almost always requires an exact match. </p>
+<p>Add terms to this list to instruct Auto CCM to never select them, even if they appear on the allowlist. For example, adding <tt>grog\d?</tt> would prevent <tt>grog</tt> and <tt>grog6</tt> from being selected, but it would not prevent <tt>grog34</tt>, <tt>grog!</tt>, or <tt>67^grog</tt> from being selected. If the allowlist is "greedy" in how it gobbles up terms around it, the blocklist is reserved in how it almost always requires an exact match. </p>
 <ul id="blocklist" class="indent"></ul>
 <input id="blockinput" class="indent"></input><button id="blockadd">Add</button>
 <script src="optionspage.js"></script>

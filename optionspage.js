@@ -1,5 +1,4 @@
-var chrome;
-var browser = browser || chrome;
+var browser = browser || chrome; // To ensure compatability between Firefox and Chrome
 
 var hasChanged = false; // marks whether changes have been made since the most recent save
 
@@ -23,7 +22,7 @@ function blockadd() {
 		return;
 	}
 	hasChanged = true;
-	blocklist.innerHTML += createListElementFromId('block', input, prevIdNum + 1);
+	blocklist.appendChild(createListElementFromId('block', input, prevIdNum + 1));
 	blockinput.value = "";
 }
 
@@ -45,7 +44,7 @@ function allowadd() {
 		return;
 	}
 	hasChanged = true;
-	allowlist.innerHTML += createListElementFromId('allow', input, prevIdNum + 1);
+	allowlist.appendChild(createListElementFromId('allow', input, prevIdNum + 1));
 	allowinput.value = "";
 }
 
@@ -61,24 +60,41 @@ function getListElementsFromId(id) {
 	let list = document.getElementById(id);
 	let children = list.children;
 	for (var i = 0; i < children.length; i++) {
-		var lineText = children[i].textContent;
-		lineText = lineText.substring(0, lineText.length - 6);
-		out.push(lineText);
+		var str = children[i].textContent;
+		out[i] = str.substring(0, str.length - 6);
 	}
 	return out;
 }
 
 function createListElementFromId(id, content, num) {
-	return "<li id =" + id + "item" + num + ">" + content + "<button class='remove' id='" + id + "removebutton" + num + "'>Remove</button>";
+	var li = document.createElement("li");
+	li.id = id + "item" + num;
+	li.textContent = content;
+	var removeButton = document.createElement("button");
+	removeButton.className = "remove";
+	removeButton.id = id + "removebutton" + num;
+	removeButton.textContent = "Remove";
+	li.appendChild(removeButton);
+	return li;
 }
 
 function createListFromIdAndArray(id, array) {
-	var innerHTML = "";
+	var outArray = [];
 	for (var i = 0; i < array.length; i++) {
-		innerHTML += createListElementFromId(id, array[i], i + 1);
+		outArray.push(createListElementFromId(id, array[i], i + 1));
 	}
-	return innerHTML;
+	return outArray;
 }
+
+function populateList(listElement, itemArray) {
+	if (itemArray != null) {
+		for (var k = 0; k < itemArray.length; k++) {
+			listElement.appendChild(itemArray[k]);
+		}
+		
+	}
+}
+
 function save_options() {
 	var spellCheck = document.getElementById('spellCheck').checked;
 	var unsavedIndicator = document.getElementById('unsavedIndicator').checked;
@@ -130,8 +146,8 @@ function restore_options() {
 		document.getElementById('spellCheck').checked = items.spellCheck;
 		document.getElementById('unsavedIndicator').checked = items.unsavedIndicator;
 		document.getElementById('warningDialog').checked = items.warningDialog;
-		document.getElementById('blocklist').innerHTML = createListFromIdAndArray('block', items.blocklist);
-		document.getElementById('allowlist').innerHTML = createListFromIdAndArray('allow', items.allowlist);
+		populateList(document.getElementById('blocklist'), createListFromIdAndArray('block', items.blocklist));
+		populateList(document.getElementById('allowlist'), createListFromIdAndArray('allow', items.allowlist));
 		document.getElementById("menubackgroundcolor").value = items.menubackgroundcolor;
 		document.getElementById("body").style.background = items.menubackgroundcolor;
 		document.getElementById("preview").style.background = items.menubackgroundcolor;

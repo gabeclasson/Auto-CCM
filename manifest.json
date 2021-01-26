@@ -3,11 +3,18 @@
 	"name": "Auto CCM",
 	"version": "2.7",
 	"description": "Auto CCM is a tool that streamlines formatting in CAS-ILE, a website that is used by University of Illinois NetMath students.",
+	"author": "Ospiro Enterprises and the other gracious contributors to the Auto CCM project",
+	"homepage_url": "https://ospiro.com/products-services/auto-ccm/",
 	"background": {
 		"scripts": ["background.js"],
 		"persistent": false
 	},
-	"options_page": "optionspage.html",
+	"options_ui": {
+		"page": "optionspage.html",
+		"browser_style": false,
+		"chrome_style": false,
+		"open_in_tab": true
+	},
 	"content_scripts": [{
 			"matches": [
 				"https://courseware.illinois.edu/*", "http://courseware.illinois.edu/*"
@@ -45,7 +52,8 @@
 	},
 	"browser_specific_settings": {
 		"gecko": {
-			"update_url": "https://raw.githubusercontent.com/mr-yman/Auto-CCM/master/updates.json"
+			"update_url": "https://raw.githubusercontent.com/mr-yman/Auto-CCM/master/updates.json",
+			"id": "{62df5a2b-435f-4dfd-8be1-e91c5d89c574}"
 		}
 	}
 }

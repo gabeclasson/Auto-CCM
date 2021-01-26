@@ -1,17 +1,22 @@
-var chrome;
-var browser = browser || chrome;
-// Creates shortcuts for various sites
+var browser = browser || chrome; // To ensure compatability between Firefox and Chrome
+
+/*
+Creates shortcuts (context menus) that appear when the the Auto CCM icon is clicked.
+*/
 browser.runtime.onInstalled.addListener(function () {
+	// How to use Auto CCM
 	browser.contextMenus.create({
 		"id": "how2use",
 		"title": "How to Use Auto CCM",
 		"contexts": ["page_action"]
 	});
+	// Courseware (CAS-ILE)
 	browser.contextMenus.create({
 		"id": "courseware",
 		"title": "CAS-ILE",
 		"contexts": ["page_action"]
 	});
+	// Wolfram language documentation
 	browser.contextMenus.create({
 		"id": "doc",
 		"title": "Mathematica Documentation",
@@ -19,16 +24,22 @@ browser.runtime.onInstalled.addListener(function () {
 	});
 });
 
-// Allows site shortcuts to be clicked, bringing the user to a new tab
+/*
+Listens for when users click on the aforementioned shortcuts (context menus) to open up new tabs 
+that bring them to their desired site
+*/
 browser.contextMenus.onClicked.addListener(function (info, tab) {
+	// How to use Auto CCM
 	if (info.menuItemId === "how2use") {
 		browser.tabs.create({
-			url: "https://ospiro.com/products-services/auto-ccm/"
+			url: "https://ospiro.com/products-services/auto-ccm/#how2use"
 		});
+	// Courseware (CAS-ILE)
 	} else if (info.menuItemId === "courseware") {
 		browser.tabs.create({
 			url: "https://courseware.illinois.edu"
 		});
+	// Wolfram language documentation
 	} else if (info.menuItemId === "doc") {
 		browser.tabs.create({
 			url: "https://reference.wolfram.com/language/"
@@ -36,9 +47,16 @@ browser.contextMenus.onClicked.addListener(function (info, tab) {
 	}
 });
 
+/*
+Listens for messages from the extension. Messages sent by the extension's content scripts to get the background page 
+to perform some action that it would not be possible or practical for the content scripts themselves to perform.
+*/
 browser.runtime.onMessage.addListener(
 	function (request, sender, sendResponse) {
-	console.log("ALERTALERT! " + request.className);
+	console.log("You've got mail! " + request.className);
+	/*
+	Gets
+	*/
 	if (request.className == "getSyncStorage") {
 		browser.storage.sync.get({
 			spellCheck: true,
@@ -48,7 +66,6 @@ browser.runtime.onMessage.addListener(
 			allowlist: [],
 			menubackgroundcolor: "#1E90FF"
 		}, function (items) {
-			console.log(browser.runtime.getURL(""));
 			sendResponse({
 				items: items,
 				url: browser.runtime.getURL("")

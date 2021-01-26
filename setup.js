@@ -1,5 +1,4 @@
-var chrome;
-var browser = browser || chrome;
+var browser = browser || chrome; // To ensure compatability between Firefox and Chrome
 // These mutation observers exist to deliver a final payload to each iFrame: code that allow Ctrl+' to deformat math.
 var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page
 var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
@@ -115,7 +114,6 @@ function onDocumentKeyDown(e) {
 	if (e.key == 's' && e.ctrlKey) {
 		e.preventDefault();
 		var currentFrame = document.querySelector("[id^='popuptabpanel']:not(.x-hide-offsets):not([id*='body'])").querySelector("iframe");
-		console.log(currentFrame);
 		var currentWindow = currentFrame.contentWindow;
 		var keyDown = new KeyboardEvent("keydown", {
 				"key": "s",
