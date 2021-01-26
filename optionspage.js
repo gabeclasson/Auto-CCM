@@ -1,5 +1,8 @@
+/*
+Author: Gabe Classon
+This script runs on the options page (optionspage.html).  
+*/
 var browser = browser || chrome; // To ensure compatability between Firefox and Chrome
-
 var hasChanged = false; // marks whether changes have been made since the most recent save
 
 // To be run when a switch is toggled
@@ -48,6 +51,7 @@ function allowadd() {
 	allowinput.value = "";
 }
 
+// Deletes an element from the DOM tree
 function remove(e) {
 	hasChanged = true;
 	var element = e.target || e.srcElement;
@@ -55,6 +59,7 @@ function remove(e) {
 	element.parentNode.removeChild(element);
 }
 
+// Creates an array from the elements of the block/allowlists
 function getListElementsFromId(id) {
 	var out = Array(0);
 	let list = document.getElementById(id);
@@ -66,6 +71,12 @@ function getListElementsFromId(id) {
 	return out;
 }
 
+/*
+id: the id of the LIST
+content: the textContent of the entry
+num: the index of the element on the list (starting from 1)
+return: A DOM object that is a single item in the block/allowlists
+*/
 function createListElementFromId(id, content, num) {
 	var li = document.createElement("li");
 	li.id = id + "item" + num;
@@ -101,6 +112,7 @@ function save_options() {
 	var warningDialog = document.getElementById('warningDialog').checked;
 	var blocklist = getListElementsFromId('blocklist');
 	var allowlist = getListElementsFromId('allowlist');
+	var casileClassic = document.getElementById('casileClassic').checked
 	var menubackgroundcolor = document.getElementById("menubackgroundcolor").value;
 	browser.storage.sync.set({
 		spellCheck: spellCheck,
@@ -108,6 +120,7 @@ function save_options() {
 		warningDialog: warningDialog,
 		blocklist: blocklist,
 		allowlist: allowlist,
+		casileClassic: casileClassic,
 		menubackgroundcolor: menubackgroundcolor
 	}, function () {
 		// Update status to let user know options were saved.
@@ -141,13 +154,15 @@ function restore_options() {
 		warningDialog: true,
 		blocklist: [],
 		allowlist: [],
-		menubackgroundcolor: "#1E90FF"
+		casileClassic: false,
+		menubackgroundcolor: "#663333"
 	}, function (items) {
 		document.getElementById('spellCheck').checked = items.spellCheck;
 		document.getElementById('unsavedIndicator').checked = items.unsavedIndicator;
 		document.getElementById('warningDialog').checked = items.warningDialog;
 		populateList(document.getElementById('blocklist'), createListFromIdAndArray('block', items.blocklist));
 		populateList(document.getElementById('allowlist'), createListFromIdAndArray('allow', items.allowlist));
+		document.getElementById('casileClassic').checked = items.casileClassic;
 		document.getElementById("menubackgroundcolor").value = items.menubackgroundcolor;
 		document.getElementById("body").style.background = items.menubackgroundcolor;
 		document.getElementById("preview").style.background = items.menubackgroundcolor;
@@ -178,6 +193,7 @@ document.getElementById('save').addEventListener('click', save_options);
 document.getElementById('spellCheck').addEventListener('click', toggleSwitch);
 document.getElementById('unsavedIndicator').addEventListener('click', toggleSwitch);
 document.getElementById('warningDialog').addEventListener('click', toggleSwitch);
+document.getElementById('casileClassic').addEventListener('click', toggleSwitch);
 document.getElementById('reset').addEventListener('click', reset_options);
 document.getElementById('allowadd').addEventListener('click', allowadd);
 document.addEventListener('DOMNodeInserted', function (e) {

@@ -45,11 +45,11 @@
 }
 
 input:checked + .slider {
-  background-color: #1E90FF;
+  background-color: #663333;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #1E90FF;
+  box-shadow: 0 0 1px #663333;
 }
 
 input:checked + .slider:before {
@@ -71,7 +71,7 @@ button {
 	margin-left:10px;
 	border-radius:10em;
 	border: solid 0px;
-	background: #1E90FF;
+	background: #663333;
 	color: white;
 	font-family: Dejavu Sans, Segoe UI, sans-serif;
 	text-align: center;
@@ -114,7 +114,7 @@ img {
 
 body {
 	display: none;
-	background:#1E90FF;
+	background:#663333;
 	font-family: Dajavu Sans, Segoe UI, sans-serif;
 }
 
@@ -137,7 +137,7 @@ body {
 }
 
 .preview {
-	background:#1E90FF;
+	background:#663333;
 	border:1px solid #FFFFFF;
 }
 
@@ -177,26 +177,32 @@ li {
 </div>
 <h2>Unsaved work</h2>
 <h3>Potential unsaved work indicator</h3>
-<p>When this setting is enabled, a red, circular indicator will appear next to the save button in each Try-It if you may have unsaved work.</p>
+<p>Show a red, circular indicator next to the save button of each Try-It if you may have unsaved work.</p>
 <div style="display:inline-block" class="indent"><label class="switch">
   <input type="checkbox" id="unsavedIndicator" checked>
   <span class="slider round"></span>
 </label></div>
 <h3>Warning dialog</h3>
-<p>When this setting is enabled, a warning dialog will ask you to confirm your decision to close a Try-It or to leave CAS-ILE if you may have unsaved work in any open Try-Its.</p>
+<p>Receive a prompt to confirm your decision to close a Try-It or to leave CAS-ILE if you may have unsaved work in any open Try-Its.</p>
 <div style="display:inline-block" class="indent"><label class="switch">
   <input type="checkbox" id="warningDialog" checked>
   <span class="slider round"></span>
 </label></div>
 <h2>Spell check</h2>
-<p>When this setting is enabled, spell check will be turned on for student text input cells. Please note that your browser settings will also have to have spell check enabled in order for this feature to work. </p>
+<p>Enable spell check for student text input cells. Please note that your browser settings will also have to have spell check turned on in order for this feature to work. </p>
 <div style="display:inline-block" class="indent"><label class="switch">
   <input type="checkbox" id="spellCheck" checked>
   <span class="slider round"></span>
 </label></div>
-<h2>Colors</h2>
+<h2>Theme</h2>
+<h3>Courseware Classic</h3>
+<p>Enable the classic look of Courseware.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="casileClassic">
+  <span class="slider round"></span>
+</label></div>
 <h3>Menu background color</h3>
-<input type="color" class="indent" id="menubackgroundcolor" name="head" value="#1E90FF">
+<input type="color" class="indent" id="menubackgroundcolor" name="head" value="#663333">
 <h3>Preview</h3>
 <img src="/icons/formaticon.svg" class="indent preview" id="preview" width="25px"/>
 <h2>User-defined selection criteria</h2>

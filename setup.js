@@ -1,3 +1,7 @@
+/*
+Author: Gabe Classon
+This script is run on the CAS-ILE tab immediately as it loads. Its primary purpose is to detect when Try-Its are opened so that they can be injected with menusetup.js.
+ */
 var browser = browser || chrome; // To ensure compatability between Firefox and Chrome
 // These mutation observers exist to deliver a final payload to each iFrame: code that allow Ctrl+' to deformat math.
 var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page
@@ -5,6 +9,7 @@ var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // 
 var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
 var tabAddedObserver = new MutationObserver(onTabAdded);
 
+// The body observer observes until the page fully loads, and then injects the studentPanelChangeObserver
 bodyChangeObserver.observe(document.body, {
 	attributes: false,
 	childList: true,
@@ -21,14 +26,17 @@ function onBodyChange() {
 			console.log(studentPanel);
 		}
 	}
-	studentPanelChangeObserver.observe(studentPanel, {
-		attributes: false,
-		childList: true,
-		subtree: false
-	});
-	bodyChangeObserver.disconnect();
+	if (studentPanel != null) {
+		studentPanelChangeObserver.observe(studentPanel, {
+			attributes: false,
+			childList: true,
+			subtree: false
+		});
+		bodyChangeObserver.disconnect();
+	}
 }
 
+// The studentPanelChangeObserver observes for when a user opens up a course, and then adds the Try-It updated observer for each course
 function onStudentPanelChange(mutationList, observer) {
 	console.log("Panel updated");
 	mutationList.forEach((mutation) => {
@@ -37,12 +45,14 @@ function onStudentPanelChange(mutationList, observer) {
 			console.log(addedNodes);
 			for (var i = 0; i < addedNodes.length; i++) {
 				if (addedNodes[i].id.includes("coursepanel")) {
+					// Observes for new Try-Its
 					var tabpanel = addedNodes[i].querySelectorAll("[id^=tabpanel][id$=body]")[0];
 					tryItUpdatedObserver.observe(tabpanel, {
 						attributes: false,
 						childList: true,
 						subtree: false
 					});
+					// Observes for new tabs in the tab bar
 					var tabBar = addedNodes[i].querySelectorAll("[id^=tabbar][id$=targetEl]")[0];
 					tabAddedObserver.observe(tabBar, {
 						attributes: false,
@@ -55,6 +65,7 @@ function onStudentPanelChange(mutationList, observer) {
 	});
 }
 
+// The Try-it updated observer observes for when Try-Its are added and injects them with menusetup.js
 function onTryItUpdated(mutationList, observer) {
 	mutationList.forEach((mutation) => {
 		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
@@ -71,6 +82,7 @@ function onTryItUpdated(mutationList, observer) {
 	});
 }
 
+// The tab added observer waits for tabs to be added to the tab bar (this occurs whenever a Try-It is opened). Then, it adds a mockbutton for each one. See mockbuttonenable.js for more info.
 function onTabAdded(mutationList, observer) {
 	mutationList.forEach((mutation) => {
 		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
@@ -84,6 +96,10 @@ function onTabAdded(mutationList, observer) {
 	});
 }
 
+/*
+frame1: The frame to injectFrame
+Injects frame1 with menusetup.js
+ */
 function injectFrame(frame1) {
 	browser.runtime.sendMessage({
 		className: "injectMenuSetup",
@@ -94,9 +110,13 @@ function injectFrame(frame1) {
 	});
 }
 
+/*
+closeButton: the close button for a particular Try-It
+Creates and sets up the mock button for a particular Try-It (See mockbuttonenable.js for more info)
+ */
 function mockButtonSetup(closeButton) {
 	var mockButton = document.createElement("span");
-	mockButton.className = "x-tab-close-btn";
+	mockButton.className = "x-tab-close-btn mockButton";
 	mockButton.id = "mockButton";
 	mockButton.tabindex = "0";
 	mockButton.style.visibility = "hidden";
@@ -107,9 +127,23 @@ function mockButtonSetup(closeButton) {
 			closeButton.click();
 		}
 	});
+	// Add a stylesheet for the mockbutton
+	var style = document.createElement("style");
+	style.textContent =
+		`
+	.mockButton:hover {
+		opacity: 1;
+	}
+	
+	.mockButton {
+		opacity: 0;
+	}
+	`;
+	style.id = "mockButtonStyle";
+	document.head.appendChild(style);
 }
 
-// Deals with Ctrl+S keys pressed outside of Try-It windows
+// Allows Ctrl+S pressed outside of a Try-It window to still cause the currently open Try-It to be saved.
 function onDocumentKeyDown(e) {
 	if (e.key == 's' && e.ctrlKey) {
 		e.preventDefault();
@@ -134,12 +168,11 @@ function onDocumentKeyDown(e) {
 }
 
 document.addEventListener("keydown", onDocumentKeyDown)
-// remove this later
-window.addEventListener("beforeunload", function (e) {
-	var frames = document.getElementsByTagName("iframe");
-	for (var o = 0; o < frames.length; o++) {
-		if (frames[o].contentWindow.hasChanged === true) {
-			event.returnValue = "string";
-		}
-	}
+
+// Checks to see if the user wants to use the classic Auto CCM theme, and implements it if they do.
+browser.runtime.sendMessage({
+	className: "classicThemeMain"
+},
+	function (response) {
+	console.log("classicThemeMainReceived");
 });

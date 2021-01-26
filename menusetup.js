@@ -1,15 +1,26 @@
-var browser = browser || chrome;
-var hasChanged = false;
-var detectUnsavedChanges = true;
-var unsavedIndicator = true;
-var warningDialog = true;
-var spellCheck = true;
+/*
+Author: Gabe Classon
+This script is injected into Try-Its when they load. It sets up the Auto CCM menu, among various other things.
+ */
+var browser = browser || chrome; // Ensure compatability between browsers
+// Various booleans to define the state of a Try-It/the user's preferences. These are only declarations and default values; they may be changed later.
+var hasChanged = false; // Has the document changed? (Is there potentially unsaved work?)
+var detectUnsavedChanges = true; // Should unsaved changes be active detected?
+var unsavedIndicator = true; // Should a red unsaved work indicator next to the status bar be shown?
+var warningDialog = true; // Should a warning dialog prompt users if they may lose unsaved work?
+var spellCheck = true; // Should spellcheck be turned on?
 
+/*
+url: The root path for this chrome extension
+color: A string color representing what color the background should be.
+Creates the Auto CCM menu that is at the top of each Try-It with the given background color.
+ */
 function createMouseMenu(url, color) {
-	var imageWidth = 25;
-	var totalWidth = (imageWidth + 1) * 6 + 1;
-	var div = document.createElement("div");
+	var imageWidth = 25; // The width of each menu icon
+	var totalWidth = (imageWidth + 1) * 6 + 1; // The total width of the menu
+	var div = document.createElement("div"); // The primary container
 	div.style = "white-space: nowrap; position: absolute; top:0;z-index: 99;margin-right: calc(50% - " + totalWidth / 2 + "px);margin-left: calc(50% - " + totalWidth / 2 + "px);margin-top: 0px;width: auto;height: auto;font-family: sans-serif; color: white; opacity: 1; transition: opacity 600 ms ease 0s; background-color: " + color;
+	// The various buttons of the Auto CCM menu, created using the helper function createButton
 	var formatButton = createButton(url, "formatButton", "formaticon.svg", "Format (Ctrl+M)", simulateControlM, false);
 	div.appendChild(formatButton);
 	var deformatButton = createButton(url, "deformatButton", "deformaticon.svg", "Deformat (Ctrl+')", controlApostrophe, false);
@@ -23,9 +34,11 @@ function createMouseMenu(url, color) {
 	div.appendChild(multiformatButton);
 	var stopButton = createButton(url, "stopButton", "starticon.svg", "Start Auto CCM (Ctrl+/)", startAutoCCM, true);
 	div.appendChild(stopButton);
+	// Several buttons should be disabled by default
 	skipButton.disabled = true;
 	returnButton.disabled = true;
 	multiformatButton.disabled = true;
+	// The primary stylesheet used by the Auto CCM menu as well as other facets of Auto CCM in the Try-It
 	var style = document.createElement("style"); // style for buttons
 	style.id = "menuSetupStyle";
 	style.textContent =
@@ -67,12 +80,12 @@ function createMouseMenu(url, color) {
 						}
 						
 						.unsavedDot{
-							background: #ed2939;
+							background: #fd2939;
 							 border-radius: 50em;
 							 display: inline-block;
-							 height: 8px;
-							 width: 8px;
-							 margin-right: 3px;
+							 height: 10px;
+							 width: 10px;
+							 margin-left: 3px;
 						}
 						
 						.closebtn {
@@ -106,6 +119,15 @@ function createMouseMenu(url, color) {
 	}
 }
 
+/*
+url: The root url for this extension
+id: The id for this button
+iconname: The name for this particular icon ex: "starticon.svg"
+title: The text that should appear when the button is hovered over
+onclickFunction: The function that should be run when the button is clicked
+isEnd: Whether this button is the end of the menu (the rightmost button)
+return: A DOM object that represents a single button of the Auto CCM menu
+ */
 function createButton(url, id, iconname, title, onclickFunction, isEnd) {
 	var img = document.createElement("img");
 	img.src = url + "icons/" + iconname;
@@ -129,6 +151,9 @@ function createButton(url, id, iconname, title, onclickFunction, isEnd) {
 	return buttonA;
 }
 
+/*
+Simulates the keypress of Ctrl+M
+ */
 function simulateControlM() {
 	var keyDown = new KeyboardEvent("keydown", {
 			"key": "m",
@@ -202,7 +227,7 @@ function controlApostrophe() {
 	}
 }
 
-// Saves the Try-It
+// Saves the open Try-It
 function controlS() {
 	var buttons = document.getElementsByClassName("x-btn-text");
 	for (var w = 0; w < buttons.length; w++) {
@@ -214,7 +239,7 @@ function controlS() {
 	console.log("Failed to find save button");
 }
 
-// The final payload: a keyup listener that will deformat math with Ctrl+'
+// A keyup listener that will deformat math when Ctrl+' is pressed
 function onDocumentKeyUp(e) {
 	if (e.key == "'" && e.ctrlKey) {
 		controlApostrophe();
@@ -231,6 +256,7 @@ function onDocumentKeyDown(e) {
 	}
 }
 
+// Starts Auto CCM by instructing the background script to inject autoctrlm.js into the Try-It iframe.
 function startAutoCCM() {
 	browser.runtime.sendMessage({
 		className: "injectAutoCtrlM"
@@ -238,14 +264,13 @@ function startAutoCCM() {
 		function () {
 		console.log("injectAutoCtrlMReceived");
 	});
-	/*
-	var script = document.createElement("script");
-	script.src = url + "autoctrlm.js";
-	script.className = "AutoCCM";
-	document.body.appendChild(script);
-	 */
 }
 
+/*
+A helper function that gives the next node in a line of text
+node: A node
+return: The next node in a line of text
+ */
 function nextNode(node) {
 	if (node.hasChildNodes()) {
 		return node.firstChild;
@@ -260,6 +285,10 @@ function nextNode(node) {
 	}
 }
 
+/*
+range: A range of selection
+return: The nodes of that range that constitute the most basic selected notes, with no overlappping or duplicates
+ */
 function getRangeSelectedNodes(range) {
 	var node = range.startContainer;
 	var endNode = range.endContainer;
@@ -269,13 +298,11 @@ function getRangeSelectedNodes(range) {
 		return [node];
 	}
 
-	// Iterate nodes until we hit the end container
 	var rangeNodes = [];
 	while (node && node != endNode) {
 		rangeNodes.push(node = nextNode(node));
 	}
 
-	// Add partially selected nodes at the start of the range
 	node = range.startContainer;
 	while (node && node != range.commonAncestorContainer) {
 		rangeNodes.unshift(node);
@@ -285,6 +312,10 @@ function getRangeSelectedNodes(range) {
 	return rangeNodes;
 }
 
+/*
+win: The window
+return: An ordered list of the most basic (i.e. the lowest on the tree) nodes that are selected, with no overlapping or duplicates
+ */
 function getSelectedNodes(win) {
 	if (win.getSelection) {
 		var sel = win.getSelection();
@@ -295,16 +326,20 @@ function getSelectedNodes(win) {
 	return [];
 }
 
+/*
+Updates the changed state to onOff
+onOff: The value of hasChanged to setActive
+ */
 function setChangedState(onOff) {
-	if (onOff != hasChanged) {
-		if (unsavedIndicator) {
+	if (onOff != hasChanged) { // only change the state if the state has actually changed
+		if (unsavedIndicator) { // Update the unsaved indicator to reflect whether there is potentially unsaved work
 			if (onOff) {
 				document.getElementById("unsavedIcon").style.visibility = "visible";
 			} else {
 				document.getElementById("unsavedIcon").style.visibility = "hidden";
 			}
 		}
-		if (warningDialog) {
+		if (warningDialog) { // Update the visibility of the mock button to reflect whether there is potentially unsaved work
 			if (onOff) {
 				mockButtonEnable();
 			} else {
@@ -315,10 +350,12 @@ function setChangedState(onOff) {
 	hasChanged = onOff;
 }
 
+// Changes hasChanged to false when a user saves
 function saveOnClick() {
 	setChangedState(false);
 }
 
+// Changes hasChanged to false and stops monitoring for changes when a user hands in a Try-It
 function handInOnClick() {
 	setChangedState(false);
 	unsavedIndicator = false;
@@ -330,24 +367,25 @@ function handInOnClick() {
 	bodyChangeObserver.disconnect();
 }
 
+// A mutation observer to observe changes in the notebook
 var notebookChangeObserver = new MutationObserver(onNotebookChange);
 function onNotebookChange(mutationsList, observer) {
 	for (var g = 0; g < mutationsList.length; g++) {
-		if (mutationsList[g].type == "childList" || mutationsList[g].type == "subtree") {
+		if (mutationsList[g].type == "childList" || mutationsList[g].type == "subtree") { // Added or deleted nodes
 			for (var h = 0; h < mutationsList[g].addedNodes.length; h++) {
 				console.log(mutationsList[g].addedNodes[h]);
 				var classList = mutationsList[g].addedNodes[h].classList;
-				if (detectUnsavedChanges && (classList == null || (!classList.contains("CellMenu")))) {
-					setChangedState(true);
+				if (detectUnsavedChanges && (classList == null || (!classList.contains("CellMenu")))) { // if you're detecting changes and something changes...
+					setChangedState(true); // ...set hasChanged to true
 				}
-				if (spellCheck && classList != null && classList.contains("UserText")) {
+				if (spellCheck && classList != null && classList.contains("UserText")) { // if you have enabled spellcheck and a user text cell has just be created...
 					var studentTextCells = mutationsList[g].addedNodes[h].getElementsByClassName("Student Text UserText");
 					if (studentTextCells != null && studentTextCells.length > 0) {
-						studentTextCells[0].spellcheck = "true";
+						studentTextCells[0].spellcheck = "true"; //...enable spellcheck for the user text cell
 					}
 				}
 			}
-			if (detectUnsavedChanges) {
+			if (detectUnsavedChanges) { // Remove nodes also reflect work that must be saved
 				for (var h = 0; h < mutationsList[g].removedNodes.length; h++) {
 					var classList = mutationsList[g].removedNodes[h].classList;
 					if (classList == null || (!classList.contains("CellMenu"))) {
@@ -356,19 +394,20 @@ function onNotebookChange(mutationsList, observer) {
 				}
 			}
 		} else if (detectUnsavedChanges && mutationsList[g].type == "characterData") {
-			setChangedState(true);
+			setChangedState(true); // Whenever something is typed, hasChanged should be true
 		}
+		// when a text cell becomes and input cell and vice versa, spellcheck must be changed as appropriate.
 		else if (spellCheck && mutationsList[g].type == "attributes" && mutationsList[g].attributeName == "class") {
 			if (mutationsList[g].target.spellcheck && mutationsList[g].target.classList.contains("Input")) {
 				mutationsList[g].target.spellcheck = false;
-			}
-			else if (!mutationsList[g].target.spellcheck && mutationsList[g].target.classList.contains("UserText") && mutationsList[g].target.classList.contains("Student") && mutationsList[g].target.classList.contains("Text")) {
+			} else if (!mutationsList[g].target.spellcheck && mutationsList[g].target.classList.contains("UserText") && mutationsList[g].target.classList.contains("Student") && mutationsList[g].target.classList.contains("Text")) {
 				mutationsList[g].target.spellcheck = true;
 			}
 		}
 	}
 }
 
+// Begins observing for notebook changes
 function observeNotebookChanges() {
 	var noteBookObserveOptions = {
 		attributes: false,
@@ -377,18 +416,19 @@ function observeNotebookChanges() {
 		subtree: true,
 		characterData: false
 	};
-	if (unsavedIndicator || warningDialog) {
+	if (unsavedIndicator || warningDialog) { // only observe for changes in the text content of the notebook if the user's options require it
 		noteBookObserveOptions.characterData = true;
 	}
-	if (spellCheck) {
+	if (spellCheck) { // only observe for attributes if spellcheck is one
 		noteBookObserveOptions.attributes = true;
 		noteBookObserveOptions.attributeFilter = ["class"];
 		noteBookObserveOptions.attributeOldValue = true;
 	}
-	 // Observes the notebook
+	// Observes the notebook
 	notebookChangeObserver.observe(document.getElementById("Notebook").getElementsByClassName("Notebook")[0], noteBookObserveOptions);
 }
 
+// Observes for when the user hands in a Try-It
 var bodyChangeObserver = new MutationObserver(onBodyChange);
 function onBodyChange(mutationsList, observer) {
 	for (var g = 0; g < mutationsList.length; g++) {
@@ -422,10 +462,11 @@ function observeBodyChanges() {
 		subtree: false,
 		characterData: false
 	};
-	 // Observes the body
+	// Observes the body
 	bodyChangeObserver.observe(document.body, bodyObserveOptions);
 }
 
+// Creates the red unsaved indicator that lies next to the save button if there may be unsaved work
 function unsavedIndicatorSetup() {
 	var unsavedDot = document.createElement("span");
 	unsavedDot.className = "unsavedDot";
@@ -434,17 +475,21 @@ function unsavedIndicatorSetup() {
 	unsavedIcon.appendChild(unsavedDot);
 	unsavedIcon.style.visibility = "hidden";
 	unsavedIcon.id = "unsavedIcon";
-	document.getElementsByClassName("x-toolbar-right-row")[0].prepend(unsavedIcon);
+	document.getElementsByClassName("x-toolbar-left-row")[0].appendChild(unsavedIcon);
 }
 
+// Monitors for when a user tries to close CAS-ILE to warn them if they have unsaved work
 function warningDialogSetup() {
-	window.addEventListener("beforeunload", function (e) {
-		if (hasChanged === true) {
-			event.returnValue = "string";
+	window.onbeforeunload = function (e) {
+		var e = e || window.event;
+		if (e && hasChanged === true) {
+			e.returnValue = 'Ospiro';
+			return "Enterprises";
 		}
-	});
+	};
 }
 
+// Enables the mock button (see mockbuttonenable.js for more info)
 function mockButtonEnable() {
 	browser.runtime.sendMessage({
 		className: "mockButtonEnable"
@@ -454,6 +499,7 @@ function mockButtonEnable() {
 	});
 }
 
+// Disables the mock button (see mockbuttondisable.js for more info)
 function mockButtonDisable() {
 	browser.runtime.sendMessage({
 		className: "mockButtonDisable"
@@ -463,7 +509,7 @@ function mockButtonDisable() {
 	});
 }
 
-// Do various things that required the sync storage
+// Do various things that require the sync storage
 browser.runtime.sendMessage({
 	className: "getSyncStorage"
 },
@@ -476,7 +522,8 @@ browser.runtime.sendMessage({
 	warningDialog = items.warningDialog;
 	detectUnsavedChanges = unsavedIndicator || warningDialog;
 	if (items.spellCheck) {
-		var allStudents = document.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student"); // Every student cell, or text cell, in the document
+		// Turn on spellcheck for every existing student cell or text cell in the document
+		var allStudents = document.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student");
 		for (var k = 0; k < allStudents.length; k++) {
 			allStudents[k].spellcheck = "true";
 		}
@@ -491,7 +538,7 @@ browser.runtime.sendMessage({
 		if (buttons[k].textContent.includes("Save")) {
 			saveButton = buttons[k];
 			break;
-		} 
+		}
 	}
 	if (saveButton == null || saveButton.offsetParent == null) {
 		unsavedIndicator = false;
@@ -523,5 +570,14 @@ browser.runtime.sendMessage({
 	}
 });
 
+// Key press observers
 window.addEventListener('keyup', onDocumentKeyUp);
 window.addEventListener('keydown', onDocumentKeyDown, true);
+
+// Apply the classic theme, if applicable
+browser.runtime.sendMessage({
+	className: "classicThemeTab"
+},
+	function (response) {
+	console.log("classicThemeTabReceived");
+});

@@ -26,15 +26,8 @@
 		"128": "storeicon.png"
 	},
 	"web_accessible_resources": [
-		"icons/deformaticon.svg",
-		"icons/formaticon.svg",
-		"icons/multiformaticon.svg",
-		"icons/returnicon.svg",
-		"icons/skipicon.svg",
-		"icons/stopicon.svg",
-		"icons/starticon.svg",
-		"menusetup.js",
-		"autoctrlm.js"
+		"icons/*",
+		"classicTheme/*"
 	],
 	"permissions": [
 		"activeTab",
@@ -53,7 +46,7 @@
 	"browser_specific_settings": {
 		"gecko": {
 			"update_url": "https://raw.githubusercontent.com/mr-yman/Auto-CCM/master/updates.json",
-			"id": "{62df5a2b-435f-4dfd-8be1-e91c5d89c574}"
+			"id": "{a083c994-6801-4dc2-91ab-b8abbc2db6c5}"
 		}
 	}
 }

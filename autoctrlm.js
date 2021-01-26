@@ -1,15 +1,21 @@
+/*
+Author: Gabe Classon
+This script is injected into Try-Its when the "Start" button in the Auto CCM menu is pressed. It initiates the automatic formatting process. 
+*/
 // user defined blocklist/allowlist
 var blockList = window.blocklist;
 var allowList = window.allowlist;
 var blockListStr = "";
 if (blockList != null && blockList.length > 0) {
+	// The following regex allows only FULL MATCHES to be blocked. For example, if a user puts "3D" in their blocklist, only the match "3D" will be blocked; "3D[x]" will remain unblocked. The regex also turns the blocklist into a regex expression that will select the entire blocklist.
 	blockListStr = "|(^" + blockList.join("$)|(^") + "$)";
 }
 var allowListStr = "";
 if (allowList != null && allowList.length > 0) {
+	// The following regex turns the allowlist into a regex expression that selects every entry on the allowlist. 
 	allowListStr = "|(" + allowList.join(")|(") + ")";
 }
-/* regex to identify what should be selected */
+// Building the regex selector: Auto CCM uses a very complicated regular expression to identify math. 
 var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)?))?)";
 var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?" + allowListStr + ")(?!([A-Za-z])|([\"])))";
 var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|@+|&&|<=|>=|=+)";
@@ -17,11 +23,11 @@ var matchifadjacent = "(" + "([\\(\\s]*\\([\\(\\s]*)?[\\w\\d\\(\\)]*([\\(\\s]*\\
 var possibleprefixoperators = "([\\-\\\\\\(])";
 var possiblepostfixoperators = "([!\\)])";
 var possiblebinaryoperators = "([\\/\\-\\.])";
-// regex to identify what should not be selected specifically
-var blockRegExpStr = "(^\\dD$)|(^\\([A-Za-z]\\)$)|(^[A-Za-z]\\)$)|(^\\([A-Za-z]$)" + blockListStr;
+// regex to identify what should not be selected specifically: dimensions like "3D", "2D", etc.; single letters or numbers surrounded in parentheses
+var blockRegExpStr = "(^\\dD$)|(^\\([A-Za-z\\d]\\)$)|(^[A-Za-z\\d]\\)$)|(^\\([A-Za-z\\d]$)" + blockListStr; 
 var blockRegExp = RegExp(blockRegExpStr, "g");
-//Other
-var requestedFormatAll = false;
+// Variables that track
+var requestedFormatAll = false; // Has the user pressed Ctrl+; or clicked the "Format All" button? (This is stored because clicking it again will start formatting all math expressions.
 var formatAll = false;
 
 // Match is a custom class that is used to process square brackets and curly braces
@@ -263,6 +269,7 @@ function getInnerStringCellOrText(element) {
 	return out;
 }
 
+// Ctrl+,: selects the next instance of unformatted math without formatting anything
 function controlComma() {
 	if (!document.isOpen) { // Do not proceed unless Auto CCM is running
 		return;
@@ -289,11 +296,89 @@ function controlSlash() {
 	return false;
 }
 
+// Ctrl+.: reselects the most recent instance of selected math
 function controlPeriod() {
 	nodeBounds = determineNodeOffsetBound(currentBounds);
 	document.location.hash = "";
 	document.location.hash = currentBounds[0].id;
 	selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
+}
+
+// Ctrl+;: formats all math
+function controlSemicolon() {
+	if (formatAll || !document.isOpen) { // forbid formatting all if Auto CCM is currently formatting all or if the document is not open
+		return;
+	}
+	if (requestedFormatAll) { // Only allow formatting all if the user has pressed twice
+		formatAll = true;
+		controlPeriod();
+		simulateControlMandSkip();
+	} else { // Give the user a message that they have selected "format all"
+		floatingAlert("You have entered Ctrl+; or clicked \"Format All.\" Performing this function will format every instance of unformatted math in the document. It is highly recommended that you save before proceeding. You will not have an opportunity to intervene if Auto CCM formats something that should not be formatted. If there is a large quantity of math to be formatted or high strain on the CAS-ILE servers, your browser tab may freeze or crash. To confirm that you would like to execute this function, enter Ctrl+; or click \"Format All\" again. If you would not like to proceed, close this notification.", "rgb(255,127,39)", 60000, 600, true);
+		requestedFormatAll = true;
+	}
+}
+
+// Simulates a Ctrl+M and Ctrl+, keypress
+function simulateControlMandSkip() {
+	if (!document.isOpen) {
+		return;
+	}
+	var keyDown = new KeyboardEvent("keydown", {
+			"key": "m",
+			"code": "KeyM",
+			"location": 0,
+			"ctrlKey": true,
+			"shiftKey": false,
+			"altKey": false,
+			"metaKey": false,
+			"repeat": false,
+			"isComposing": false,
+			"charCode": 109,
+			"keyCode": 77,
+			"which": 77
+		});
+	var keyPress = new KeyboardEvent("keypress", {
+			"key": "m",
+			"code": "KeyM",
+			"location": 0,
+			"ctrlKey": true,
+			"shiftKey": false,
+			"altKey": false,
+			"metaKey": false,
+			"repeat": false,
+			"isComposing": false,
+			"charCode": 109,
+			"keyCode": 77,
+			"which": 77
+		});
+	var keyUp = new KeyboardEvent("keyup", {
+			"key": "m",
+			"code": "KeyM",
+			"location": 0,
+			"ctrlKey": true,
+			"shiftKey": false,
+			"altKey": false,
+			"metaKey": false,
+			"repeat": false,
+			"isComposing": false,
+			"charCode": 109,
+			"keyCode": 77,
+			"which": 77
+		});
+	console.log(window.getSelection());
+	if (window.getSelection != null) {
+		var anchorNode = window.getSelection().anchorNode;
+		console.log(anchorNode);
+		if (anchorNode != null) {
+			var dispatchNode = anchorNode.parentElement.closest("li.UserText");
+			console.log(dispatchNode);
+			dispatchNode.dispatchEvent(keyDown);
+			dispatchNode.dispatchEvent(keyPress);
+			dispatchNode.dispatchEvent(keyUp);
+			controlComma();
+		}
+	}
 }
 
 // A key up listener that listens for all the different keyboard events
@@ -349,7 +434,7 @@ function controlMNext() {
 			match = matches.next();
 		} while (match != undefined && match.value != undefined && match.value[0].match(blockRegExp) != null); // filter through undesirable options
 	}
-	allStudents[i].normalize();
+	allStudents[i].normalize(); // Non normalized nodes can prevent formatting from happening. For more info, look up "normalize node".
 	innerStringCell = getInnerStringCellOrText(allStudents[i]);
 	var matchText = match.value[0];
 	var matchLength = matchText.length;
@@ -463,27 +548,7 @@ function endNow() {
 	document.isOpen = false;
 }
 
-function endMenu() {
-	if (originalMenuSettings.formatButtonOnClick != null) {
-		var formatButton = document.getElementById("formatButton");
-		formatButton.onclick = originalMenuSettings.formatButtonOnClick;
-	}
-	var skipButton = document.getElementById("skipButton");
-	var returnButton = document.getElementById("returnButton");
-	var multiformatButton = document.getElementById("multiformatButton");
-	var stopButton = document.getElementById("stopButton");
-	skipButton.onclick = null;
-	returnButton.onclick = null;
-	multiformatButton.onclick = null;
-	skipButton.disabled = true;
-	returnButton.disabled = true;
-	multiformatButton.disabled = true;
-	var stopButtonImage = stopButton.getElementsByTagName("img")[0];
-	stopButtonImage.src = originalMenuSettings.stopButtonImage;
-	stopButton.onclick = originalMenuSettings.stopButtonOnClick;
-	stopButton.title = originalMenuSettings.stopButtonTitle;
-}
-
+// Recall that the menu is set up in menusetup.js; furthermore, Auto CCM can be started and stopped multiple times, and all of these instances of "autoctrln.js" will use the same Auto CCM menu. Therefore, every time autoctrlm.js is run, the buttons on the menu must be assigned to actions for that specific instance of autoctrlm.js.
 var originalMenuSettings = new Object();
 function startMenu() {
 	var formatButton = document.getElementById("formatButton");
@@ -508,79 +573,26 @@ function startMenu() {
 	stopButton.title = "Terminate Auto CCM (Ctrl+/)";
 }
 
-function controlSemicolon() {
-	if (formatAll || !document.isOpen) {
-		return;
+// Disconnects this instance of autoctrlm.js from the Auto CCM menu
+function endMenu() {
+	if (originalMenuSettings.formatButtonOnClick != null) {
+		var formatButton = document.getElementById("formatButton");
+		formatButton.onclick = originalMenuSettings.formatButtonOnClick;
 	}
-	if (requestedFormatAll) {
-		formatAll = true;
-		controlPeriod();
-		simulateControlMandSkip();
-	} else {
-		floatingAlert("You have entered Ctrl+; or clicked \"Format All.\" Performing this function will format every instance of unformatted math in the document. It is highly recommended that you save before proceeding. You will not have an opportunity to intervene if Auto CCM formats something that should not be formatted. If there is a large quantity of math to be formatted or high strain on the CAS-ILE servers, your browser tab may freeze or crash. To confirm that you would like to execute this function, enter Ctrl+; or click \"Format All\" again. If you would not like to proceed, close this notification.", "rgb(255,127,39)", 60000, 600, true);
-		requestedFormatAll = true;
-	}
-}
-
-function simulateControlMandSkip() {
-	if (!document.isOpen) {
-		return;
-	}
-	var keyDown = new KeyboardEvent("keydown", {
-			"key": "m",
-			"code": "KeyM",
-			"location": 0,
-			"ctrlKey": true,
-			"shiftKey": false,
-			"altKey": false,
-			"metaKey": false,
-			"repeat": false,
-			"isComposing": false,
-			"charCode": 109,
-			"keyCode": 77,
-			"which": 77
-		});
-	var keyPress = new KeyboardEvent("keypress", {
-			"key": "m",
-			"code": "KeyM",
-			"location": 0,
-			"ctrlKey": true,
-			"shiftKey": false,
-			"altKey": false,
-			"metaKey": false,
-			"repeat": false,
-			"isComposing": false,
-			"charCode": 109,
-			"keyCode": 77,
-			"which": 77
-		});
-	var keyUp = new KeyboardEvent("keyup", {
-			"key": "m",
-			"code": "KeyM",
-			"location": 0,
-			"ctrlKey": true,
-			"shiftKey": false,
-			"altKey": false,
-			"metaKey": false,
-			"repeat": false,
-			"isComposing": false,
-			"charCode": 109,
-			"keyCode": 77,
-			"which": 77
-		});
-	console.log(window.getSelection());
-	if (window.getSelection != null) {
-		var anchorNode = window.getSelection().anchorNode;
-		console.log(anchorNode);
-		if (anchorNode != null) {
-			var dispatchNode = anchorNode.parentElement.closest("li.UserText");
-			console.log(dispatchNode);
-			dispatchNode.dispatchEvent(keyDown);
-			dispatchNode.dispatchEvent(keyPress);
-			dispatchNode.dispatchEvent(keyUp);
-			controlComma();
-		}
-	}
+	var skipButton = document.getElementById("skipButton");
+	var returnButton = document.getElementById("returnButton");
+	var multiformatButton = document.getElementById("multiformatButton");
+	var stopButton = document.getElementById("stopButton");
+	skipButton.onclick = null;
+	returnButton.onclick = null;
+	multiformatButton.onclick = null;
+	skipButton.disabled = true;
+	returnButton.disabled = true;
+	multiformatButton.disabled = true;
+	var stopButtonImage = stopButton.getElementsByTagName("img")[0];
+	stopButtonImage.src = originalMenuSettings.stopButtonImage;
+	stopButton.onclick = originalMenuSettings.stopButtonOnClick;
+	stopButton.title = originalMenuSettings.stopButtonTitle;
 }
 
 var i = 0; // An index representing which text cell we are on
@@ -631,18 +643,23 @@ if (allStudents.length === 0) {
 		hasNotifiedOn = true;
 		startMenu();
 		// Make sure that all cells are expanded and visible.
-		document.getElementsByClassName("bmenu")[1].click()
+		var tryItMenuButton = document.getElementsByClassName("x-btn-arrow")[0].click()
 		setTimeout(function () {
 			var menuItems = document.getElementsByClassName("x-menu-item");
 			console.log(menuItems);
 			var k;
 			for (k = 0; k < menuItems.length; k++) {
 				if (menuItems[k].textContent.match(/Expand/i) != null) {
-					break
+					break;
 				}
 			}
 			console.log("Expanded groups");
-			menuItems[k].click();
+			if (menuItems[k] != null) {
+				menuItems[k].click();
+			}
+			else {
+				tryItMenuButton.click(); // close menu if cannot select button
+			}
 			// Select the first instance of unformatted math: subsequent instances of unformatted math can be brought about by using Ctrl+M or Ctrl+,
 			selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
 		}, 100);
