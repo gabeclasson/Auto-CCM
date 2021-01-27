@@ -9,12 +9,21 @@ For installation instructions and information on how to use Auto CCM, please vis
 Before you install Auto CCM, you must navigate to https://ospiro.com/products-services/auto-ccm/ and read our disclaimer.
 
 ## Copyright Status of Contributions
-Auto CCM has been released into the public domain under the CC0 license. As a matter of policy, all contributors to this project are expected to forfeit the copyright to their contributions under the terms of the same license. 
+Auto CCM, except where noted, has been released into the public domain under the CC0 license (with a supplemental patent license). As a matter of policy, all contributors to this project are expected to forfeit the copyright to their contributions under the terms of the same license. 
 
 ## Trademark Information
 "Ospiro," "Auto CCM," and the Auto CCM logo are unregistered trademarks of Ospiro Enterprises. While Ospiro has forfeited its copyright over its employees' contributions to Auto CCM, Ospiro has reserved its trademarks under the terms of the CC0 license. You are free to modify Auto CCM in any way, shape, or form, but you should not use the Auto CCM name or logo to distribute significantly modified programs in a fashion that implies endorsement by, or association with, the original Auto CCM project. 
 
 ## Version Information
+
+### Version 2.7
+January 26, 2021
+* Assorted bug fixes
+* Added an options page
+* Added spell check
+* Added unsaved work indicator/warning
+* Added "Courseware Classic" theme
+* Added user defined selection criteria
 
 ### Version 2.6
 September 12, 2020
