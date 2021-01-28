@@ -18,7 +18,7 @@ if (allowList != null && allowList.length > 0) {
 // Building the regex selector: Auto CCM uses a very complicated regular expression to identify math. 
 var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)?))?)";
 var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?" + allowListStr + ")(?!([A-Za-z])|([\"])))";
-var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|@+|&&|<=|>=|=+)";
+var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|(@+)|(&&)|(<=)|(>=)|((?<!(^[\\s\\u200B]?|^[\\s\\u200B]?=))==?))";
 var matchifadjacent = "(" + "([\\(\\s]*\\([\\(\\s]*)?[\\w\\d\\(\\)]*([\\(\\s]*\\([\\(\\s]*)?" + ")";
 var possibleprefixoperators = "([\\-\\\\\\(])";
 var possiblepostfixoperators = "([!\\)])";
