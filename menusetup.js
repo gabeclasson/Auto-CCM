@@ -441,7 +441,7 @@ function onBodyChange(mutationsList, observer) {
 					if (buttons != null) {
 						for (var j = 0; j < buttons.length; j++) {
 							console.log("DIALOGCHECK");
-							if (buttons[j].textContent == "Yes") {
+							if (buttons[j].textContent == "Hand in") {
 								console.log(buttons[j]);
 								buttons[j].addEventListener("click", handInOnClick);
 							}
