@@ -254,6 +254,76 @@ function onDocumentKeyDown(e) {
 		e.preventDefault();
 		controlS();
 	}
+	if (e.key == "Tab") {
+		var activeCell = document.activeElement.closest("li.Cell");
+		var insertionBarElement = document.getElementsByClassName("InsertionBar")[0];
+		// If there is already an insertion bar
+		if (insertionBarElement != null) {
+			var closestCellGroup = insertionBarElement.closest("li.CellGroup");
+			if (closestCellGroup == insertionBarElement) {
+				closestCellGroup = null;
+			}
+			// And the insertion bar is on the last element in a group
+			if (insertionBarElement.nextElementSibling == null && closestCellGroup != null) {
+				e.preventDefault();
+				closestCellGroup.classList.add("InsertionBar");
+				var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+				if (pasteTarget != null) {
+					pasteTarget.focus();
+				}
+			} else { // Otherwise, if the insertion bar is not on the last element of the group
+				// When at the top of the page
+				if (insertionBarElement.classList.contains("DummyCell")) {
+					insertionBarElement.tabIndex = 0;
+					insertionBarElement.focus();
+				}
+				// Last element on page: do nothing
+				else if (insertionBarElement.nextElementSibling == null) {
+					return;
+				} 
+				// If next element is OutputCell
+				else if (insertionBarElement.nextElementSibling.matches("li.OutputCell")) {
+					e.preventDefault();
+					insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']").click();
+				}
+				else {
+					e.preventDefault();
+					insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']").focus();
+				}
+			}
+			insertionBarElement.classList.remove("InsertionBar");
+		}
+		// If there is no insertion bar and there is an active cell, make an insertion bar
+		else if (activeCell != null) {
+			e.preventDefault();
+			if (activeCell.closest("li.CellGroup.Closed") == null) {
+				// Output cells should not have a insertion bar directly associated with them
+				if (activeCell.matches("ul.CellGroup > li.OutputCell")) {
+					activeCell.parentElement.parentElement.classList.add("InsertionBar");
+				}
+				else {
+					activeCell.classList.add("InsertionBar");
+				}
+			} else {
+				var lastClosedCell;
+				var currentElement = activeCell;
+				while (currentElement.parentElement != null && currentElement.className != "Notebook") {
+					if (currentElement.matches("li.CellGroup.Closed")) {
+						lastClosedCell = currentElement;
+					}
+					currentElement = currentElement.parentElement;
+				}
+				if (lastClosedCell != null) {
+					lastClosedCell.classList.add("InsertionBar");
+				}
+			}
+			var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+			if (pasteTarget != null) {
+				pasteTarget.focus();
+			}
+		}
+
+	}
 }
 
 // Starts Auto CCM by instructing the background script to inject autoctrlm.js into the Try-It iframe.
