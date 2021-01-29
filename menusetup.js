@@ -255,7 +255,8 @@ function onDocumentKeyDown(e) {
 		controlS();
 	}
 	if (e.key == "Tab") {
-		var activeCell = document.activeElement.closest("li.Cell");
+		// CASE 1
+		var activeCell = document.activeElement.closest("li.Cell") || document.querySelector("li.Selected");
 		var insertionBarElement = document.getElementsByClassName("InsertionBar")[0];
 		// If there is already an insertion bar
 		if (insertionBarElement != null) {
@@ -280,13 +281,28 @@ function onDocumentKeyDown(e) {
 				// Last element on page: do nothing
 				else if (insertionBarElement.nextElementSibling == null) {
 					return;
-				} 
+				}
 				// If next element is OutputCell
 				else if (insertionBarElement.nextElementSibling.matches("li.OutputCell")) {
 					e.preventDefault();
-					insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']").click();
-				}
-				else {
+					var outputStringCell = insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']");
+					if (outputStringCell != null) {
+						outputStringCell.click();
+					}
+					// If output cell could not be selected
+					if (outputStringCell != document.activeElement) {
+						// If output cell is part of an evaluation group
+						if (insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.OutputCell")) {
+							insertionBarElement.nextElementSibling.parentElement.parentElement.classList.add("InsertionBar");
+						} else {
+							insertionBarElement.nextElementSibling.classList.add("InsertionBar");
+						}
+						var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+						if (pasteTarget != null) {
+							pasteTarget.focus();
+						}
+					}
+				} else {
 					e.preventDefault();
 					insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']").focus();
 				}
@@ -298,10 +314,9 @@ function onDocumentKeyDown(e) {
 			e.preventDefault();
 			if (activeCell.closest("li.CellGroup.Closed") == null) {
 				// Output cells should not have a insertion bar directly associated with them
-				if (activeCell.matches("ul.CellGroup > li.OutputCell")) {
+				if (activeCell.matches("ul.EvaluationGroup > li.OutputCell")) {
 					activeCell.parentElement.parentElement.classList.add("InsertionBar");
-				}
-				else {
+				} else {
 					activeCell.classList.add("InsertionBar");
 				}
 			} else {
@@ -321,8 +336,11 @@ function onDocumentKeyDown(e) {
 			if (pasteTarget != null) {
 				pasteTarget.focus();
 			}
+			if (activeCell.classList.contains("Selected")) {
+				activeCell.classList.remove("Selected")
+				activeCell.querySelector("ul").classList.remove("Selected");
+			}
 		}
-
 	}
 }
 
