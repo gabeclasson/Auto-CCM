@@ -260,10 +260,7 @@ function onDocumentKeyDown(e) {
 		var insertionBarElement = document.getElementsByClassName("InsertionBar")[0];
 		// If there is already an insertion bar
 		if (insertionBarElement != null) {
-			var closestCellGroup = insertionBarElement.closest("li.CellGroup");
-			if (closestCellGroup == insertionBarElement) {
-				closestCellGroup = null;
-			}
+			var closestCellGroup = insertionBarElement.parentElement.closest("li.CellGroup");
 			// And the insertion bar is on the last element in a group
 			if (insertionBarElement.nextElementSibling == null && closestCellGroup != null) {
 				e.preventDefault();
