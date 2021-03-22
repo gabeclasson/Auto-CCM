@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Auto CCM",
-	"version": "2.7",
+	"version": "2.8",
 	"description": "Auto CCM is a tool that streamlines formatting in CAS-ILE, a website that is used by University of Illinois NetMath students.",
 	"author": "Ospiro Enterprises and the other gracious contributors to the Auto CCM project",
 	"homepage_url": "https://ospiro.com/products-services/auto-ccm/",
