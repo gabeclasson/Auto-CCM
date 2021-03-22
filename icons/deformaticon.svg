@@ -17,7 +17,20 @@
   sodipodi:docname="deformaticon.svg"
   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
  <defs
-   id="defs2" />
+   id="defs2">
+  <clipPath
+    clipPathUnits="userSpaceOnUse"
+    id="clipPath817">
+   <rect
+     style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:237.3598;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect819"
+     width="200"
+     height="200"
+     x="0"
+     y="97"
+     transform="matrix(-0.70711,0.70711,0.70711,0.70711,0,0)" />
+  </clipPath>
+ </defs>
  <sodipodi:namedview
    id="base"
    pagecolor="#000000"
@@ -26,15 +39,15 @@
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
    inkscape:zoom="0.7"
-   inkscape:cx="212.8"
-   inkscape:cy="189.96"
+   inkscape:cx="997.38"
+   inkscape:cy="376.18"
    inkscape:document-units="mm"
    inkscape:current-layer="text817"
    showgrid="false"
-   inkscape:window-width="3840"
-   inkscape:window-height="2035"
-   inkscape:window-x="-13"
-   inkscape:window-y="-13"
+   inkscape:window-width="2560"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
    inkscape:window-maximized="1" />
  <metadata
    id="metadata5">
@@ -58,14 +71,16 @@
     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.4762"
     id="text817">
    <path
-     d="M 161.79,137.3 V 155.76 H 132.44 L 129.91,194.22 Q 129.16,204.21 129.16,211.55 129.16,229.13 133.2,233.05 137.38,236.84 143.2,236.84 155.34,236.84 157.62,221.54 H 162.17 Q 157.99,256.7 134.09,256.7 122.96,256.7 116.13,249.87 109.42,243.04 109.42,229.63 109.42,220.78 112.08,192.19 L 115.49,155.76 H 88.679 Q 86.023,201.81 82.228,223.06 78.56,244.31 74.007,250.5 69.58,256.7 61.864,256.7 56.045,256.7 51.998,253.29 48.077,249.87 48.077,244.31 48.077,238.99 54.907,229.76 64.899,216.35 69.833,201.93 74.766,187.39 77.295,155.76 H 68.694 Q 58.322,155.76 52.757,160.44 47.318,165 42.385,173.6 H 37.831 Q 41.499,160.06 47.318,151.34 53.136,142.61 59.208,139.95 65.405,137.3 81.09,137.3 Z"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:6.4762;fill:#ffffff"
-     id="path819" />
-   <path
      transform="matrix(-0.70711,0.70711,0.70711,0.70711,0,0)"
      style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.34842;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:49.25284;stroke-opacity:1;paint-order:markers stroke fill"
      d="M 57.104,63.81 H 80.075 V 356.21 H 57.104 Z"
-     id="rect814" />
+     id="rect814"
+     clip-path="url(#clipPath817)" />
+   <path
+     id="path821"
+     d="M 37.83,173.46 42.36,173.8 C 47.06,168.49 48.9,152.77 76.59,155.85 75.58,223.19 46.05,230.3 47.89,244.11 48.56,251.94 54.78,256.75 61.48,257.03 82.69,256.3 81.73,227.72 88.33,155.68 H 115.68 C 114.23,181.07 110.26,206.47 109.81,231.36 110.15,247.91 120.22,256.75 133.47,256.86 155.29,257.58 162.17,232.14 162.17,221.28 H 157.47 C 157.02,230.24 152.71,236.67 143.54,237.06 118.54,237.39 132.3,193.1 132.47,156.01 L 162.17,156.18 162,137.22 C 38.55,136.62 54.22,134.21 37.83,173.46 Z"
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.41913"
+     inkscape:connector-curvature="0" />
   </g>
  </g>
 </svg>

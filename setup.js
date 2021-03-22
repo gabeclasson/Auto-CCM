@@ -8,6 +8,8 @@ var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the bod
 var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
 var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
 var tabAddedObserver = new MutationObserver(onTabAdded);
+var defaultCloseDialogCreationObserver = new MutationObserver(createDefaultCloseDialog);
+var defaultCloseDialogUpdateObserver = new MutationObserver(updateDefaultCloseDialog);
 
 // The body observer observes until the page fully loads, and then injects the studentPanelChangeObserver
 bodyChangeObserver.observe(document.body, {
@@ -125,6 +127,26 @@ function mockButtonSetup(closeButton) {
 		if (confirm("Are you sure you want to close this Try-It? You may have unsaved work. Click 'OK' to leave; click 'Cancel' to return to the Try-It.")) {
 			mockButton.style.visibility = "hidden";
 			closeButton.click();
+			// The following code will click "close" on a default close dialog (if it exists).
+			/*
+			var xWindowClosableList = document.querySelectorAll(".x-window-closable");
+			var defaultCloseDialog;
+			for (var k = 0; k < xWindowClosableList.length; k++) {
+			if (xWindowClosableList[k].textContent.includes("Are you sure")) {
+			defaultCloseDialog = xWindowClosableList[k];
+			break;
+			}
+			}
+			if (defaultCloseDialog != null) {
+			var buttonList = defaultCloseDialog.querySelectorAll("a[role = button]");
+			for (var d = 0; d < buttonList.length; d++) {
+			if (buttonList[d].textContent.includes("Yes")) {
+			buttonList[d].click();
+			break;
+			}
+			}
+			}
+			 */
 		}
 	});
 	// Add a stylesheet for the mockbutton
@@ -141,6 +163,73 @@ function mockButtonSetup(closeButton) {
 	`;
 	style.id = "mockButtonStyle";
 	document.head.appendChild(style);
+}
+
+browser.runtime.sendMessage({
+	className: "getSyncStorage"
+},
+	function (response) {
+	var items = response.items;
+	var warningDialog = items.warningDialog;
+	if (warningDialog) {
+		defaultCloseDialogCreationObserver.observe(document.body, {
+			attributes: false,
+			childList: true,
+			subtree: false
+		});
+	}
+});
+
+/*
+Watches for the creation of the defualt close dialog window
+ */
+function createDefaultCloseDialog(mutationList, observer) {
+	mutationList.forEach((mutation) => {
+		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
+			var addedNodes = mutation.addedNodes;
+			console.log(addedNodes);
+			for (var i = 0; i < addedNodes.length; i++) {
+				if (addedNodes[i].classList.contains("x-window-closable") && addedNodes[i].textContent.includes("Are you sure")) {
+					addedNodes[i].visibility = "hidden";
+					defaultCloseDialogUpdateObserver.observe(addedNodes[i], {
+						attributes: true,
+						attributeFilter: ["class"],
+						attributeOldValue: true
+					});
+					clickYesOnDialog(addedNodes[i]);
+					observer.disconnect();
+					return;
+				}
+			}
+		}
+	});
+}
+
+/*
+Confirms the default close dialog built into CAS-ILE, closing a given Try-It.
+ */
+function updateDefaultCloseDialog(mutationList, observer) {
+	for (var g = 0; g < mutationList.length; g++) {
+		if (mutationList[g].type == "attributes" && mutationList[g].attributeName == "class") {
+			if (!mutationList[g].target.classList.contains("x-hide-offsets")) {
+				clickYesOnDialog(mutationList[g].target);
+			}
+		}
+	}
+}
+
+/*
+dialog: A dialog element with a "yes" button to confirm (in the form of a DOM a element
+Confirms the dialog by clicking "Yes"
+ */
+function clickYesOnDialog(dialog) {
+	var buttonList = dialog.querySelectorAll("a[role = button]");
+	for (var d = 0; d < buttonList.length; d++) {
+		if (buttonList[d].textContent.includes("Yes")) {
+			buttonList[d].click();
+			break;
+		}
+	}
 }
 
 // Allows Ctrl+S pressed outside of a Try-It window to still cause the currently open Try-It to be saved.

@@ -25,16 +25,16 @@
    borderopacity="1.0"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:zoom="0.98995"
-   inkscape:cx="151.74"
-   inkscape:cy="485.45"
+   inkscape:zoom="0.49498"
+   inkscape:cx="2003.7"
+   inkscape:cy="655.16"
    inkscape:document-units="mm"
-   inkscape:current-layer="text817"
+   inkscape:current-layer="g817"
    showgrid="false"
-   inkscape:window-width="3840"
-   inkscape:window-height="2035"
-   inkscape:window-x="-13"
-   inkscape:window-y="-13"
+   inkscape:window-width="2560"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
    inkscape:window-maximized="1" />
  <metadata
    id="metadata5">
@@ -60,17 +60,27 @@
    <g
      id="g817"
      transform="translate(2.989,3.7)">
-    <path
-      id="path819-7"
-      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:5.60008"
-      d="M 118.56,174.05 V 190.01 H 93.182 L 90.994,223.27 Q 90.346,231.91 90.346,238.26 90.346,253.46 93.839,256.85 97.454,260.13 102.49,260.13 112.98,260.13 114.96,246.9 H 118.89 Q 115.28,277.3 94.609,277.3 84.986,277.3 79.08,271.39 73.278,265.49 73.278,253.89 73.278,246.24 75.578,221.52 L 78.526,190.01 H 55.342 Q 53.042,229.84 49.766,248.21 46.592,266.59 42.658,271.94 38.826,277.3 32.151,277.3 27.118,277.3 23.625,274.35 20.235,271.39 20.235,266.59 20.235,261.99 26.141,254 34.779,242.41 39.042,229.94 43.314,217.37 45.494,190.01 H 38.057 Q 29.09,190.01 24.282,194.06 19.578,198 15.306,205.44 H 11.372 Q 14.546,193.73 19.578,186.19 24.602,178.64 29.86,176.34 35.212,174.05 48.78,174.05 Z"
-      inkscape:connector-curvature="0" />
-    <path
-      sodipodi:nodetypes="scscccscccccccscsccscsccccsccsccc"
-      id="path819-7-14-9"
-      d="M 112.54,109.3 C 103.49,109.3 97.182,110.06 93.622,111.59 90.112,113.12 86.682,116.41 83.332,121.44 79.982,126.47 77.242,132.88 75.132,140.69 H 79.062 C 81.902,135.73 84.902,131.94 88.042,129.31 91.242,126.61 95.832,125.26 101.82,125.26 H 109.24 C 107.79,143.5 105.64,156.81 102.8,165.19 102.12,167.16 101.36,169.55 100.52,171.49 H 115.28 C 116.72,159.79 117.99,144.39 119.1,125.26 H 142.28 L 139.33,156.77 C 137.8,173.25 137.03,184.04 137.03,189.14 137.03,196.87 138.96,202.71 142.83,206.64 146.77,210.58 151.94,212.55 158.36,212.55 172.15,212.55 180.24,202.42 182.65,182.15 H 178.72 C 177.4,190.97 173.24,195.38 166.24,195.38 162.88,195.38 160,194.29 157.59,192.1 155.26,189.84 154.1,183.64 154.1,173.51 154.1,169.28 154.31,164.28 154.75,158.52 L 156.94,125.26 H 182.32 V 109.3 Z M 95.828,192.86 94.439,212.49 C 94.916,212.53 95.403,212.55 95.902,212.55 100.35,212.55 103.85,210.76 106.41,207.19 108.29,204.64 110.04,199.86 111.65,192.86 Z"
-      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:5.59998"
-      inkscape:connector-curvature="0" />
+    <g
+      id="g967"
+      transform="translate(-510.05,-38.769)">
+     <path
+       sodipodi:nodetypes="ccccccccccccccccc"
+       id="path834-4-2-0"
+       d="M 650.86,147.59 C 589.46,147.51 597.24,150.5 585.27,179.15 L 589.19,179.45 C 593.25,174.84 594.85,161.24 618.8,163.92 618.49,185.01 614.94,199.26 610.61,209.43 L 624.94,209.55 C 626.15,197.35 627.27,182.22 628.95,163.76 H 652.6 C 651.35,185.72 647.92,207.68 647.52,229.19 647.83,243.5 656.52,251.15 667.98,251.25 686.84,251.87 692.79,229.88 692.79,220.48 H 688.73 C 688.35,228.23 684.62,233.79 676.69,234.14 655.07,234.41 666.97,196.11 667.11,164.05 L 692.79,164.21 692.65,147.8 C 675.97,147.72 662.23,147.59 650.86,147.59 Z"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.22699"
+       inkscape:connector-curvature="0" />
+     <path
+       sodipodi:nodetypes="cccc"
+       id="path834-4-4-8"
+       d="M 606.88,232.47 605.73,251.39 C 614.54,251.09 618.92,245.24 621.74,232.36 Z"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.22699"
+       inkscape:connector-curvature="0" />
+     <path
+       inkscape:connector-curvature="0"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.227"
+       d="M 521.34,244.3 525.26,244.59 C 529.32,239.99 530.92,226.4 554.86,229.07 553.99,287.29 528.45,293.43 530.05,305.37 530.63,312.15 536,316.3 541.8,316.55 560.13,315.92 559.31,291.21 565.01,228.92 H 588.66 C 587.41,250.88 583.97,272.83 583.58,294.34 583.88,308.67 592.58,316.3 604.04,316.41 622.9,317.02 628.85,295.02 628.85,285.64 H 624.79 C 624.41,293.38 620.68,298.95 612.75,299.29 591.13,299.56 603.03,261.27 603.17,229.21 L 628.85,229.35 628.71,212.96 C 521.97,212.44 535.52,210.35 521.34,244.3 Z"
+       id="path834-1-4" />
+    </g>
    </g>
   </g>
  </g>

@@ -254,7 +254,7 @@ function onDocumentKeyDown(e) {
 		e.preventDefault();
 		controlS();
 	}
-	if (e.key == "Tab") {
+	if (e.key == "Tab" && !e.shiftKey) {
 		// CASE 1
 		var activeCell = document.activeElement.closest("li.Cell") || document.querySelector("li.Selected");
 		var insertionBarElement = document.getElementsByClassName("InsertionBar")[0];
@@ -279,8 +279,8 @@ function onDocumentKeyDown(e) {
 				else if (insertionBarElement.nextElementSibling == null) {
 					return;
 				}
-				// If next element is OutputCell
-				else if (insertionBarElement.nextElementSibling.matches("li.OutputCell")) {
+				// If next element is OutputCell or MessageCell
+				else if (insertionBarElement.nextElementSibling.matches("li.OutputCell") || insertionBarElement.nextElementSibling.matches("li.MessageCell")) {
 					e.preventDefault();
 					var outputStringCell = insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']");
 					if (outputStringCell != null) {
@@ -288,8 +288,8 @@ function onDocumentKeyDown(e) {
 					}
 					// If output cell could not be selected
 					if (outputStringCell != document.activeElement) {
-						// If output cell is part of an evaluation group
-						if (insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.OutputCell")) {
+						// If output cell is last element of an evaluation group
+						if ((insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.OutputCell") || insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.MessageCell")) && insertionBarElement.nextElementSibling.nextElementSibling == null) {
 							insertionBarElement.nextElementSibling.parentElement.parentElement.classList.add("InsertionBar");
 						} else {
 							insertionBarElement.nextElementSibling.classList.add("InsertionBar");
@@ -335,9 +335,12 @@ function onDocumentKeyDown(e) {
 			}
 			if (activeCell.classList.contains("Selected")) {
 				activeCell.classList.remove("Selected")
-				activeCell.querySelector("ul").classList.remove("Selected");
+				activeCell.querySelector("ul, dl, ol").classList.remove("Selected");
 			}
 		}
+	}
+	else if (e.key == "Tab" && e.shiftKey) {
+		
 	}
 }
 
