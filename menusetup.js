@@ -290,8 +290,10 @@ function onDocumentKeyDown(e) {
 					if (outputStringCell != document.activeElement) {
 						// If output cell is last element of an evaluation group
 						if ((insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.OutputCell") || insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.MessageCell")) && insertionBarElement.nextElementSibling.nextElementSibling == null) {
+							console.log("HEY%");
 							insertionBarElement.nextElementSibling.parentElement.parentElement.classList.add("InsertionBar");
 						} else {
+							console.log(insertionBarElement.nextElementSibling);
 							insertionBarElement.nextElementSibling.classList.add("InsertionBar");
 						}
 						var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
@@ -338,9 +340,94 @@ function onDocumentKeyDown(e) {
 				activeCell.querySelector("ul, dl, ol").classList.remove("Selected");
 			}
 		}
+	} else if (e.key == "Tab" && e.shiftKey) {
+		e.preventDefault();
+		// CASE 1
+		var activeCell = document.activeElement.closest("li.Cell") || document.querySelector("li.Selected");
+		var insertionBarElement = document.getElementsByClassName("InsertionBar")[0];
+		// If there is already an insertion bar
+		if (insertionBarElement != null) {
+
+			// If the insertion bar is on a cell
+			if (insertionBarElement.classList.contains("Cell")) {
+				focusElement(insertionBarElement);
+				if (!insertionBarElement.contains(document.activeElement)) {
+					var currentCell = insertionBarElement;
+					var previousElement = currentCell.previousElementSibling;
+					var recursionCounter = 0;
+					while (previousElement == null && recursionCounter < 15) {
+						currentCell = currentCell.parentElement.closest("li");
+						previousElement = currentCell.previousElementSibling;
+						recursionCounter++;
+					}
+					addInsertionBar(previousElement);
+				}
+			}
+			// If the insertion bar is on a group
+			else if (insertionBarElement.classList.contains("CellGroup")) {
+				// And if the insertion bar group is open
+				if (insertionBarElement.classList.contains("Open")) {
+					// if it is on an evaluation group
+					if (insertionBarElement.classList.contains("EvaluationGroup")) {
+						var lastElement = insertionBarElement.lastElementChild.lastElementChild;
+						focusElement(lastElement);
+						if (!lastElement.contains(document.activeElement)) {
+							addInsertionBar(lastElement.previousElementSibling);
+						}
+					}
+					//otherwise
+					else {
+						var lastChildren = insertionBarElement.lastElementChild.querySelectorAll("li");
+						var lastChild = lastChildren[lastChildren.length - 1];
+						console.log(lastChild);
+						if (lastChild != null) {
+							addInsertionBar(lastChild);
+						}
+					}
+				}
+				// And if the insertion bar group is closed
+				else {
+					var firstSelectableElement = insertionBarElement.querySelector("[contenteditable='true']");
+					focusElement(firstSelectableElement);
+				}
+			}
+		}
+		// If there is not an insertion bar
+		else if (activeCell != null) {
+			var currentCell = activeCell;
+			var previousElement = currentCell.previousElementSibling;
+			var recursionCounter = 0;
+			while (previousElement == null && recursionCounter < 15) {
+				currentCell = currentCell.parentElement.closest("li");
+				previousElement = currentCell.previousElementSibling;
+				recursionCounter++;
+			}
+			addInsertionBar(previousElement);
+		}
 	}
-	else if (e.key == "Tab" && e.shiftKey) {
-		
+}
+
+function focusElement(element) {
+	element.classList.remove("InsertionBar");
+	var stringCell = element.contenteditable ? element : element.querySelector("[contenteditable='true']");
+	if (stringCell != null) {
+		stringCell.click();
+		stringCell.focus();
+	} else {
+		element.click();
+		element.focus();
+	}
+}
+
+function addInsertionBar(element) {
+	var insertionBarElement = document.querySelector(".InsertionBar");
+	if (insertionBarElement != null) {
+		insertionBarElement.classList.remove("InsertionBar");
+	}
+	element.classList.add("InsertionBar");
+	var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+	if (pasteTarget != null) {
+		pasteTarget.focus();
 	}
 }
 
