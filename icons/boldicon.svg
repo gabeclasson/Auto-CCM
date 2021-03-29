@@ -14,27 +14,27 @@
   viewBox="0 0 200 200"
   version="1.1"
   id="svg8"
-  sodipodi:docname="returnicon.svg"
+  sodipodi:docname="boldicon.svg"
   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
  <defs
    id="defs2" />
  <sodipodi:namedview
    id="base"
-   pagecolor="#000000"
+   pagecolor="#ffffff"
    bordercolor="#666666"
    borderopacity="1.0"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:zoom="1.4"
-   inkscape:cx="-86.76"
-   inkscape:cy="338.72"
+   inkscape:zoom="0.7"
+   inkscape:cx="-440.46"
+   inkscape:cy="240.11"
    inkscape:document-units="mm"
-   inkscape:current-layer="text817"
+   inkscape:current-layer="text818"
    showgrid="false"
-   inkscape:window-width="3840"
-   inkscape:window-height="2035"
-   inkscape:window-x="-13"
-   inkscape:window-y="-13"
+   inkscape:window-width="2560"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
    inkscape:window-maximized="1" />
  <metadata
    id="metadata5">
@@ -58,13 +58,19 @@
     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.4762"
     id="text817">
    <g
-     aria-label="↺"
+     aria-label="↷"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:212.12425px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:34.34391"
      id="text816">
-    <path
-      d="M 139.77,170.64 126.52,121.34 175.92,134.49 154.27,141.74 Q 176.65,165.67 176.65,196.01 176.65,227.81 154.17,250.29 131.8,272.66 100,272.66 68.306,272.66 45.83,250.29 23.354,227.81 23.354,196.12 23.354,165.56 45.83,141.74 L 52.976,148.99 Q 33.608,169.6 33.608,196.01 33.608,223.56 52.976,243.04 72.449,262.41 100,262.41 127.45,262.41 146.92,243.04 166.5,223.56 166.5,196.22 166.5,176.75 155.93,160.18 148.58,148.68 147.02,148.99 Z"
-      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Jokerman;-inkscape-font-specification:'Jokerman Bold';fill:#ffffff;stroke-width:34.34391"
-      id="path815" />
+    <g
+      aria-label="B"
+      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:175.00137px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;stroke-width:150.25575"
+      id="text818">
+     <path
+       d="M 104.64,135.66 Q 118.81,135.66 129.49,139.51 140.16,143.19 145.94,150.19 151.71,157.19 151.71,166.64 151.71,175.91 146.11,183.09 140.51,190.26 130.89,193.06 142.09,195.34 148.74,203.91 155.56,212.31 155.56,224.04 155.56,234.36 149.61,242.24 143.66,249.94 132.64,254.14 121.79,258.34 107.26,258.34 H 44.439 V 135.66 Z M 102.71,183.79 Q 108.14,183.79 111.29,180.99 114.44,178.01 114.44,173.11 114.44,168.39 111.29,165.76 108.14,162.96 102.71,162.96 H 80.66 V 183.79 Z M 102.71,231.04 Q 109.71,231.21 113.74,228.06 117.94,224.91 117.94,219.49 117.94,214.41 113.74,211.61 109.71,208.64 102.71,208.81 H 80.66 V 231.04 Z"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-family:Montserrat;-inkscape-font-specification:'Montserrat Ultra-Bold';fill:#6b6b6b;fill-opacity:1;stroke-width:150.25575"
+       id="path11"
+       inkscape:connector-curvature="0" />
+    </g>
    </g>
   </g>
  </g>

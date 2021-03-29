@@ -114,6 +114,7 @@ function save_options() {
 	var allowlist = getListElementsFromId('allowlist');
 	var casileClassic = document.getElementById('casileClassic').checked
 	var menubackgroundcolor = document.getElementById("menubackgroundcolor").value;
+	var textStyleMenu = document.getElementById('textStyleMenu').checked
 	browser.storage.sync.set({
 		spellCheck: spellCheck,
 		unsavedIndicator: unsavedIndicator,
@@ -121,7 +122,8 @@ function save_options() {
 		blocklist: blocklist,
 		allowlist: allowlist,
 		casileClassic: casileClassic,
-		menubackgroundcolor: menubackgroundcolor
+		menubackgroundcolor: menubackgroundcolor,
+		textStyleMenu: textStyleMenu
 	}, function () {
 		// Update status to let user know options were saved.
 		hasChanged = false;
@@ -155,7 +157,8 @@ function restore_options() {
 		blocklist: [],
 		allowlist: [],
 		casileClassic: false,
-		menubackgroundcolor: "#663333"
+		menubackgroundcolor: "#663333",
+		textStyleMenu: true
 	}, function (items) {
 		document.getElementById('spellCheck').checked = items.spellCheck;
 		document.getElementById('unsavedIndicator').checked = items.unsavedIndicator;
@@ -166,6 +169,7 @@ function restore_options() {
 		document.getElementById("menubackgroundcolor").value = items.menubackgroundcolor;
 		document.getElementById("body").style.background = items.menubackgroundcolor;
 		document.getElementById("preview").style.background = items.menubackgroundcolor;
+		document.getElementById('textStyleMenu').checked = items.textStyleMenu;
 		var css =
 			`input:checked + .slider {
 				background-color: ${items.menubackgroundcolor};
@@ -194,6 +198,7 @@ document.getElementById('spellCheck').addEventListener('click', toggleSwitch);
 document.getElementById('unsavedIndicator').addEventListener('click', toggleSwitch);
 document.getElementById('warningDialog').addEventListener('click', toggleSwitch);
 document.getElementById('casileClassic').addEventListener('click', toggleSwitch);
+document.getElementById('textStyleMenu').addEventListener('click', toggleSwitch);
 document.getElementById('reset').addEventListener('click', reset_options);
 document.getElementById('allowadd').addEventListener('click', allowadd);
 document.addEventListener('DOMNodeInserted', function (e) {

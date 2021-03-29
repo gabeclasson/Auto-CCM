@@ -39,7 +39,7 @@
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
    inkscape:zoom="0.7"
-   inkscape:cx="997.38"
+   inkscape:cx="631.67"
    inkscape:cy="376.18"
    inkscape:document-units="mm"
    inkscape:current-layer="text817"
@@ -71,11 +71,12 @@
     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.4762"
     id="text817">
    <path
-     transform="matrix(-0.70711,0.70711,0.70711,0.70711,0,0)"
+     transform="matrix(0.70711,0.70711,-0.70711,0.70711,200,0)"
      style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.34842;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:49.25284;stroke-opacity:1;paint-order:markers stroke fill"
      d="M 57.104,63.81 H 80.075 V 356.21 H 57.104 Z"
      id="rect814"
-     clip-path="url(#clipPath817)" />
+     clip-path="url(#clipPath817)"
+     inkscape:connector-curvature="0" />
    <path
      id="path821"
      d="M 37.83,173.46 42.36,173.8 C 47.06,168.49 48.9,152.77 76.59,155.85 75.58,223.19 46.05,230.3 47.89,244.11 48.56,251.94 54.78,256.75 61.48,257.03 82.69,256.3 81.73,227.72 88.33,155.68 H 115.68 C 114.23,181.07 110.26,206.47 109.81,231.36 110.15,247.91 120.22,256.75 133.47,256.86 155.29,257.58 162.17,232.14 162.17,221.28 H 157.47 C 157.02,230.24 152.71,236.67 143.54,237.06 118.54,237.39 132.3,193.1 132.47,156.01 L 162.17,156.18 162,137.22 C 38.55,136.62 54.22,134.21 37.83,173.46 Z"

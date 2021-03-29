@@ -69,7 +69,8 @@ browser.runtime.onMessage.addListener(
 			blocklist: [],
 			allowlist: [],
 			casileClassic: false,
-			menubackgroundcolor: "#663333"
+			menubackgroundcolor: "#663333",
+			textStyleMenu: true
 		}, function (items) {
 			sendResponse({
 				items: items,
