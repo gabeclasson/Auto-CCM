@@ -1,6 +1,6 @@
 /*
 Author: Gabe Classon
-This script is injected into the CAS-ILE tab; it enables the "mock close button" (a mock button that appear over the close button when a user has unsaved changes; if the user clicks the mock button, it asks them to confirm their selection to prevent lost work).
+This script is injected into the CAS-ILE tab; it enables the "mock close button" (a mock button that appears over the close button when a user has unsaved changes; if the user clicks the mock button, it asks them to confirm their selection to prevent lost work).
 */
 console.log("mockbuttonenable.js injected");
 var allStudentPanels = document.querySelectorAll(("[id^=coursepanel][id$=body]"));
