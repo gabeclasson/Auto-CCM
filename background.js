@@ -68,6 +68,22 @@ browser.runtime.onMessage.addListener(
 			warningDialog: true,
 			blocklist: [],
 			allowlist: [],
+			fontlist: [
+				"Source Sans Pro, sans-serif",
+				"Arial, sans-serif",
+				"Arial Black, sans-serif",
+				"Verdana, sans-serif",
+				"Tahoma, sans-serif",
+				"Trebuchet MS, sans-serif",
+				"Impact, sans-serif",
+				"Times New Roman, serif",
+				"Georgia, serif",
+				"Consolas, monospace",
+				"Courier, monospace",
+				"Lucida Console, monospace",
+				"Brush Script MT, cursive",
+				"Comic Sans MS, cursive"
+			],
 			casileClassic: false,
 			menubackgroundcolor: "#663333",
 			textStyleMenu: true

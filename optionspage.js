@@ -51,6 +51,25 @@ function allowadd() {
 	allowinput.value = "";
 }
 
+// Adds the text in the input field to the fontlist
+function fontadd() {
+	let fontlist = document.getElementById("fontlist");
+	let prevIdNum;
+	if (fontlist.lastChild != null) {
+		let prevId = fontlist.lastChild.id;
+		prevIdNum = parseInt(prevId.substring(8));
+	} else {
+		prevIdNum = 0;
+	}
+	var input = document.getElementById("fontinput").value.trim();
+	if (input == null || input == "") {
+		return;
+	}
+	hasChanged = true;
+	fontlist.appendChild(createListElementFromId('font', input, prevIdNum + 1));
+	fontinput.value = "";
+}
+
 // Deletes an element from the DOM tree
 function remove(e) {
 	hasChanged = true;
@@ -75,12 +94,15 @@ function getListElementsFromId(id) {
 id: the id of the LIST
 content: the textContent of the entry
 num: the index of the element on the list (starting from 1)
-return: A DOM object that is a single item in the block/allowlists
+return: A DOM object that is a single item in the block/allow/fontlists
 */
 function createListElementFromId(id, content, num) {
 	var li = document.createElement("li");
 	li.id = id + "item" + num;
 	li.textContent = content;
+	if (id == "font") {
+		li.style.fontFamily = content;
+	}
 	var removeButton = document.createElement("button");
 	removeButton.className = "remove";
 	removeButton.id = id + "removebutton" + num;
@@ -112,6 +134,7 @@ function save_options() {
 	var warningDialog = document.getElementById('warningDialog').checked;
 	var blocklist = getListElementsFromId('blocklist');
 	var allowlist = getListElementsFromId('allowlist');
+	var fontlist = getListElementsFromId('fontlist');
 	var casileClassic = document.getElementById('casileClassic').checked
 	var menubackgroundcolor = document.getElementById("menubackgroundcolor").value;
 	var textStyleMenu = document.getElementById('textStyleMenu').checked
@@ -121,6 +144,7 @@ function save_options() {
 		warningDialog: warningDialog,
 		blocklist: blocklist,
 		allowlist: allowlist,
+		fontlist: fontlist,
 		casileClassic: casileClassic,
 		menubackgroundcolor: menubackgroundcolor,
 		textStyleMenu: textStyleMenu
@@ -156,6 +180,22 @@ function restore_options() {
 		warningDialog: true,
 		blocklist: [],
 		allowlist: [],
+		fontlist: [
+			"Source Sans Pro, sans-serif",
+			"Arial, sans-serif",
+			"Arial Black, sans-serif",
+			"Verdana, sans-serif",
+			"Tahoma, sans-serif",
+			"Trebuchet MS, sans-serif",
+			"Impact, sans-serif",
+			"Times New Roman, serif",
+			"Georgia, serif",
+			"Consolas, monospace",
+			"Courier, monospace",
+			"Lucida Console, monospace",
+			"Brush Script MT, cursive",
+			"Comic Sans MS, cursive"
+		],
 		casileClassic: false,
 		menubackgroundcolor: "#663333",
 		textStyleMenu: true
@@ -165,6 +205,7 @@ function restore_options() {
 		document.getElementById('warningDialog').checked = items.warningDialog;
 		populateList(document.getElementById('blocklist'), createListFromIdAndArray('block', items.blocklist));
 		populateList(document.getElementById('allowlist'), createListFromIdAndArray('allow', items.allowlist));
+		populateList(document.getElementById('fontlist'), createListFromIdAndArray('font', items.fontlist));
 		document.getElementById('casileClassic').checked = items.casileClassic;
 		document.getElementById("menubackgroundcolor").value = items.menubackgroundcolor;
 		document.getElementById("body").style.background = items.menubackgroundcolor;
@@ -212,6 +253,7 @@ document.addEventListener('DOMNodeInserted', function (e) {
 	}
 });
 document.getElementById('blockadd').addEventListener('click', blockadd);
+document.getElementById('fontadd').addEventListener('click', fontadd);
 
 document.getElementById("menubackgroundcolor").addEventListener("change", updatebackgroundcolor);
 function updatebackgroundcolor() {

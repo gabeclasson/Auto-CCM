@@ -343,7 +343,7 @@ function createButton(url, id, iconname, title, onclickFunction, isEnd) {
 	return buttonA;
 }
 
-function createTextStyleMenu(url) {
+function createTextStyleMenu(url, fontlist) {
 	// Parent span
 	var span = document.createElement("span");
 	span.classList = ["textStyleMenu"];
@@ -397,42 +397,12 @@ function createTextStyleMenu(url) {
 	fontFamilySelect.className = "selectFont customSelect";
 	fontFamilySelect.id = "fontFamilySelect";
 	fontFamilySelect.title = "Font face";
-	var blankOption = document.createElement("option");
-	var sourceSansProOption = document.createElement("option");
-	var arialOption = document.createElement("option");
-	var arialBlackOption = document.createElement("option");
-	var verdanaOption = document.createElement("option");
-	var tahomaOption = document.createElement("option");
-	var trebuchetMSOption = document.createElement("option");
-	var impactOption = document.createElement("option");
-	var timesNewRomanOption = document.createElement("option");
-	var georgiaOption = document.createElement("option");
-	var consolasOption = document.createElement("option");
-	var courierOption = document.createElement("option");
-	var lucidaConsoleOption = document.createElement("option");
-	var brushScriptMTOption = document.createElement("option");
-	var comicSansMSOption = document.createElement("option");
-	blankOption.value = "";
-	sourceSansProOption.value = "Source Sans Pro, sans-serif";
-	arialOption.value = "Arial, sans-serif";
-	arialBlackOption.value = "Arial Black, sans-serif";
-	verdanaOption.value = "Verdana, sans-serif";
-	tahomaOption.value = "Tahoma, 'sans-serif";
-	trebuchetMSOption.value = "Trebuchet MS, sans-serif";
-	impactOption.value = "Impact, sans-serif";
-	timesNewRomanOption.value = "Times New Roman, serif";
-	georgiaOption.value = "Georgia, serif";
-	consolasOption.value = "Consolas, monospace";
-	courierOption.value = "Courier, monospace";
-	lucidaConsoleOption.value = "Lucida Console, monospace";
-	brushScriptMTOption.value = "Brush Script MT, cursive";
-	comicSansMSOption.value = "Comic Sans MS, cursive";
-	var fontFamilyOptions = [sourceSansProOption, courierOption, arialOption, arialBlackOption, verdanaOption, tahomaOption, trebuchetMSOption, impactOption, timesNewRomanOption, georgiaOption, consolasOption, lucidaConsoleOption, brushScriptMTOption, comicSansMSOption];
-	fontFamilySelect.appendChild(blankOption);
-	for (var g = 0; g < fontFamilyOptions.length; g++) {
-		var fontFamilyOption = fontFamilyOptions[g];
-		fontFamilyOption.textContent = fontFamilyOption.value.split(",")[0];
-		fontFamilyOption.style.fontFamily = fontFamilyOption.value;
+	fontlist.splice(0, 0, "");
+	for (var f = 0; f < fontlist.length; f++) {
+		var fontFamilyOption = document.createElement("option");
+		fontFamilyOption.value = fontlist[f];
+		fontFamilyOption.textContent = fontlist[f].split(",")[0];
+		fontFamilyOption.style.fontFamily = fontlist[f];
 		fontFamilyOption.style.paddingTop = "3px";
 		fontFamilyOption.style.paddingBottom = "3px";
 		fontFamilyOption.classList = "fontFamilyOption selectOption";
@@ -443,7 +413,7 @@ function createTextStyleMenu(url) {
 		if (fontFamilySelect.selectedIndex == 0) {
 			return null;
 		}
-		document.exe
+		console.log("Font family selected");
 		reselectGlobalSelection();
 		document.execCommand("fontName", "false", fontFamilySelect.options[fontFamilySelect.selectedIndex].value);
 		forceTextStyleMenuUpdate();
@@ -1364,7 +1334,7 @@ browser.runtime.sendMessage({
 	createMouseMenu(url, items.menubackgroundcolor);
 	var textStyleMenu = items.textStyleMenu;
 	if (textStyleMenu) {
-		createTextStyleMenu(url);
+		createTextStyleMenu(url, items.fontlist);
 		document.addEventListener("focusin", onDocumentFocusIn);
 		document.addEventListener("selectionchange", onSelectionChange);
 	}
