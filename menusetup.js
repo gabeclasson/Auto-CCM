@@ -705,7 +705,7 @@ function onSelectionChange(e) {
 	// Underline & Strikethrough
 	var underlineInput = document.getElementById("underlineToggle");
 	var strikethroughInput = document.getElementById("strikethroughToggle");
-	var textDecoration = getPrevailingStyle(selectedNodes, "webkitTextDecorationsInEffect");
+	var textDecoration = getPrevailingStyle(selectedNodes, "webkitTextDecorationsInEffect", "textDecorationLine");
 	underlineInput.checked = textDecoration != null && textDecoration.includes("underline");
 	strikethroughInput.checked = textDecoration != null && textDecoration.includes("line-through");
 	// Justification
@@ -745,9 +745,11 @@ function onSelectionChange(e) {
 
 /*
 selectionArray: An array of selection nodes
+attributeName: the attribute to search for within the nodes
+backupAttributeName: the backup attribute to search for within the nodes, if the attributeName as initially given does not exist
 Gets the prevailing style (of an attribute) that is applied to a given selection. Returns null if the
  */
-function getPrevailingStyle(selectionArray, attributeName) {
+function getPrevailingStyle(selectionArray, attributeName, backupAttributeName) {
 	var style = undefined
 		for (var i = 0; i < selectionArray.length; i++) {
 			var node = selectionArray[i];
@@ -762,7 +764,13 @@ function getPrevailingStyle(selectionArray, attributeName) {
 			}
 			if (node.textContent.length > 0 && node.tagName != "BR") {
 				attributeValue = window.getComputedStyle(node, null)[attributeName];
-				if (attributeValue == null || (style != null && !style.includes(attributeValue) && !attributeValue.includes(style) && style != null)) {
+				if (attributeValue == null && backupAttributeName != null) { // If the attributeName does not exist in the computed styles, switch to using the backupAttributeName
+					var temp = attributeName;
+					attributeName = backupAttributeName;
+					backupAttributeName = temp;
+					attributeValue = window.getComputedStyle(node, null)[attributeName];
+				}
+				if (style != null && !style.includes(attributeValue) && !attributeValue.includes(style)) {
 					return null;
 				} else if (style != attributeValue && attributeValue.includes(style)) {
 					// do nothing... the prevailing style can be maintained
