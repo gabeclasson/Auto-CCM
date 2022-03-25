@@ -339,11 +339,13 @@ function setChangedState(onOff) {
 				document.getElementById("unsavedIcon").style.visibility = "hidden";
 			}
 		}
-		if (warningDialog) { // Update the visibility of the mock button to reflect whether there is potentially unsaved work
+		if (warningDialog) { 
+			// Notify the parent tab as to whether there is potentially unsaved work
+			// (Important to stop unnecessary warning dialogs)
 			if (onOff) {
-				mockButtonEnable();
+				notifyNotebookUnsavedWork();
 			} else {
-				mockButtonDisable();
+				notifyNotebookSavedWork();
 			}
 		}
 	}
@@ -489,23 +491,23 @@ function warningDialogSetup() {
 	};
 }
 
-// Enables the mock button (see mockbuttonenable.js for more info)
-function mockButtonEnable() {
+// Notifies the global page that there is unsaved work (see notifyNotebookUnsavedWork.js for more info)
+function notifyNotebookUnsavedWork() {
 	browser.runtime.sendMessage({
-		className: "mockButtonEnable"
+		className: "notifyNotebookUnsavedWork"
 	},
 		function () {
-		console.log("mockButtonEnableReceived");
+		console.log("notifyNotebookUnsavedWorkReceived");
 	});
 }
 
-// Disables the mock button (see mockbuttondisable.js for more info)
-function mockButtonDisable() {
+// Notifies the global page that there is no unsaved work  (see notifyNotebookSavedWork.js for more info)
+function notifyNotebookSavedWork() {
 	browser.runtime.sendMessage({
-		className: "mockButtonDisable"
+		className: "notifyNotebookSavedWork"
 	},
 		function () {
-		console.log("mockButtonDisableReceived");
+		console.log("notifyNotebookSavedWorkReceived");
 	});
 }
 

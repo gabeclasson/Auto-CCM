@@ -7,7 +7,6 @@ var browser = browser || chrome; // To ensure compatability between Firefox and 
 var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page
 var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
 var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
-var tabAddedObserver = new MutationObserver(onTabAdded);
 
 // The body observer observes until the page fully loads, and then injects the studentPanelChangeObserver
 bodyChangeObserver.observe(document.body, {
@@ -52,13 +51,6 @@ function onStudentPanelChange(mutationList, observer) {
 						childList: true,
 						subtree: false
 					});
-					// Observes for new tabs in the tab bar
-					var tabBar = addedNodes[i].querySelectorAll("[id^=tabbar][id$=targetEl]")[0];
-					tabAddedObserver.observe(tabBar, {
-						attributes: false,
-						childList: true,
-						subtree: false
-					});
 				}
 			}
 		}
@@ -82,20 +74,6 @@ function onTryItUpdated(mutationList, observer) {
 	});
 }
 
-// The tab added observer waits for tabs to be added to the tab bar (this occurs whenever a Try-It is opened). Then, it adds a mockbutton for each one. See mockbuttonenable.js for more info.
-function onTabAdded(mutationList, observer) {
-	mutationList.forEach((mutation) => {
-		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
-			var addedNodes = mutation.addedNodes;
-			console.log("Tab added");
-			for (var i = 0; i < addedNodes.length; i++) {
-				var closeButton = addedNodes[0].getElementsByClassName("x-tab-close-btn")[0];
-				mockButtonSetup(closeButton);
-			}
-		}
-	});
-}
-
 /*
 frame1: The frame to injectFrame
 Injects frame1 with menusetup.js
@@ -108,39 +86,6 @@ function injectFrame(frame1) {
 		function () {
 		console.log("injectMenuSetupReceived");
 	});
-}
-
-/*
-closeButton: the close button for a particular Try-It
-Creates and sets up the mock button for a particular Try-It (See mockbuttonenable.js for more info)
- */
-function mockButtonSetup(closeButton) {
-	var mockButton = document.createElement("span");
-	mockButton.className = "x-tab-close-btn mockButton";
-	mockButton.id = "mockButton";
-	mockButton.tabindex = "0";
-	mockButton.style.visibility = "hidden";
-	closeButton.parentElement.appendChild(mockButton);
-	mockButton.addEventListener("click", function (e) {
-		if (confirm("Are you sure you want to close this Try-It? You may have unsaved work. Click 'OK' to leave; click 'Cancel' to return to the Try-It.")) {
-			mockButton.style.visibility = "hidden";
-			closeButton.click();
-		}
-	});
-	// Add a stylesheet for the mockbutton
-	var style = document.createElement("style");
-	style.textContent =
-		`
-	.mockButton:hover {
-		opacity: 1;
-	}
-	
-	.mockButton {
-		opacity: 0;
-	}
-	`;
-	style.id = "mockButtonStyle";
-	document.head.appendChild(style);
 }
 
 // Allows Ctrl+S pressed outside of a Try-It window to still cause the currently open Try-It to be saved.
@@ -168,6 +113,84 @@ function onDocumentKeyDown(e) {
 }
 
 document.addEventListener("keydown", onDocumentKeyDown)
+
+// Gets the current active tab (that is, the little tab button) 
+function activeTab() {
+	var allStudentPanels = document.querySelectorAll(("[id^=coursepanel][id$=body]"));
+	var activePanel;
+	for (var k = 0; k < allStudentPanels.length; k++) {
+		if (allStudentPanels[k].parentElement.classList.contains("x-hide-offsets")) {
+			continue;
+		} else {
+			activePanel = allStudentPanels[k];
+			break;
+		}
+	}
+	return activePanel.getElementsByClassName("x-tab-active")[0]; 
+}
+
+// Here, we deal with closing the default close dialog when there are no unsaved changes
+
+let closeDialogCreatedObserver = new MutationObserver(onBodyChildAdded); 
+let closeDialogFocusedObserver = new MutationObserver(onCloseDialogChange); 
+let tabsWithUnsavedWork = []; 
+
+// Observes the body's children in the hopes of catching the child that is the close dialog
+function onBodyChildAdded(mutationList, observer) {
+	mutationList.forEach((mutation) => {
+		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
+			var addedNodes = mutation.addedNodes;
+			for (var i = 0; i < addedNodes.length; i++) {
+				if (addedNodes[i].classList != null 
+					&& addedNodes[i].classList.contains("x-message-box")
+					&& addedNodes[i].textContent.includes("Are you sure")
+					) {
+						console.debug("Got close dialog"); 
+						// We've got the close dialog in addedNodes[i]
+						closeDialogFocusedObserver.observe(addedNodes[i], {
+							attributes: true,
+							attributeFilter: [ "class" ], 
+							childList: false,
+							subtree: false
+						});
+						manageCloseDialog(addedNodes[i]); 
+				}
+			}
+		}
+	});
+}
+
+// Observes for changes to the close dialog's visibility status
+function onCloseDialogChange(mutationList, observer) {
+	mutationList.forEach((mutation) => {
+		if (mutation.attributeName == "class" 
+			&& !mutation.target.classList.contains("x-hide-offsets")) {
+				manageCloseDialog(mutation.target); 
+		}
+	});
+}
+
+// When the close dialog pops up, this function handles whether or not
+// it is automatically closed because the try-it contains no unsaved work. 
+function manageCloseDialog(closeDialog) {
+	console.debug("Manage close dialog"); 
+	if (!tabsWithUnsavedWork.includes(activeTab().id)) {
+		// If the tab does not have unsaved work, close the dialog & the Try-It.
+		var buttons = closeDialog.getElementsByClassName("x-btn");
+		for (var w = 0; w < buttons.length; w++) {
+			if (buttons[w].textContent.includes("Yes")) {
+				buttons[w].click();
+				return;
+			}
+		}
+	}
+}
+
+closeDialogCreatedObserver.observe(document.body, {
+	attributes: false,
+	childList: true,
+	subtree: false
+});
 
 // Checks to see if the user wants to use the classic Auto CCM theme, and implements it if they do.
 browser.runtime.sendMessage({
