@@ -76,16 +76,16 @@ browser.runtime.onMessage.addListener(
 				url: browser.runtime.getURL("")
 			});
 		});
-	} else if (request.className == "mockButtonEnable") {
+	} else if (request.className == "notifyNotebookUnsavedWork") {
 		browser.tabs.executeScript(
 			sender.tab.id, {
-			file: "mockbuttonenable.js"
+			file: "notifyNotebookUnsavedWork.js"
 		});
 		sendResponse();
-	} else if (request.className == "mockButtonDisable") {
+	} else if (request.className == "notifyNotebookSavedWork") {
 		browser.tabs.executeScript(
 			sender.tab.id, {
-			file: "mockbuttondisable.js"
+			file: "notifyNotebookSavedWork.js"
 		});
 		sendResponse();
 	} else if (request.className == "injectMenuSetup") {
