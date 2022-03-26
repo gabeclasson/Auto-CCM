@@ -15,24 +15,98 @@ bodyChangeObserver.observe(document.body, {
 	subtree: true
 });
 
-function onBodyChange() {
-	var panels = document.getElementsByClassName("x-panel-body x-panel-body-default x-layout-fit x-panel-body-default");
-	var studentPanel;
-	for (var i = 0; i < panels.length; i++) {
-		if (panels[i].id.includes("studentpanel")) {
-			studentPanel = panels[i];
-			console.log("Got panel");
-			console.log(studentPanel);
+let hasObservedPanel = false;
+let hasObservedPrimaryPanel = false;  
+function onBodyChange(mutationList, observer) {
+	if (!hasObservedPanel) {
+		let studentPanel = document.querySelector(".x-panel-body.x-panel-body-default.x-layout-fit.x-panel-body-default[id*=studentpanel]");
+		if (studentPanel != null) {
+			studentPanelChangeObserver.observe(studentPanel, {
+				attributes: false,
+				childList: true,
+				subtree: false
+			});
+			hasObservedPanel = true; 
 		}
 	}
-	if (studentPanel != null) {
-		studentPanelChangeObserver.observe(studentPanel, {
-			attributes: false,
-			childList: true,
-			subtree: false
-		});
+	if (!hasObservedPrimaryPanel) {
+		if (document.querySelector(".panel-primary")) { 
+			browser.runtime.sendMessage({
+				className: "getSyncStorage"
+			},
+			function (response) {
+				let items = response.items;
+				addInformationPanel(
+					items.menubackgroundcolor,
+					response.url
+					); 
+				}
+			);
+			hasObservedPrimaryPanel = true; 
+		}
+		
+	}
+	if (hasObservedPanel && hasObservedPrimaryPanel) {
 		bodyChangeObserver.disconnect();
 	}
+}
+
+function addInformationPanel(color, url) {
+	let infoPanel = document.createElement("div"); 
+	infoPanel.className = "panel panel-primary"; 
+	let panelHeading = document.createElement("div"); 
+	panelHeading.className = "panel-heading"; 
+	panelHeading.style.backgroundColor = color; 
+	panelHeading.style.borderColor = color; 
+	let panelTitle = document.createElement("h3");
+	panelTitle.className = "panel-title";
+	panelTitle.textContent = "Auto CCM"; 
+	panelHeading.appendChild(panelTitle); 
+	infoPanel.appendChild(panelHeading); 
+
+	let listGroup = document.createElement("div"); 
+	listGroup.className = "list-group";
+
+	let introItem = document.createElement("div"); 
+	introItem.className = "list-group-item"; 
+	introItem.appendChild(document.createTextNode("Welcome to Gabe Classon's Auto CCM! Confused on where to start? Check out our "));
+	let helpPageLink = document.createElement("a");
+	helpPageLink.href = "https://gabeclasson.com/projects/auto-ccm/usage";
+	helpPageLink.textContent = "help page";
+	introItem.appendChild(helpPageLink); 
+	introItem.appendChild(document.createTextNode(" to get started. ")); 
+	listGroup.appendChild(introItem);
+	
+
+	let versionNumber = "2.8"; 
+	let updateItem = document.createElement("div"); 
+	updateItem.className = "list-group-item"; 
+	updateItem.appendChild(document.createTextNode("Here's what's new in "));
+	let updateLink = document.createElement("a");
+	updateLink.href = `https://gabeclasson.com/projects/auto-ccm/versions/${versionNumber}`;
+	updateLink.textContent = `Auto CCM Version ${versionNumber}`; 
+	updateItem.appendChild(updateLink); 
+	updateItem.appendChild(document.createTextNode(": "));
+	let updateList = document.createElement("ul"); 
+	let updates = [
+		"Fixed smart dialog warning so that, when enabled, the user will receive an unsaved work warning if and only if they may have unsaved work. "
+	]; 
+	for (let i = 0; i < updates.length; i++) {
+		let update = updates[i]; 
+		if (update instanceof HTMLElement) {
+			updateList.appendChild(update); 
+		} else {
+			let li = document.createElement("li"); 
+			li.textContent = update; 
+			updateList.appendChild(li); 
+		}
+	}
+	updateItem.appendChild(updateList); 
+	listGroup.appendChild(updateItem);
+
+	infoPanel.appendChild(listGroup); 
+	let firstPrimaryPanel = document.querySelector(".panel-primary"); 
+	firstPrimaryPanel.parentElement.insertBefore(infoPanel, firstPrimaryPanel); 
 }
 
 // The studentPanelChangeObserver observes for when a user opens up a course, and then adds the Try-It updated observer for each course
