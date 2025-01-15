@@ -7,24 +7,24 @@ var browser = browser || chrome; // To ensure compatability between Firefox and 
 /*
 Creates shortcuts (context menus) that appear when the the Auto CCM icon is clicked.
  */
-browser.runtime.onInstalled.addListener(function () {
+browser.runtime.onInstalled.addListener(async () => {
 	// How to use Auto CCM
 	browser.contextMenus.create({
 		"id": "how2use",
 		"title": "How to Use Auto CCM",
-		"contexts": ["page_action"]
+		"contexts": ["action"]
 	});
 	// Courseware (CAS-ILE)
 	browser.contextMenus.create({
 		"id": "courseware",
 		"title": "CAS-ILE",
-		"contexts": ["page_action"]
+		"contexts": ["action"]
 	});
 	// Wolfram language documentation
 	browser.contextMenus.create({
 		"id": "doc",
 		"title": "Mathematica Documentation",
-		"contexts": ["page_action"]
+		"contexts": ["action"]
 	});
 });
 

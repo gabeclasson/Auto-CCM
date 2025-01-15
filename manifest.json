@@ -12,7 +12,6 @@
 	"options_ui": {
 		"page": "optionspage.html",
 		"browser_style": false,
-		"chrome_style": false,
 		"open_in_tab": true
 	},
 	"content_scripts": [{

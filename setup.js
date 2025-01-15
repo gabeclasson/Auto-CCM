@@ -89,6 +89,7 @@ function addInformationPanel(color, url) {
 	updateItem.appendChild(document.createTextNode(": "));
 	let updateList = document.createElement("ul"); 
 	let updates = [
+		"Comply with new Chrome Extension Store requirements",
 		"Fixed smart dialog warning so that, when enabled, the user will receive an unsaved work warning if and only if they may have unsaved work. "
 	]; 
 	for (let i = 0; i < updates.length; i++) {
