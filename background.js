@@ -36,7 +36,7 @@ browser.contextMenus.onClicked.addListener(function (info, tab) {
 	// How to use Auto CCM
 	if (info.menuItemId === "how2use") {
 		browser.tabs.create({
-			url: "https://ospiro.com/products-services/auto-ccm/#how2use"
+			url: "https://gabeclasson.com/projects/auto-ccm/usage/"
 		});
 		// Courseware (CAS-ILE)
 	} else if (info.menuItemId === "courseware") {
