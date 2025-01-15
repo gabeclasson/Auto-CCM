@@ -77,15 +77,15 @@ browser.runtime.onMessage.addListener(
 			});
 		});
 	} else if (request.className == "notifyNotebookUnsavedWork") {
-		browser.tabs.executeScript(
-			sender.tab.id, {
-			file: "notifyNotebookUnsavedWork.js"
+		browser.scripting.executeScript({
+			target: {tabId: sender.tab.id}, 
+			files: ["notifyNotebookUnsavedWork.js"]
 		});
 		sendResponse();
 	} else if (request.className == "notifyNotebookSavedWork") {
-		browser.tabs.executeScript(
-			sender.tab.id, {
-			file: "notifyNotebookSavedWork.js"
+		browser.scripting.executeScript({
+			target: {tabId: sender.tab.id}, 
+			files: ["notifyNotebookSavedWork.js"]
 		});
 		sendResponse();
 	} else if (request.className == "injectMenuSetup") {
@@ -97,10 +97,9 @@ browser.runtime.onMessage.addListener(
 			function (details) {
 			for (var k = 0; k < details.length; k++) {
 				if (details[k].url == frameUrl) {
-					browser.tabs.executeScript(
-						tabId, {
-						file: "menusetup.js",
-						frameId: details[k].frameId
+					browser.scripting.executeScript({
+						target: {tabId: tabId, frameIds: [details[k].frameId]},
+						files: ["menusetup.js"]
 					});
 					break;
 				}
@@ -110,10 +109,9 @@ browser.runtime.onMessage.addListener(
 	} else if (request.className == "injectAutoCtrlM") {
 		var tabId = sender.tab.id;
 		var frameId = sender.frameId;
-		browser.tabs.executeScript(
-			tabId, {
-			file: "autoctrlm.js",
-			frameId: frameId
+		browser.scripting.executeScript({
+			target: {tabId: tabId, frameIds: [frameId]},
+			files: ["autoctrlm.js"]
 		});
 		sendResponse();
 	} else if (request.className == "getUrl") {
@@ -125,10 +123,9 @@ browser.runtime.onMessage.addListener(
 			casileClassic: false,
 		}, function (items) {
 			if (items.casileClassic) {
-				browser.tabs.executeScript(
-					tabId, {
-					file: "classicThemeTab.js",
-					frameId: frameId
+				browser.scripting.executeScript({
+					target: {tabId: tabId, frameIds: [frameId]},
+					files: ["classicThemeTab.js"]
 				});
 			}
 		});
@@ -138,9 +135,9 @@ browser.runtime.onMessage.addListener(
 			casileClassic: false,
 		}, function (items) {
 			if (items.casileClassic) {
-				browser.tabs.executeScript(
-					sender.tab.id, {
-					file: "classicThemeMain.js"
+				browser.scripting.executeScript({
+					target: {tabId: sender.tab.id}, 
+					files: ["classicThemeMain.js"]
 				});
 			}
 		});
