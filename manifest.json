@@ -6,8 +6,8 @@
 	"author": "Gabe Classon and other contributors to the Auto CCM project",
 	"homepage_url": "https://gabeclasson.com/projects/auto-ccm/",
 	"background": {
-		"scripts": ["background.js"],
-		"persistent": false
+		"service_worker": "background.js",
+		"type": "module"
 	},
 	"options_ui": {
 		"page": "optionspage.html",
