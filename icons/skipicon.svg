@@ -17,7 +17,92 @@
   sodipodi:docname="skipicon.svg"
   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
  <defs
-   id="defs2" />
+   id="defs2">
+  <marker
+    inkscape:stockid="Arrow2Send"
+    orient="auto"
+    refY="0.0"
+    refX="0.0"
+    id="marker1596"
+    style="overflow:visible;"
+    inkscape:isstock="true">
+   <path
+     id="path1594"
+     style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+     d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+     transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+  </marker>
+  <marker
+    inkscape:stockid="Arrow2Send"
+    orient="auto"
+    refY="0.0"
+    refX="0.0"
+    id="Arrow2Send"
+    style="overflow:visible;"
+    inkscape:isstock="true">
+   <path
+     id="path867"
+     style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+     d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+     transform="scale(0.3) rotate(180) translate(-2.3,0)" />
+  </marker>
+  <marker
+    inkscape:stockid="Arrow1Mend"
+    orient="auto"
+    refY="0.0"
+    refX="0.0"
+    id="Arrow1Mend"
+    style="overflow:visible;"
+    inkscape:isstock="true">
+   <path
+     id="path843"
+     d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+     style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+     transform="scale(0.4) rotate(180) translate(10,0)" />
+  </marker>
+  <marker
+    inkscape:stockid="Arrow1Lend"
+    orient="auto"
+    refY="0.0"
+    refX="0.0"
+    id="marker1144"
+    style="overflow:visible;"
+    inkscape:isstock="true">
+   <path
+     id="path1142"
+     d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+     style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+     transform="scale(0.8) rotate(180) translate(12.5,0)" />
+  </marker>
+  <marker
+    inkscape:stockid="Arrow1Lstart"
+    orient="auto"
+    refY="0.0"
+    refX="0.0"
+    id="Arrow1Lstart"
+    style="overflow:visible"
+    inkscape:isstock="true">
+   <path
+     id="path834"
+     d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+     style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+     transform="scale(0.8) translate(12.5,0)" />
+  </marker>
+  <marker
+    inkscape:stockid="Arrow1Lend"
+    orient="auto"
+    refY="0.0"
+    refX="0.0"
+    id="Arrow1Lend"
+    style="overflow:visible;"
+    inkscape:isstock="true">
+   <path
+     id="path837"
+     d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+     style="fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+     transform="scale(0.8) rotate(180) translate(12.5,0)" />
+  </marker>
+ </defs>
  <sodipodi:namedview
    id="base"
    pagecolor="#000000"
@@ -25,17 +110,18 @@
    borderopacity="1.0"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:zoom="1.4"
-   inkscape:cx="-57.354"
-   inkscape:cy="338.72"
+   inkscape:zoom="0.49498"
+   inkscape:cx="-290.55"
+   inkscape:cy="309.95"
    inkscape:document-units="mm"
-   inkscape:current-layer="text817"
+   inkscape:current-layer="g912"
    showgrid="false"
-   inkscape:window-width="3840"
-   inkscape:window-height="2035"
-   inkscape:window-x="-13"
-   inkscape:window-y="-13"
-   inkscape:window-maximized="1" />
+   inkscape:window-width="2560"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   showguides="false" />
  <metadata
    id="metadata5">
   <rdf:RDF>
@@ -61,10 +147,50 @@
      aria-label="↷"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:212.12425px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:34.34391"
      id="text816">
-    <path
-      d="M 18.744,233.3 Q 18.744,201.5 41.22,179.13 63.697,156.66 95.391,156.66 119.01,156.66 137.55,169.08 156.09,181.41 166.24,203.99 L 181.26,186.69 174.52,237.34 134.02,206.27 Q 152.36,210.2 156.81,207.93 L 154.02,202.02 Q 134.23,166.81 95.494,166.81 67.943,166.81 48.471,186.28 28.998,205.75 28.998,233.3 Z"
-      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Jokerman;-inkscape-font-specification:'Jokerman Bold';fill:#ffffff;stroke-width:34.34391"
-      id="path821" />
+    <g
+      id="g2038"
+      transform="translate(-1.3373e-5,-8.7362)">
+     <g
+       id="g912"
+       transform="translate(0,-5.291)">
+      <g
+        id="g910"
+        transform="translate(0,-25.009)">
+       <circle
+         r="21.761"
+         cy="263.93"
+         cx="100"
+         id="path815"
+         style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:95.95466;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke" />
+       <g
+         transform="translate(2.2467,19.111)"
+         id="g2032">
+        <g
+          id="g905"
+          transform="translate(0.68)">
+         <path
+           sodipodi:open="true"
+           d="M 27.134,226.62 A 70.041,70.041 0 0 1 89.84,163.05 70.041,70.041 0 0 1 164.03,212.74"
+           sodipodi:end="5.9937"
+           sodipodi:start="3.2289"
+           sodipodi:ry="70.041"
+           sodipodi:rx="70.041"
+           sodipodi:cy="232.73"
+           sodipodi:cx="96.908"
+           sodipodi:type="arc"
+           id="path815-4"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:212.12425px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:12;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke" />
+         <path
+           sodipodi:nodetypes="cccc"
+           inkscape:connector-curvature="0"
+           id="path1998-7-1"
+           d="M 171.77,181.26 135.2,201.98 172.99,226.09 Z"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:212.12425px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.11127px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        </g>
+       </g>
+      </g>
+     </g>
+    </g>
    </g>
   </g>
  </g>

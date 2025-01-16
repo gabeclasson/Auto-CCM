@@ -13,17 +13,21 @@ var suppressClosingDialogCourse = false; // Should all warning dialogs about lea
 var suppressClosingDialogTryIt = false; // Should all warning dialogs about the closing of individual Try-Its be suppressed? 
 var suppressSaveWarning = false; // Should the Ctrl+S save warning be suppressed? 
 var spellCheck = true; // Should spellcheck be turned on?
+var globalSelection;
 
 /*
 url: The root path for this chrome extension
 color: A string color representing what color the background should be.
+textStyleMenu: whether to also include extended text formatting options
 Creates the Auto CCM menu that is at the top of each Try-It with the given background color.
  */
 function createMouseMenu(url, color) {
 	var imageWidth = 25; // The width of each menu icon
-	var totalWidth = (imageWidth + 1) * 6 + 1; // The total width of the menu
+	var totalWidth = (imageWidth + 1) * 5 + 1; // The total width of the menu
 	var div = document.createElement("div"); // The primary container
 	div.style = "white-space: nowrap; position: absolute; top:0;z-index: 99;margin-right: calc(50% - " + totalWidth / 2 + "px);margin-left: calc(50% - " + totalWidth / 2 + "px);margin-top: 0px;width: auto;height: auto;font-family: sans-serif; color: white; opacity: 1; transition: opacity 600 ms ease 0s; background-color: " + color;
+	div.id = "mouseMenu";
+	div.className = "mouseMenu";
 	// The various buttons of the Auto CCM menu, created using the helper function createButton
 	var formatButton = createButton(url, "formatButton", "formaticon.svg", "Format (Ctrl+M)", simulateControlM, false);
 	div.appendChild(formatButton);
@@ -31,8 +35,6 @@ function createMouseMenu(url, color) {
 	div.appendChild(deformatButton);
 	var skipButton = createButton(url, "skipButton", "skipicon.svg", "Skip Selection (Ctrl+,)", null, false);
 	div.appendChild(skipButton);
-	var returnButton = createButton(url, "returnButton", "returnicon.svg", "Return to Selection (Ctrl+.)", null, false);
-	div.appendChild(returnButton);
 	var multiformatButton = createButton(url, "multiformatButton", "multiformaticon.svg", "Format All (Ctrl+;)", null, false);
 	div.appendChild(multiformatButton);
 	div.appendChild(multiformatButton);
@@ -40,7 +42,6 @@ function createMouseMenu(url, color) {
 	div.appendChild(stopButton);
 	// Several buttons should be disabled by default
 	skipButton.disabled = true;
-	returnButton.disabled = true;
 	multiformatButton.disabled = true;
 	// The primary stylesheet used by the Auto CCM menu as well as other facets of Auto CCM in the Try-It
 	var style = document.createElement("style"); // style for buttons
@@ -116,6 +117,197 @@ function createMouseMenu(url, color) {
 							color: white; 
 							opacity: 1;
 						}
+						
+						.textStyleMenu {
+							margin-left: 0px;
+							margin-right: 0px;
+							width: 100%;
+							height: 25px;
+							display: none;
+							text-align: center;
+							position: absolute;
+							z-index: 1000;
+							bottom: 0px;
+							border: solid gray;
+							border-width: 1px 0 1px 0;
+							background-color: white;
+							color: #6b6b6b;
+							overflow-y: hidden;
+							overflow-x: hidden;
+						}
+						
+						.innerTextStyleMenu {
+							display: inline-block;
+							text-align: center;
+							vertical-align: middle;
+							height: 25px;
+							width: auto;
+							overflow-y: hidden;
+							overflow-x: hidden;
+							width: auto;
+							position: relative;
+						}
+						
+						.customSelect {
+							-webkit-appearance: none;
+							-moz-appearance: none;
+							appearance: none;
+							position: relative;
+							height: 25px;
+							display: inline-block;
+							border: 0px;
+							padding-top: 3px;
+							padding-bottom: 3px;
+							padding-left: 6px;
+							padding-right: 3px;
+							margin-left: 2px;
+							margin-right: 2px;
+							background-image: url('${url}icons/selectarrowicon.svg');
+							background-size: 10px 10px;
+							background-position: calc(100% - 5px) 50%;
+							background-repeat: no-repeat;
+							color: #6b6b6b;
+							overflow: hidden;
+							vertical-align: top;
+						}
+						
+						#fontFamilySelect {
+							width: 145px;
+						}
+						
+						#fontSizeSelect {
+							width: 50px;
+						}
+						
+						.customSelect:hover {
+							filter: brightness(90%);
+							cursor: pointer;
+						}
+						
+						.customSelect:active {
+							filter: brightness(75%);
+							cursor: pointer;
+						}
+						
+						
+						.selectOption {
+							vertical-align: top;
+							padding-top: 3px;
+							padding-bottom: 3px;
+							display: inline-block;
+							height: 25px;
+							overflow: hidden;
+						}
+						
+						.menuSeparator {
+							vertical-align: top;
+							height: 25px;
+							width: 2px;
+							margin-left: 2px;
+							margin-right: 2px;
+						}
+						
+						.customInput {
+							vertical-align: top;
+						}
+						
+						.customToggle {
+							-webkit-appearance: none;
+							-moz-appearance: none;
+							appearance: none;
+						}
+						
+						.customToggleDiv {
+							display: inline-block;
+							vertical-align: top;
+							background: white;
+							margin-left: 2px;
+							margin-right: 2px;
+						}
+						
+						.customToggleDiv:hover {
+							filter:brightness(90%);
+							vertical-align: top;
+							cursor: pointer;
+						}
+						
+						.customToggleDiv:active {
+							filter:brightness(75%);
+							vertical-align: top;
+							cursor: pointer;
+						}
+						
+						.customToggleImg {
+							vertical-align: middle;
+							height: 25px;
+							width: 25px;
+						}
+						
+						.checkedToggle {
+							filter:brightness(75%);
+						}
+						
+						.checkedToggle:hover {
+							filter:brightness(75%);
+						}
+						
+						.checkedToggle:active {
+							filter:brightness(75%);
+						}
+						
+						.customColorDiv, .customButtonDiv {
+							display: inline-block;
+							vertical-align: top;
+							background: white;
+							margin-left: 2px;
+							margin-right: 2px;	
+						}
+						
+						.customColorInput:hover {
+							cursor: pointer;
+						}
+						
+						.customColorDiv:hover, .customButtonDiv:hover {
+							filter:brightness(90%);
+							cursor: pointer;
+						}
+						
+						.customColorDiv:active, .customButtonDiv:active {
+							filter:brightness(75%);
+							cursor: pointer;
+						}
+						
+						.customColorImg, .customButtonImg {
+							vertical-align: middle;
+							height: 25px;
+							cursor: pointer;
+						}
+						
+						.leftArrowDiv {
+							left: 0px;
+						}
+						
+						.rightArrowDiv {
+							right: 0px;
+						}
+						
+						.leftArrowDiv, .rightArrowDiv {
+							position: absolute;
+							margin-left: 0;
+							margin-right: 0;
+							padding-left: 2px;
+							padding-right: 2px;
+							z-index: 1001;
+						}
+						
+						.customColorInput {
+							opacity: 0;
+							position: absolute;
+							top: 0;
+							left: 0;
+							height: 25px;
+							width: 25px;
+						}
 						`;
 	if (document.head != null && document.body != null) {
 		document.body.insertBefore(div, document.body.children[0])
@@ -153,6 +345,429 @@ function createButton(url, id, iconname, title, onclickFunction, isEnd) {
 		buttonA.style.borderBottom = "1px solid white";
 	}
 	return buttonA;
+}
+
+function createTextStyleMenu(url, fontlist) {
+	// Parent span
+	var span = document.createElement("span");
+	span.classList = ["textStyleMenu"];
+	span.addEventListener("click", function (e) {
+		e.stopPropagation();
+	});
+	span.addEventListener("mousedown", function (e) {
+		e.stopPropagation();
+	});
+	span.id = "textStyleMenu";
+	// Arrow keys
+	// left arrow
+	var leftArrowDiv = document.createElement("div");
+	leftArrowDiv.className = "customColorDiv leftArrowDiv";
+	var leftArrowImg = document.createElement("img");
+	leftArrowImg.className = "customColorImg";
+	leftArrowImg.src = url + "icons/leftarrow.svg";
+	leftArrowDiv.appendChild(leftArrowImg);
+	leftArrowDiv.addEventListener("mousedown", function (e) {
+		var innerTextStyleMenu = document.getElementById("innerTextStyleMenu");
+		var offset = parseInt(innerTextStyleMenu.style.right);
+		if (offset != NaN) {
+			innerTextStyleMenu.style.right = (offset + 10) + "px"
+		}
+	});
+	span.appendChild(leftArrowDiv);
+	// right arrow
+	var rightArrowDiv = document.createElement("div");
+	rightArrowDiv.className = "customColorDiv rightArrowDiv";
+	var rightArrowImg = document.createElement("img");
+	rightArrowImg.className = "customColorImg";
+	rightArrowImg.src = url + "icons/rightarrow.svg";
+	rightArrowDiv.appendChild(rightArrowImg);
+	rightArrowDiv.addEventListener("mousedown", function (e) {
+		var innerTextStyleMenu = document.getElementById("innerTextStyleMenu");
+		var offset = parseInt(innerTextStyleMenu.style.right);
+		if (offset != NaN) {
+			innerTextStyleMenu.style.right = (offset - 10) + "px"
+		}
+	});
+	span.appendChild(rightArrowDiv);
+	// containing div
+	var div = document.createElement("div");
+	div.classList = ["innerTextStyleMenu"];
+	div.id = "innerTextStyleMenu";
+	div.style.right = "0px";
+	span.appendChild(div);
+	div.appendChild(createSeparator(url));
+	// font-family
+	var fontFamilySelect = document.createElement("select");
+	fontFamilySelect.className = "selectFont customSelect";
+	fontFamilySelect.id = "fontFamilySelect";
+	fontFamilySelect.title = "Font face";
+	fontlist.splice(0, 0, "");
+	for (var f = 0; f < fontlist.length; f++) {
+		var fontFamilyOption = document.createElement("option");
+		fontFamilyOption.value = fontlist[f];
+		fontFamilyOption.textContent = fontlist[f].split(",")[0];
+		fontFamilyOption.style.fontFamily = fontlist[f];
+		fontFamilyOption.style.paddingTop = "3px";
+		fontFamilyOption.style.paddingBottom = "3px";
+		fontFamilyOption.classList = "fontFamilyOption selectOption";
+		fontFamilySelect.appendChild(fontFamilyOption);
+	}
+	fontFamilySelect.addEventListener("change", function (e) {
+		var fontFamilySelect = e.target;
+		if (fontFamilySelect.selectedIndex == 0) {
+			return null;
+		}
+		console.log("Font family selected");
+		reselectGlobalSelection();
+		document.execCommand("fontName", "false", fontFamilySelect.options[fontFamilySelect.selectedIndex].value);
+		forceTextStyleMenuUpdate();
+	});
+	div.appendChild(fontFamilySelect);
+	// font-size
+	var fontSizeSelect = document.createElement("select");
+	fontSizeSelect.className = "customSelect";
+	fontSizeSelect.id = "fontSizeSelect";
+	fontSizeSelect.title = "Font size";
+	var fontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72, 144];
+	var blankSizeOption = document.createElement("option");
+	blankSizeOption.value = "";
+	fontSizeSelect.appendChild(blankSizeOption);
+	for (var f = 0; f < fontSizes.length; f++) {
+		var option = document.createElement("option");
+		option.classList = "selectOption";
+		option.value = fontSizes[f] + "px";
+		option.textContent = "" + fontSizes[f];
+		fontSizeSelect.appendChild(option);
+	}
+	fontSizeSelect.addEventListener("change", function (e) {
+		var fontSizeSelect = e.target;
+		if (fontSizeSelect.selectedIndex == 0) {
+			return null;
+		}
+		var value = fontSizeSelect.options[fontSizeSelect.selectedIndex].value;
+		setFontSize(value);
+	});
+	div.appendChild(fontSizeSelect);
+	div.appendChild(createSeparator(url));
+	if (document.body != null) {
+		document.body.insertBefore(span, document.body.children[0]);
+	}
+	// bold
+	div.appendChild(createCustomToggle("fontWeight", url + "icons/boldicon.svg", "bold", "Bold (Ctrl+B)"));
+	// italics
+	div.appendChild(createCustomToggle("fontStyle", url + "icons/italicsicon.svg", "italic", "Italics"));
+
+	// underline
+	div.appendChild(createCustomToggle("underline", url + "icons/underlineicon.svg", "underline", "Underline (Ctrl+U)"));
+	// strikethrough
+	div.appendChild(createCustomToggle("strikethrough", url + "icons/strikethroughicon.svg", "strikethrough", "Strikethrough"));
+	div.appendChild(createSeparator(url));
+	//justification
+	div.appendChild(createCustomToggle("justifyLeft", url + "icons/justifylefticon.svg", "justifyLeft", "Justify left"));
+	div.appendChild(createCustomToggle("justifyCenter", url + "icons/justifycentericon.svg", "justifyCenter", "Justify center"));
+	div.appendChild(createCustomToggle("justifyRight", url + "icons/justifyrighticon.svg", "justifyRight", "Justify right"));
+	div.appendChild(createCustomToggle("justifyFull", url + "icons/justifyfullicon.svg", "justifyFull", "Justify"));
+	div.appendChild(createSeparator(url));
+	// color
+	div.appendChild(createCustomColorInput("textColor", url + "icons/textcoloricon.svg", "foreColor", "Text color"));
+	div.appendChild(createCustomColorInput("highlightColor", url + "icons/highlighticon.svg", "hiliteColor", "Highlight color"));
+	div.appendChild(createCustomButton("removeHighlight", url + "icons/removehighlighticon.svg", "Remove highlight", function (e) {
+			reselectGlobalSelection();
+			document.execCommand("hiliteColor", false, "#00000000");
+		}));
+	div.appendChild(createSeparator(url));
+	// remove formatting
+	div.appendChild(createCustomButton("removeFormat", url + "icons/removeformattingicon.svg", "Remove formatting", function (e) {
+			reselectGlobalSelection();
+			document.execCommand("removeFormat");
+		}));
+	div.appendChild(createSeparator(url));
+	return;
+}
+
+function createCustomToggle(attributeName, iconPath, commandName, title) {
+	var div = document.createElement("div");
+	div.className = "customToggleDiv";
+	div.title = title;
+	var toggle = document.createElement("input");
+	toggle.type = "checkbox";
+	toggle.className = attributeName + "Toggle customToggle";
+	toggle.id = attributeName + "Toggle";
+	div.appendChild(toggle);
+	var img = document.createElement("img");
+	img.src = iconPath;
+	img.className = "customToggleImg";
+	div.appendChild(img);
+	div.addEventListener("click", function (e) {
+		var toggle = e.target.querySelector("input.customToggle") || e.target.parentElement.querySelector("input.customToggle");
+		reselectGlobalSelection();
+		document.execCommand(commandName);
+		if (toggle.checked) {
+			toggle.checked = false;
+			this.classList.remove("checkedToggle");
+		} else {
+			toggle.checked = true;
+			this.classList.add("checkedToggle");
+		}
+		forceTextStyleMenuUpdate();
+	});
+	return div;
+}
+
+function createCustomColorInput(attributeName, iconPath, commandName, title) {
+	var customColorDiv = document.createElement("div");
+	customColorDiv.className = "customColorDiv";
+	customColorDiv.title = title;
+	var customColorInput = document.createElement("input");
+	customColorInput.type = "color";
+	customColorInput.className = "customColorInput";
+	customColorInput.id = attributeName + "Input";
+	customColorInput.value = "#6b6b6b";
+	customColorInput.addEventListener("change", function (e) {
+		reselectGlobalSelection();
+		document.execCommand(commandName, false, this.value);
+	});
+	customColorDiv.appendChild(customColorInput);
+	var customColorImg = document.createElement("img");
+	customColorImg.className = "customColorImg";
+	customColorImg.id = attributeName + "Img";
+	customColorImg.src = iconPath;
+	customColorImg.style.background = "#6b6b6b";
+	customColorDiv.appendChild(customColorImg);
+	return customColorDiv;
+}
+
+function createCustomButton(idRoot, iconPath, title, onClickListener) {
+	var customButtonDiv = document.createElement("div");
+	customButtonDiv.className = "customButtonDiv";
+	customButtonDiv.title = title;
+	customButtonDiv.addEventListener("click", onClickListener);
+	customButtonDiv.id = idRoot + "Div";
+	var customButtonImg = document.createElement("img");
+	customButtonImg.className = "customButtonImg";
+	customButtonImg.id = idRoot + "Img";
+	customButtonImg.src = iconPath;
+	customButtonDiv.appendChild(customButtonImg);
+	return customButtonDiv;
+}
+
+function setFontSize(size) {
+	var sel = window.getSelection();
+
+	var selectedHtml = "";
+	if (sel.rangeCount) {
+		var container = document.createElement("div");
+		for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+			container.appendChild(sel.getRangeAt(i).cloneContents());
+		}
+		const children = container.getElementsByTagName("*")
+			for (let child of children) {
+				if (child.style.fontSize) {
+					child.style.fontSize = `${size}`
+				}
+			}
+			selectedHtml = container.innerHTML;
+	}
+
+	let html = `<font style="font-size: ${size};">${selectedHtml}</font>`;
+	reselectGlobalSelection();
+	document.execCommand('insertHTML', false, html);
+}
+
+function createSeparator(url) {
+	var img = document.createElement("img");
+	img.src = url + "icons/separator.svg";
+	img.className = "menuSeparator";
+	return img;
+}
+
+function forceTextStyleMenuUpdate(fontFamilySelect) {
+	var fontFamilySelect = document.getElementById("fontFamilySelect");
+	fontFamilySelect.style.fontFamily = fontFamilySelect.options[fontFamilySelect.selectedIndex].value;
+	var toggleDivs = document.getElementsByClassName("customToggleDiv");
+	for (var t = 0; t < toggleDivs.length; t++) {
+		var toggleInput = toggleDivs[t].querySelector("input.customToggle");
+		if (toggleInput.checked) {
+			toggleDivs[t].classList.add("checkedToggle");
+		} else {
+			toggleDivs[t].classList.remove("checkedToggle");
+		}
+	}
+	var customColorInputs = document.getElementsByClassName("customColorInput");
+	for (var c = 0; c < customColorInputs.length; c++) {
+		var customColorInput = customColorInputs[c];
+		var customColorDiv = customColorInput.closest("div.customColorDiv");
+		var customColorImg = customColorDiv.querySelector("img.customColorImg");
+		customColorImg.style.background = customColorInput.value;
+	}
+}
+
+function resetTextStyleMenu(fontFamilySelect) {
+	document.getElementById("fontFamilySelect").selectedIndex = 0;
+	document.getElementById("fontSizeSelect").selectedIndex = 0;
+	var toggles = document.getElementsByClassName("customToggle");
+	for (var t = 0; t < toggles.length; t++) {
+		toggles[t].checked = false;
+	}
+	var colors = document.getElementsByClassName("customColorInput");
+	for (var c = 0; c < colors.length; c++) {
+		colors[c].value = "#6b6b6b";
+	}
+	forceTextStyleMenuUpdate();
+}
+
+/*Selection change observer*/
+function onSelectionChange(e) {
+	globalSelection = window.getSelection().getRangeAt(0);
+	var selectedNodes = getSelectedNodes(window);
+	if (selectedNodes.length == 0) {
+		var selection = window.getSelection();
+		if (selection.isCollapsed) {
+			selectedNodes = [selection.anchorNode];
+		}
+	}
+	if (selectedNodes.length == 0 || (selectedNodes[0] != null && selectedNodes[0].parentElement != null && selectedNodes[0].parentElement.closest(".textStyleMenu") != null) || (selectedNodes[0] != null && selectedNodes[0].parentElement != null && selectedNodes[0].parentElement.closest(".PasteTarget") != null)) {
+		resetTextStyleMenu();
+		return;
+	}
+	// Font-family
+	var fontSelect = document.getElementById("fontFamilySelect");
+	var font = getPrevailingStyle(selectedNodes, "font-family");
+	var fontName = null;
+	if (font != null) {
+		fontName = font.split(",")[0];
+		fontName = fontName.trim();
+		if (fontName[0] == '"' || fontName[0] == "'") {
+			fontName = fontName.substring(1);
+		}
+		if (fontName[fontName.length - 1] == '"' || fontName[fontName.length - 1] == "'") {
+			fontName = fontName.substring(0, fontName.length - 1);
+		}
+	}
+	var fontSelectOptions = fontSelect.options;
+	for (var i = 0; i < fontSelectOptions.length; i++) {
+		if (fontSelectOptions[i].textContent == fontName) {
+			fontSelect.selectedIndex = i;
+			break;
+		}
+	}
+	if (font == null || i == fontSelectOptions.length) {
+		fontSelect.selectedIndex = 0;
+	}
+
+	// Font-size
+	var fontSizeSelect = document.getElementById("fontSizeSelect");
+	var fontSize = getPrevailingStyle(selectedNodes, "font-size");
+	var fontSizeSelectOptions = fontSizeSelect.options;
+	for (var i = 0; i < fontSizeSelectOptions.length; i++) {
+		if (fontSizeSelectOptions[i].value == fontSize) {
+			fontSizeSelect.selectedIndex = i;
+			break;
+		}
+	}
+	if (fontSize == null || i == fontSizeSelectOptions.length) {
+		fontSizeSelect.selectedIndex = 0;
+	}
+	// Font-weight
+	var fontWeightInput = document.getElementById("fontWeightToggle");
+	var fontWeight = getPrevailingStyle(selectedNodes, "font-weight");
+	fontWeightInput.checked = fontWeight > 400;
+	// Italics
+	var fontStyleInput = document.getElementById("fontStyleToggle");
+	var fontStyle = getPrevailingStyle(selectedNodes, "font-style");
+	fontStyleInput.checked = fontStyle != null && fontStyle.includes("italic");
+	// Underline & Strikethrough
+	var underlineInput = document.getElementById("underlineToggle");
+	var strikethroughInput = document.getElementById("strikethroughToggle");
+	var textDecoration = getPrevailingStyle(selectedNodes, "webkitTextDecorationsInEffect", "textDecorationLine");
+	underlineInput.checked = textDecoration != null && textDecoration.includes("underline");
+	strikethroughInput.checked = textDecoration != null && textDecoration.includes("line-through");
+	// Justification
+	var justifyLeftInput = document.getElementById("justifyLeftToggle");
+	var justifyRightInput = document.getElementById("justifyRightToggle");
+	var justifyCenterInput = document.getElementById("justifyCenterToggle");
+	var justifyFullInput = document.getElementById("justifyFullToggle");
+	var justification = getPrevailingStyle(selectedNodes, "text-align");
+	justifyLeftInput.checked = justification != null && justification.includes("left");
+	justifyRightInput.checked = justification != null && justification.includes("right");
+	justifyCenterInput.checked = justification != null && justification.includes("center");
+	justifyFullInput.checked = justification != null && justification.includes("justify");
+	//Color
+	var textColorInput = document.getElementById("textColorInput");
+	var textColor = getPrevailingStyle(selectedNodes, "color");
+	if (textColor != null) {
+		textColorInput.value = convertRBGStrToHexStr(textColor);
+	} else {
+		textColorInput.value = "#6b6b6b";
+	}
+	// Hilight color
+	var highlightColorInput = document.getElementById("highlightColorInput");
+	var highlightColor = getPrevailingStyle(selectedNodes, "background-color");
+	if (highlightColor != null) {
+		var hexStr = convertRBGStrToHexStr(highlightColor);
+		if (hexStr.length < 8) {
+			highlightColorInput.value = hexStr;
+		} else {
+			highlightColorInput.value = "#6b6b6b";
+		}
+	} else {
+		highlightColorInput.value = "#6b6b6b";
+	}
+	// Force VISUAL updates to menu forceTextStyleMenuUpdate();
+	forceTextStyleMenuUpdate();
+}
+
+/*
+selectionArray: An array of selection nodes
+attributeName: the attribute to search for within the nodes
+backupAttributeName: the backup attribute to search for within the nodes, if the attributeName as initially given does not exist
+Gets the prevailing style (of an attribute) that is applied to a given selection. Returns null if the
+ */
+function getPrevailingStyle(selectionArray, attributeName, backupAttributeName) {
+	var style = undefined
+		for (var i = 0; i < selectionArray.length; i++) {
+			var node = selectionArray[i];
+			if (node == null) {
+				return null;
+			}
+			if (!(node instanceof Element)) {
+				node = node.parentElement;
+			}
+			if (node == null) {
+				return null;
+			}
+			if (node.textContent.length > 0 && node.tagName != "BR") {
+				attributeValue = window.getComputedStyle(node, null)[attributeName];
+				if (attributeValue == null && backupAttributeName != null) { // If the attributeName does not exist in the computed styles, switch to using the backupAttributeName
+					var temp = attributeName;
+					attributeName = backupAttributeName;
+					backupAttributeName = temp;
+					attributeValue = window.getComputedStyle(node, null)[attributeName];
+				}
+				if (style != null && !style.includes(attributeValue) && !attributeValue.includes(style)) {
+					return null;
+				} else if (style != attributeValue && attributeValue.includes(style)) {
+					// do nothing... the prevailing style can be maintained
+				} else {
+					style = attributeValue;
+				}
+			}
+		}
+		return style;
+}
+
+function convertRBGStrToHexStr(rgbString) {
+	var rgbVals = rgbString.split(/[)(]/g)[1];
+	var rgbArray = rgbVals.split(",");
+	var out = "#";
+	for (var i = 0; i < rgbArray.length; i++) {
+		var hexPart = parseInt(rgbArray[i]).toString(16);
+		if (hexPart.length < 2) {
+			hexPart = "0" + hexPart;
+		}
+		out += hexPart;
+	}
+	return out;
 }
 
 /*
@@ -201,10 +816,8 @@ function simulateControlM() {
 			"keyCode": 77,
 			"which": 77
 		});
-	console.log(window.getSelection());
 	if (window.getSelection != null) {
 		var anchorNode = window.getSelection().anchorNode;
-		console.log(anchorNode);
 		if (anchorNode != null) {
 			var dispatchNode = anchorNode.parentElement.closest("li.TextCell");
 			dispatchNode.dispatchEvent(keyDown);
@@ -217,9 +830,11 @@ function simulateControlM() {
 // Deformats selected cells
 function controlApostrophe() {
 	var selectedNodes = getSelectedNodes(window);
+	if (selectedNodes == null || selectedNodes.length == 0) {
+		return;
+	}
 	var previousNode = null;
 	for (var i = 0; i < selectedNodes.length; i++) {
-		console.log(selectedNodes[i]);
 		if (selectedNodes[i].classList != null && selectedNodes[i].classList.contains("Inline")) {
 			var newNode = document.createTextNode(selectedNodes[i].textContent);
 			selectedNodes[i].replaceWith(newNode);
@@ -261,6 +876,209 @@ function onDocumentKeyDown(e) {
 		if (suppressSaveWarning || confirm("Are you sure you want to save? This will overwrite any previous saves.")) {
 			controlS();
 		}
+	}
+	if (e.key == "Tab" && !e.shiftKey) {
+		// CASE 1
+		var activeCell = document.activeElement.closest("li.Cell") || document.querySelector("li.Selected");
+		var insertionBarElement = document.getElementsByClassName("InsertionBar")[0];
+		// If there is already an insertion bar
+		if (insertionBarElement != null) {
+			var closestCellGroup = insertionBarElement.parentElement.closest("li.CellGroup");
+			// And the insertion bar is on the last element in a group
+			if (insertionBarElement.nextElementSibling == null && closestCellGroup != null) {
+				e.preventDefault();
+				closestCellGroup.classList.add("InsertionBar");
+				var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+				if (pasteTarget != null) {
+					pasteTarget.focus();
+				}
+			} else { // Otherwise, if the insertion bar is not on the last element of the group
+				// When at the top of the page
+				if (insertionBarElement.classList.contains("DummyCell")) {
+					insertionBarElement.tabIndex = 0;
+					insertionBarElement.focus();
+				}
+				// Last element on page: do nothing
+				else if (insertionBarElement.nextElementSibling == null) {
+					return;
+				}
+				// If next element is OutputCell or MessageCell
+				else if (insertionBarElement.nextElementSibling.matches("li.OutputCell") || insertionBarElement.nextElementSibling.matches("li.MessageCell")) {
+					e.preventDefault();
+					var outputStringCell = insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']");
+					if (outputStringCell != null) {
+						outputStringCell.click();
+					}
+					// If output cell could not be selected
+					if (outputStringCell != document.activeElement) {
+						// If output cell is last element of an evaluation group
+						if ((insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.OutputCell") || insertionBarElement.nextElementSibling.matches("ul.EvaluationGroup > li.MessageCell")) && insertionBarElement.nextElementSibling.nextElementSibling == null) {
+							insertionBarElement.nextElementSibling.parentElement.parentElement.classList.add("InsertionBar");
+						} else {
+							insertionBarElement.nextElementSibling.classList.add("InsertionBar");
+						}
+						var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+						if (pasteTarget != null) {
+							pasteTarget.focus();
+						}
+					}
+				} else {
+					e.preventDefault();
+					insertionBarElement.nextElementSibling.querySelector("[contenteditable='true']").focus();
+				}
+			}
+			insertionBarElement.classList.remove("InsertionBar");
+		}
+		// If there is no insertion bar and there is an active cell, make an insertion bar
+		else if (activeCell != null) {
+			e.preventDefault();
+			if (activeCell.closest("li.CellGroup.Closed") == null) {
+				// Output cells should not have a insertion bar directly associated with them
+				if (activeCell.matches("ul.EvaluationGroup > li.OutputCell")) {
+					activeCell.parentElement.parentElement.classList.add("InsertionBar");
+				} else {
+					activeCell.classList.add("InsertionBar");
+				}
+			} else {
+				var lastClosedCell;
+				var currentElement = activeCell;
+				while (currentElement.parentElement != null && currentElement.className != "Notebook") {
+					if (currentElement.matches("li.CellGroup.Closed")) {
+						lastClosedCell = currentElement;
+					}
+					currentElement = currentElement.parentElement;
+				}
+				if (lastClosedCell != null) {
+					lastClosedCell.classList.add("InsertionBar");
+				}
+			}
+			var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+			if (pasteTarget != null) {
+				pasteTarget.focus();
+			}
+			if (activeCell.classList.contains("Selected")) {
+				activeCell.classList.remove("Selected")
+				activeCell.querySelector("ul, dl, ol").classList.remove("Selected");
+			}
+		}
+	} else if (e.key == "Tab" && e.shiftKey) {
+		e.preventDefault();
+		// CASE 1
+		var activeCell = document.activeElement.closest("li.Cell") || document.querySelector("li.Selected");
+		var insertionBarElement = document.getElementsByClassName("InsertionBar")[0];
+		// If there is already an insertion bar
+		if (insertionBarElement != null) {
+
+			// If the insertion bar is on a cell
+			if (insertionBarElement.classList.contains("Cell")) {
+				focusElement(insertionBarElement);
+				if (!insertionBarElement.contains(document.activeElement)) {
+					var currentCell = insertionBarElement;
+					var previousElement = currentCell.previousElementSibling;
+					var recursionCounter = 0;
+					while (previousElement == null && recursionCounter < 15) {
+						currentCell = currentCell.parentElement.closest("li");
+						previousElement = currentCell.previousElementSibling;
+						recursionCounter++;
+					}
+					addInsertionBar(previousElement);
+				}
+			}
+			// If the insertion bar is on a group
+			else if (insertionBarElement.classList.contains("CellGroup")) {
+				// And if the insertion bar group is open
+				if (insertionBarElement.classList.contains("Open")) {
+					// if it is on an evaluation group
+					if (insertionBarElement.classList.contains("EvaluationGroup")) {
+						var lastElement = insertionBarElement.lastElementChild.lastElementChild;
+						focusElement(lastElement);
+						if (!lastElement.contains(document.activeElement)) {
+							addInsertionBar(lastElement.previousElementSibling);
+						}
+					}
+					//otherwise
+					else {
+						var lastChildren = insertionBarElement.lastElementChild.querySelectorAll("li");
+						var lastChild = lastChildren[lastChildren.length - 1];
+						if (lastChild != null) {
+							addInsertionBar(lastChild);
+						}
+					}
+				}
+				// And if the insertion bar group is closed
+				else {
+					var firstSelectableElement = insertionBarElement.querySelector("[contenteditable='true']");
+					focusElement(firstSelectableElement);
+				}
+			}
+		}
+		// If there is not an insertion bar
+		else if (activeCell != null) {
+			var currentCell = activeCell;
+			var previousElement = currentCell.previousElementSibling;
+			var recursionCounter = 0;
+			while (previousElement == null && recursionCounter < 15) {
+				currentCell = currentCell.parentElement.closest("li");
+				previousElement = currentCell.previousElementSibling;
+				recursionCounter++;
+			}
+			if (recursionCounter < 15) {
+				addInsertionBar(previousElement);
+			}
+		}
+		// Remove anything that might be selected
+		var selectedElements = document.querySelectorAll(".Selected");
+		for (var s = 0; s < selectedElements.length; s++) {
+			selectedElements[s].classList.remove("Selected");
+		}
+	}
+}
+
+function onDocumentFocusIn(e) {
+	var textStyleMenu = document.getElementById("textStyleMenu");
+	if ((e.target.matches("[contenteditable=true]") && !e.target.classList.contains("PasteTarget")) && !e.target.classList.contains("Clipboard")) {
+		textStyleMenu.style.display = "inline-block";
+	} else if (e.target.closest("#textStyleMenu") != null || e.target.closest("#mouseMenu") != null) {
+		// Do nothing
+	} else {
+		textStyleMenu.style.display = "none";
+	}
+}
+
+function reselectGlobalSelection() {
+	try {
+		if (globalSelection instanceof Range) {
+			var sel = window.getSelection();
+			sel.removeAllRanges();
+			sel.addRange(globalSelection);
+		}
+	} catch (e) {
+		console.log(e);
+		console.trace();
+	}
+}
+
+function focusElement(element) {
+	element.classList.remove("InsertionBar");
+	var stringCell = element.contenteditable ? element : element.querySelector("[contenteditable='true']");
+	if (stringCell != null) {
+		stringCell.click();
+		stringCell.focus();
+	} else {
+		element.click();
+		element.focus();
+	}
+}
+
+function addInsertionBar(element) {
+	var insertionBarElement = document.querySelector(".InsertionBar");
+	if (insertionBarElement != null) {
+		insertionBarElement.classList.remove("InsertionBar");
+	}
+	element.classList.add("InsertionBar");
+	var pasteTarget = document.getElementsByClassName("PasteTarget")[0];
+	if (pasteTarget != null) {
+		pasteTarget.focus();
 	}
 }
 
@@ -383,7 +1201,6 @@ function onNotebookChange(mutationsList, observer) {
 	for (var g = 0; g < mutationsList.length; g++) {
 		if (mutationsList[g].type == "childList" || mutationsList[g].type == "subtree") { // Added or deleted nodes
 			for (var h = 0; h < mutationsList[g].addedNodes.length; h++) {
-				console.log(mutationsList[g].addedNodes[h]);
 				var classList = mutationsList[g].addedNodes[h].classList;
 				if (detectUnsavedChanges && (classList == null || (!classList.contains("CellMenu")))) { // if you're detecting changes and something changes...
 					setChangedState(true); // ...set hasChanged to true
@@ -446,13 +1263,11 @@ function onBodyChange(mutationsList, observer) {
 			for (var h = 0; h < mutationsList[g].addedNodes.length; h++) {
 				var classList = mutationsList[g].addedNodes[h].classList;
 				if (detectUnsavedChanges && classList.contains("x-window-dlg")) {
-					console.log(mutationsList[g].addedNodes[h]);
 					var buttons = mutationsList[g].addedNodes[h].getElementsByTagName("button");
 					if (buttons != null) {
 						for (var j = 0; j < buttons.length; j++) {
 							console.log("DIALOGCHECK");
-							if (buttons[j].textContent == "Yes") {
-								console.log(buttons[j]);
+							if (buttons[j].textContent == "Hand in") {
 								buttons[j].addEventListener("click", handInOnClick);
 							}
 						}
@@ -516,6 +1331,12 @@ browser.runtime.sendMessage({
 	var items = response.items;
 	var url = response.url;
 	createMouseMenu(url, items.menubackgroundcolor);
+	var textStyleMenu = items.textStyleMenu;
+	if (textStyleMenu) {
+		createTextStyleMenu(url, items.fontlist);
+		document.addEventListener("focusin", onDocumentFocusIn);
+		document.addEventListener("selectionchange", onSelectionChange);
+	}
 	spellCheck = items.spellCheck;
 	unsavedIndicator = items.unsavedIndicator;
 	suppressClosingDialogTryIt = items.suppressClosingDialogTryIt;
@@ -525,14 +1346,13 @@ browser.runtime.sendMessage({
 	suppressSaveWarning = items.suppressSaveWarning;
 	detectUnsavedChanges = unsavedIndicator || (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow || !suppressClosingDialogCourse))
 
-	if (items.spellCheck) {
+	if (spellCheck) {
 		// Turn on spellcheck for every existing student cell or text cell in the document
 		var allStudents = document.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student");
+		// Turn on spellcheck for every existing student cell or text cell in the document
 		for (var k = 0; k < allStudents.length; k++) {
 			allStudents[k].spellcheck = "true";
 		}
-		window.allowlist = items.allowlist;
-		window.blocklist = items.blocklist;
 	}
 	// Unsaved changes stuff
 	// Find the save button

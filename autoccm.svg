@@ -16,9 +16,9 @@
   id="svg8"
   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
   sodipodi:docname="autoccm.svg"
-  inkscape:export-filename="C:\Users\gabri\Desktop\Auto Ctrl M\storeicon.png"
-  inkscape:export-xdpi="10.79"
-  inkscape:export-ydpi="10.79">
+  inkscape:export-filename="C:\Users\gabri\Desktop\Auto CCM\Git\Auto-CCM\storeicon.png"
+  inkscape:export-xdpi="10.795"
+  inkscape:export-ydpi="10.795">
  <defs
    id="defs2" />
  <sodipodi:namedview
@@ -28,14 +28,14 @@
    borderopacity="1.0"
    inkscape:pageopacity="0.0"
    inkscape:pageshadow="2"
-   inkscape:zoom="0.35355"
-   inkscape:cx="633.02"
-   inkscape:cy="888.29"
+   inkscape:zoom="0.5"
+   inkscape:cx="-252.4"
+   inkscape:cy="609.58"
    inkscape:document-units="mm"
    inkscape:current-layer="layer1"
    showgrid="false"
-   inkscape:window-width="1920"
-   inkscape:window-height="1137"
+   inkscape:window-width="2560"
+   inkscape:window-height="1017"
    inkscape:window-x="-8"
    inkscape:window-y="-8"
    inkscape:window-maximized="1"
@@ -51,7 +51,7 @@
     <dc:format>image/svg+xml</dc:format>
     <dc:type
       rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-    <dc:title />
+    <dc:title></dc:title>
    </cc:Work>
   </rdf:RDF>
  </metadata>
@@ -60,17 +60,6 @@
    inkscape:groupmode="layer"
    id="layer1"
    transform="translate(45.59,2.0901)">
-  <text
-    xml:space="preserve"
-    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:262.78812px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.56971;"
-    x="31.861"
-    y="203.48"
-    id="text827"><tspan
-     sodipodi:role="line"
-     id="tspan825"
-     x="31.861"
-     y="203.48"
-     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';stroke-width:6.56971;fill:#000000;">π</tspan></text>
   <text
     xml:space="preserve"
     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5832px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458"
@@ -299,5 +288,10 @@
       style="fill:#000000;fill-opacity:1" />
    </g>
   </g>
+  <path
+    id="path858"
+    d="M 42.523,125.51 46.855,125.84 C 52.145,120.7 56.151,105.5 82.498,108.47 72.029,173.61 42.456,180.48 42.298,193.84 41.844,201.41 47.165,206.07 53.625,206.34 74.217,205.64 77.329,177.99 93.878,108.31 H 120.34 C 115.35,132.87 107.93,157.44 103.99,181.51 101.97,197.52 110.46,206.07 123.26,206.18 144.25,206.88 154.51,182.27 156.04,171.77 H 151.5 C 149.79,180.43 144.73,186.65 135.8,187.03 111.56,187.35 131.13,144.5 136.53,108.63 L 165.21,108.8 167.73,90.463 C 48.418,89.883 63.909,87.543 42.523,125.51 Z"
+    style="fill:#050202;fill-opacity:1;stroke:none;stroke-width:0.21194"
+    inkscape:connector-curvature="0" />
  </g>
 </svg>

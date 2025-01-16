@@ -18,7 +18,7 @@ if (allowList != null && allowList.length > 0) {
 // Building the regex selector: Auto CCM uses a very complicated regular expression to identify math. 
 var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)?))?)";
 var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?" + allowListStr + ")(?!([A-Za-z])|([\"])))";
-var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|@+|&&|<=|>=|=+)";
+var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|(@+)|(&&)|(<=)|(>=)|((?<!(^[\\s\\u200B]?|^[\\s\\u200B]?=))==?))";
 var matchifadjacent = "(" + "([\\(\\s]*\\([\\(\\s]*)?[\\w\\d\\(\\)]*([\\(\\s]*\\([\\(\\s]*)?" + ")";
 var possibleprefixoperators = "([\\-\\\\\\(])";
 var possiblepostfixoperators = "([!\\)])";
@@ -304,6 +304,35 @@ function controlPeriod() {
 	selectText(nodeBounds[0], nodeBounds[1], nodeBounds[2], nodeBounds[3]);
 }
 
+// Forces persistent Control+. while Auto CCM is running
+function onSelectionChange(e) {
+	nodeBounds = determineNodeOffsetBound(currentBounds);
+	if (nodeBounds == null) {
+		return;
+	}
+	let sel = document.getSelection();
+	let anchorNode = sel.anchorNode;
+	if (anchorNode != nodeBounds[0]) {
+		controlPeriod();
+		return;
+	}
+	let anchorOffset = sel.anchorOffset;
+	if (anchorOffset != nodeBounds[1]) {
+		controlPeriod();
+		return;
+	}
+	let extentNode = sel.extentNode;
+	if (extentNode != nodeBounds[2]) {
+		controlPeriod();
+		return;
+	}
+	let extentOffset = sel.extentOffset;
+	if (extentOffset != nodeBounds[3]) {
+		controlPeriod();
+		return;
+	}
+}
+
 // Ctrl+;: formats all math
 function controlSemicolon() {
 	if (formatAll || !document.isOpen) { // forbid formatting all if Auto CCM is currently formatting all or if the document is not open
@@ -311,7 +340,6 @@ function controlSemicolon() {
 	}
 	if (requestedFormatAll) { // Only allow formatting all if the user has pressed twice
 		formatAll = true;
-		controlPeriod();
 		simulateControlMandSkip();
 	} else { // Give the user a message that they have selected "format all"
 		floatingAlert("You have entered Ctrl+; or clicked \"Format All.\" Performing this function will format every instance of unformatted math in the document. It is highly recommended that you save before proceeding. You will not have an opportunity to intervene if Auto CCM formats something that should not be formatted. If there is a large quantity of math to be formatted or high strain on the CAS-ILE servers, your browser tab may freeze or crash. To confirm that you would like to execute this function, enter Ctrl+; or click \"Format All\" again. If you would not like to proceed, close this notification.", "rgb(255,127,39)", 60000, 600, true);
@@ -391,8 +419,7 @@ function keyUpListener(e) {
 			return;
 		}
 	}
-	// Ctrl+M and Ctrl+, are treated the same by Auto CCM: both advance the highlighted portion to the next instance of unformatted math
-	if (e.key === 'm' && e.ctrlKey || e.key == ',' && e.ctrlKey) {
+	if (e.key == ',' && e.ctrlKey) {
 		controlComma();
 	}
 	// Ctrl+. rehighlights the current selection of unformatted math
@@ -519,6 +546,7 @@ Ends the current session of Auto CCM
 function endNow() {
 	if (document.isOpen) {
 		window.removeEventListener('keyup', document.previousListener);
+		document.removeEventListener('selectionchange', document.previousSelectionListener);
 		if (!hasNotifiedOn) {
 			floatingAlert("Auto CCM has nothing to format.", "#2196F3", 2000, 600, false);
 		} else {
@@ -555,14 +583,11 @@ function startMenu() {
 	originalMenuSettings.formatButtonOnClick = formatButton.onclick;
 	formatButton.onclick = simulateControlMandSkip;
 	var skipButton = document.getElementById("skipButton");
-	var returnButton = document.getElementById("returnButton");
 	var multiformatButton = document.getElementById("multiformatButton");
 	var stopButton = document.getElementById("stopButton");
 	skipButton.onclick = controlComma;
-	returnButton.onclick = controlPeriod;
 	multiformatButton.onclick = controlSemicolon;
 	skipButton.disabled = false;
-	returnButton.disabled = false;
 	multiformatButton.disabled = false;
 	var stopButtonImage = stopButton.getElementsByTagName("img")[0];
 	originalMenuSettings.stopButtonImage = stopButtonImage.src;
@@ -580,14 +605,11 @@ function endMenu() {
 		formatButton.onclick = originalMenuSettings.formatButtonOnClick;
 	}
 	var skipButton = document.getElementById("skipButton");
-	var returnButton = document.getElementById("returnButton");
 	var multiformatButton = document.getElementById("multiformatButton");
 	var stopButton = document.getElementById("stopButton");
 	skipButton.onclick = null;
-	returnButton.onclick = null;
 	multiformatButton.onclick = null;
 	skipButton.disabled = true;
-	returnButton.disabled = true;
 	multiformatButton.disabled = true;
 	var stopButtonImage = stopButton.getElementsByTagName("img")[0];
 	stopButtonImage.src = originalMenuSettings.stopButtonImage;
@@ -625,6 +647,11 @@ if (allStudents.length === 0) {
 	}
 	window.addEventListener('keyup', keyUpListener);
 	document.previousListener = keyUpListener;
+	if (document.previousSelectionListener != undefined) {
+		document.removeEventListener('selectionchange', document.previousSelectionListener);
+	}
+	document.addEventListener('selectionchange', onSelectionChange);
+	document.previousSelectionListener = onSelectionChange;
 	// Get the bounds of the next selection
 	bounds = controlMNext();
 	if (bounds == undefined) {
@@ -636,7 +663,7 @@ if (allStudents.length === 0) {
 		endNow();
 	} else {
 		if (isUsurping) {
-			floatingAlert("Auto CCM is usurping another session of itself.", "rgb(255,127,39)", 2000, 600, false);
+			floatingAlert("Auto CCM is usurping another instance of itself.", "rgb(255,127,39)", 2000, 600, false);
 		} else {
 			floatingAlert("Auto CCM is starting.", "#2196F3", 2000, 600, false);
 		}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:cc="http://creativecommons.org/ns#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  width="200mm"
+  height="200mm"
+  viewBox="0 0 200 200"
+  version="1.1"
+  id="svg8"
+  sodipodi:docname="textcoloricon.svg"
+  inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+ <defs
+   id="defs2" />
+ <sodipodi:namedview
+   id="base"
+   pagecolor="#c92f2f"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:zoom="0.7"
+   inkscape:cx="156.22"
+   inkscape:cy="324.53"
+   inkscape:document-units="mm"
+   inkscape:current-layer="text818"
+   showgrid="false"
+   inkscape:window-width="2560"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1" />
+ <metadata
+   id="metadata5">
+  <rdf:RDF>
+   <cc:Work
+     rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type
+      rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:title></dc:title>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g
+   inkscape:label="Layer 1"
+   inkscape:groupmode="layer"
+   id="layer1"
+   transform="translate(0,-97)">
+  <g
+    aria-label="π"
+    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.4762"
+    id="text817">
+   <g
+     aria-label="↷"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:212.12425px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:34.34391"
+     id="text816">
+    <g
+      aria-label="B"
+      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:175.00137px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;stroke-width:150.25575"
+      id="text818">
+     <g
+       aria-label="A"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:144.21692px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;stroke-width:541.73553"
+       id="text821-9"
+       transform="translate(75.905,-34.745)">
+      <path
+        d="M 124.1,331.75 H -75.905 V 131.75 H 124.09 Z M -30.905,271.75 V 291.75 H 79.095 V 271.75 Z"
+        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-family:Montserrat;-inkscape-font-specification:'Montserrat Semi-Bold';fill:#ffffff;fill-opacity:1;stroke-width:541.73553"
+        id="path850"
+        inkscape:connector-curvature="0"
+        sodipodi:nodetypes="cccccccccc" />
+     </g>
+     <g
+       aria-label="A"
+       transform="scale(1.0591,0.94419)"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:136.16214px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;stroke-width:511.47864"
+       id="text821">
+      <path
+        d="M 123.56,239.29 116.07,220.77 H 71.953 L 64.464,239.29 H 42.27 L 83.663,143.98 H 105.86 L 146.57,239.29 Z M 79.033,203.48 H 109.13 L 94.147,166.44 Z"
+        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-family:Montserrat;-inkscape-font-specification:'Montserrat Semi-Bold';fill:#6b6b6b;fill-opacity:1;stroke-width:511.47864"
+        id="path822" />
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>
