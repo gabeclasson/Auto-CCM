@@ -139,6 +139,8 @@ function onStudentPanelChange(mutationList, observer) {
 						childList: true,
 						subtree: false
 					});
+					var tabBar = addedNodes[i].querySelectorAll("[id^=tabbar][id$=targetEl]")[0];
+					monitorTryItCloseButtons(tabBar);
 				}
 			}
 		}
@@ -151,11 +153,12 @@ function onTryItUpdated(mutationList, observer) {
 		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
 			var addedNodes = mutation.addedNodes;
 			for (var i = 0; i < addedNodes.length; i++) {
+				console.log(addedNodes[i])
 				var frame1 = addedNodes[i].getElementsByTagName('iframe')[0];
 				frame1.onload = function () {
 					injectFrame(frame1);
 				};
-				refreshWindowOnBeforeUnload();
+
 			}
 		}
 	});
@@ -201,6 +204,38 @@ function onDocumentKeyDown(e) {
 
 document.addEventListener("keydown", onDocumentKeyDown)
 
+// Handling closing warning dialogs
+
+let recentlyClosedTab;
+
+function monitorTryItCloseButtons(tabBar) {
+	function onTabAdded(mutationList, observer) {
+		mutationList.forEach((mutation) => {
+			if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
+				var addedNodes = mutation.addedNodes;
+				console.log("Tab added");
+				for (var i = 0; i < addedNodes.length; i++) {
+					var closeButton = addedNodes[0].getElementsByClassName("x-tab-close-btn")[0];
+					closeButton.addEventListener("click", onCloseButtonClicked);
+				}
+			}
+		});
+	}
+
+	function onCloseButtonClicked(event) {
+		console.log("close button clicked")
+		console.log(event)
+		recentlyClosedTab = event.target.parentElement;
+	}
+
+	var tabAddedObserver = new MutationObserver(onTabAdded);
+	tabAddedObserver.observe(tabBar, {
+		attributes: false,
+		childList: true,
+		subtree: false
+	});
+}
+
 // Gets the current active tab (that is, the little tab button) 
 function activeTab() {
 	var allStudentPanels = document.querySelectorAll(("[id^=coursepanel][id$=body]"));
@@ -222,6 +257,7 @@ let tabsWithUnsavedWork = [];
 function monitorTryItClosingDialogs(suppressClosingDialogTryIt, smartClosingDialog) {
 	let closeDialogCreatedObserver = new MutationObserver(onBodyChildAdded); 
 	let closeDialogFocusedObserver = new MutationObserver(onCloseDialogChange); 
+
 	// Observes the body's children in the hopes of catching the child that is the close dialog
 	function onBodyChildAdded(mutationList, observer) {
 		mutationList.forEach((mutation) => {
@@ -261,7 +297,7 @@ function monitorTryItClosingDialogs(suppressClosingDialogTryIt, smartClosingDial
 	// it is automatically closed because the try-it contains no unsaved work. 
 	function manageCloseDialog(closeDialog) {
 		console.debug("Manage close dialog"); 
-		if (suppressClosingDialogTryIt || (smartClosingDialog && !tabsWithUnsavedWork.includes(activeTab().id))) {
+		if (suppressClosingDialogTryIt || (smartClosingDialog && !tabsWithUnsavedWork.includes(recentlyClosedTab.id))) {
 			// If the tab does not have unsaved work, close the dialog & the Try-It.
 			var buttons = closeDialog.getElementsByClassName("x-btn");
 			for (var w = 0; w < buttons.length; w++) {
