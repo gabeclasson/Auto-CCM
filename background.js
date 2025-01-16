@@ -65,7 +65,11 @@ browser.runtime.onMessage.addListener(
 		browser.storage.sync.get({
 			spellCheck: true,
 			unsavedIndicator: true,
-			warningDialog: true,
+			smartClosingDialog: true,
+			suppressClosingDialogWindow: false, 
+			suppressClosingDialogCourse: false, 
+			suppressSaveWarning: false, 
+			suppressClosingDialogTryIt: false,
 			blocklist: [],
 			allowlist: [],
 			casileClassic: false,
