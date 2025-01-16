@@ -3,28 +3,27 @@ Author: Gabe Classon
 This script is injected into Try-Its when the "Start" button in the Auto CCM menu is pressed. It initiates the automatic formatting process. 
 */
 // user defined blocklist/allowlist
-var blockList = window.blocklist;
-var allowList = window.allowlist;
-var blockListStr = "";
-if (blockList != null && blockList.length > 0) {
+var blocklistStr = "";
+if (blocklist != null && blocklist.length > 0) {
 	// The following regex allows only FULL MATCHES to be blocked. For example, if a user puts "3D" in their blocklist, only the match "3D" will be blocked; "3D[x]" will remain unblocked. The regex also turns the blocklist into a regex expression that will select the entire blocklist.
-	blockListStr = "|(^" + blockList.join("$)|(^") + "$)";
+	blocklistStr = "|(^" + blocklist.join("$)|(^") + "$)";
 }
-var allowListStr = "";
-if (allowList != null && allowList.length > 0) {
+var allowlistStr = "";
+if (allowlist != null && allowlist.length > 0) {
 	// The following regex turns the allowlist into a regex expression that selects every entry on the allowlist. 
-	allowListStr = "|(" + allowList.join(")|(") + ")";
+	allowlistStr = "|(" + allowlist.join(")|(") + ")";
 }
+console.log(allowlist)
 // Building the regex selector: Auto CCM uses a very complicated regular expression to identify math. 
 var number = "(\\w*[+-]?((\\d+(\\.\\d+)?)|(\\.\\d+))\\w*(\\.(?!\\s*([A-Za-z]|$)?))?)";
-var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?" + allowListStr + ")(?!([A-Za-z])|([\"])))";
+var miscmatch = "((?<!([A-Za-z])|([\"']))\\-?([Aa]\\s*\\.\\s*\\w|\\w\\s*\\.\\s*[Aa]|[△∇∂π]|Pi|[B-H]'?|[J-Z]'?|[b-h]'?|[j-z]'?" + allowlistStr + ")(?!([A-Za-z])|([\"])))";
 var definitebinaryoperator = "([+*^<>≤≥]|\\\\\\.|(@+)|(&&)|(<=)|(>=)|((?<!(^[\\s\\u200B]?|^[\\s\\u200B]?=))==?))";
 var matchifadjacent = "(" + "([\\(\\s]*\\([\\(\\s]*)?[\\w\\d\\(\\)]*([\\(\\s]*\\([\\(\\s]*)?" + ")";
 var possibleprefixoperators = "([\\-\\\\\\(])";
 var possiblepostfixoperators = "([!\\)])";
 var possiblebinaryoperators = "([\\/\\-\\.])";
 // regex to identify what should not be selected specifically: dimensions like "3D", "2D", etc.; single letters or numbers surrounded in parentheses
-var blockRegExpStr = "(^\\dD$)|(^\\([A-Za-z\\d]\\)$)|(^[A-Za-z\\d]\\)$)|(^\\([A-Za-z\\d]$)" + blockListStr; 
+var blockRegExpStr = "(^\\dD$)|(^\\([A-Za-z\\d]\\)$)|(^[A-Za-z\\d]\\)$)|(^\\([A-Za-z\\d]$)" + blocklistStr; 
 var blockRegExp = RegExp(blockRegExpStr, "g");
 // Variables that track
 var requestedFormatAll = false; // Has the user pressed Ctrl+; or clicked the "Format All" button? (This is stored because clicking it again will start formatting all math expressions.

@@ -14,6 +14,8 @@ var suppressClosingDialogTryIt = false; // Should all warning dialogs about the 
 var suppressSaveWarning = false; // Should the Ctrl+S save warning be suppressed? 
 var spellCheck = true; // Should spellcheck be turned on?
 var globalSelection;
+var allowlist;
+var blocklist;
 
 /*
 url: The root path for this chrome extension
@@ -1344,6 +1346,8 @@ browser.runtime.sendMessage({
 	suppressClosingDialogCourse = items.suppressClosingDialogCourse;
 	smartClosingDialog = items.smartClosingDialog;
 	suppressSaveWarning = items.suppressSaveWarning;
+	allowlist = items.allowlist;
+	blocklist = items.blocklist;
 	detectUnsavedChanges = unsavedIndicator || (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow || !suppressClosingDialogCourse))
 
 	if (spellCheck) {
