@@ -19,7 +19,7 @@ Auto CCM, except where noted, has been released into the public domain under the
 ### Version 3.0
 January 16, 2025
 * Added a formatting menu to allow users to customize font, color, etc. This can be disabled in the options menu.
-* Allowed users to use tab and shift+tab to navigate through Try-Its.
+* Allowed users to use Tab and Shift+Tab to navigate through Try-Its.
 * Updated the 'Smart closing warnings' customization, which allows users to suppress warnings when all work has been saved. This customization is on by default.
 * Added customizations to allow users to completely suppress all warnings when closing Try-Its, or when saving with Ctrl+S.
 * Complied with new Chrome Extension Store requirements, updating to Manifest v3.
