@@ -40,7 +40,10 @@ function onBodyChange(mutationList, observer) {
 					items.menubackgroundcolor,
 					response.url
 					); 
+				if (items.suppressWindowDialog) {
+					window.onbeforeunload = null;
 				}
+			}
 			);
 			hasObservedPrimaryPanel = true; 
 		}
