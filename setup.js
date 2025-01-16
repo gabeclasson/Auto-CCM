@@ -101,8 +101,11 @@ function addInformationPanel(color, url) {
 	updateItem.appendChild(document.createTextNode(": "));
 	let updateList = document.createElement("ul"); 
 	let updates = [
-		"Comply with new Chrome Extension Store requirements",
-		"Fixed smart dialog warning so that, when enabled, the user will receive an unsaved work warning if and only if they may have unsaved work. "
+		"Comply with new Chrome Extension Store requirements, including update to Manifest v3.",
+		"Fixed user-defined selection criteria.",
+		"Removed 'Unsaved work warning' customization, which was poorly designed.",
+		"Added 'Smart closing warnings' customization, which allows users to only see a closing warning when all work in a Try-It is saved. This customization is on by default.",
+		"Added customizations to allow users to completely suppress all closing warnings."
 	]; 
 	for (let i = 0; i < updates.length; i++) {
 		let update = updates[i]; 
