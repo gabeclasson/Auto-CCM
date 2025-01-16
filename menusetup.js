@@ -7,7 +7,11 @@ var browser = browser || chrome; // Ensure compatability between browsers
 var hasChanged = false; // Has the document changed? (Is there potentially unsaved work?)
 var detectUnsavedChanges = true; // Should unsaved changes be active detected?
 var unsavedIndicator = true; // Should a red unsaved work indicator next to the status bar be shown?
-var warningDialog = true; // Should a warning dialog prompt users if they may lose unsaved work?
+var smartClosingDialog = true; // Should warning dialogs only show if a user may have unsaved work? 
+var suppressClosingDialogWindow = false; // Should all warning dialogs about the closing of the main tab be suppressed? 
+var suppressClosingDialogCourse = false; // Should all warning dialogs about leaving a course for the dashboard be suppressed? 
+var suppressClosingDialogTryIt = false; // Should all warning dialogs about the closing of individual Try-Its be suppressed? 
+var suppressSaveWarning = false; // Should the Ctrl+S save warning be suppressed? 
 var spellCheck = true; // Should spellcheck be turned on?
 
 /*
@@ -252,7 +256,11 @@ function onDocumentKeyUp(e) {
 function onDocumentKeyDown(e) {
 	if (e.key == "s" && e.ctrlKey) {
 		e.preventDefault();
-		controlS();
+		e.stopPropagation();
+			e.stopImmediatePropagation();
+		if (suppressSaveWarning || confirm("Are you sure you want to save? This will overwrite any previous saves.")) {
+			controlS();
+		}
 	}
 }
 
@@ -339,7 +347,7 @@ function setChangedState(onOff) {
 				document.getElementById("unsavedIcon").style.visibility = "hidden";
 			}
 		}
-		if (warningDialog) { 
+		if (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow || !suppressClosingDialogCourse)) { 
 			// Notify the parent tab as to whether there is potentially unsaved work
 			// (Important to stop unnecessary warning dialogs)
 			if (onOff) {
@@ -361,7 +369,7 @@ function saveOnClick() {
 function handInOnClick() {
 	setChangedState(false);
 	unsavedIndicator = false;
-	warningDialog = false;
+	suppressClosingDialogTryIt = true;
 	detectUnsavedChanges = false;
 	if (!spellCheck) {
 		notebookChangeObserver.disconnect();
@@ -418,7 +426,7 @@ function observeNotebookChanges() {
 		subtree: true,
 		characterData: false
 	};
-	if (unsavedIndicator || warningDialog) { // only observe for changes in the text content of the notebook if the user's options require it
+	if (detectUnsavedChanges) { // only observe for changes in the text content of the notebook if the user's options require it
 		noteBookObserveOptions.characterData = true;
 	}
 	if (spellCheck) { // only observe for attributes if spellcheck is one
@@ -480,17 +488,6 @@ function unsavedIndicatorSetup() {
 	document.getElementsByClassName("x-toolbar-left-row")[0].appendChild(unsavedIcon);
 }
 
-// Monitors for when a user tries to close CAS-ILE to warn them if they have unsaved work
-function warningDialogSetup() {
-	window.onbeforeunload = function (e) {
-		var e = e || window.event;
-		if (e && hasChanged === true) {
-			e.returnValue = 'Ospiro';
-			return "Enterprises";
-		}
-	};
-}
-
 // Notifies the global page that there is unsaved work (see notifyNotebookUnsavedWork.js for more info)
 function notifyNotebookUnsavedWork() {
 	browser.runtime.sendMessage({
@@ -521,8 +518,13 @@ browser.runtime.sendMessage({
 	createMouseMenu(url, items.menubackgroundcolor);
 	spellCheck = items.spellCheck;
 	unsavedIndicator = items.unsavedIndicator;
-	warningDialog = items.warningDialog;
-	detectUnsavedChanges = unsavedIndicator || warningDialog;
+	suppressClosingDialogTryIt = items.suppressClosingDialogTryIt;
+	suppressClosingDialogWindow = items.suppressClosingDialogWindow;
+	suppressClosingDialogCourse = items.suppressClosingDialogCourse;
+	smartClosingDialog = items.smartClosingDialog;
+	suppressSaveWarning = items.suppressSaveWarning;
+	detectUnsavedChanges = unsavedIndicator || (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow || !suppressClosingDialogCourse))
+
 	if (items.spellCheck) {
 		// Turn on spellcheck for every existing student cell or text cell in the document
 		var allStudents = document.getElementById("Notebook").getElementsByClassName("Notebook")[0].getElementsByClassName("Text Student");
@@ -544,7 +546,7 @@ browser.runtime.sendMessage({
 	}
 	if (saveButton == null || saveButton.offsetParent == null) {
 		unsavedIndicator = false;
-		warningDialog = false;
+		suppressClosingDialogTryIt = true;
 		detectUnsavedChanges = false;
 		hasChanged = false;
 	} else {
@@ -558,14 +560,11 @@ browser.runtime.sendMessage({
 					}`;
 			document.head.appendChild(style);
 		}
-		if (warningDialog) {
-			warningDialogSetup();
-		}
 		if (detectUnsavedChanges) {
 			saveButton.addEventListener("click", saveOnClick);
 			setChangedState(false);
 		}
-		if (unsavedIndicator || warningDialog || spellCheck) {
+		if (detectUnsavedChanges || spellCheck) {
 			observeNotebookChanges();
 			observeBodyChanges();
 		}

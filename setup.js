@@ -2,11 +2,25 @@
 Author: Gabe Classon
 This script is run on the CAS-ILE tab immediately as it loads. Its primary purpose is to detect when Try-Its are opened so that they can be injected with menusetup.js.
  */
+
 var browser = browser || chrome; // To ensure compatability between Firefox and Chrome
 // These mutation observers exist to deliver a final payload to each iFrame: code that allow Ctrl+' to deformat math.
 var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page
 var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
 var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
+
+let tabsWithUnsavedWork = {}; 
+
+// Temporary variables to handle messages
+var tempIndex;
+var tempActivePanel;
+var tempActiveTab;
+
+// These variables keep track of basic parameters of the program
+var smartClosingDialog;
+var suppressClosingDialogWindow;
+var suppressClosingDialogCourse;
+var suppressClosingDialogTryIt;
 
 // The body observer observes until the page fully loads, and then injects the studentPanelChangeObserver
 bodyChangeObserver.observe(document.body, {
@@ -40,7 +54,12 @@ function onBodyChange(mutationList, observer) {
 					items.menubackgroundcolor,
 					response.url
 					); 
-				}
+
+				suppressClosingDialogWindow = items.suppressClosingDialogWindow;
+				suppressClosingDialogCourse = items.suppressClosingDialogCourse;
+				suppressClosingDialogTryIt = items.suppressClosingDialogTryIt;
+				smartClosingDialog = items.smartClosingDialog;
+			}
 			);
 			hasObservedPrimaryPanel = true; 
 		}
@@ -89,8 +108,12 @@ function addInformationPanel(color, url) {
 	updateItem.appendChild(document.createTextNode(": "));
 	let updateList = document.createElement("ul"); 
 	let updates = [
-		"Comply with new Chrome Extension Store requirements",
-		"Fixed smart dialog warning so that, when enabled, the user will receive an unsaved work warning if and only if they may have unsaved work. "
+		"Removed 'Unsaved work warning' customization, which was poorly designed.",
+		"Added 'Smart closing warnings' customization, which allows users to suppress warnings when all work has been saved. This customization is on by default.",
+		"Added customizations to allow users to completely suppress all warnings when closing Try-Its, or when saving with Ctrl+S.",
+		"Complied with new Chrome Extension Store requirements, updating to Manifest v3.",
+		"Fixed user-defined selection criteria.",
+		"Various bug fixes."
 	]; 
 	for (let i = 0; i < updates.length; i++) {
 		let update = updates[i]; 
@@ -120,12 +143,21 @@ function onStudentPanelChange(mutationList, observer) {
 			for (var i = 0; i < addedNodes.length; i++) {
 				if (addedNodes[i].id.includes("coursepanel")) {
 					// Observes for new Try-Its
+					var coursepanel = addedNodes[i];
 					var tabpanel = addedNodes[i].querySelectorAll("[id^=tabpanel][id$=body]")[0];
 					tryItUpdatedObserver.observe(tabpanel, {
 						attributes: false,
 						childList: true,
 						subtree: false
 					});
+					if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt || !suppressClosingDialogCourse)) {
+						tabsWithUnsavedWork[coursepanel.id] = [];
+						var tabBar = addedNodes[i].querySelectorAll("[id^=tabbar][id$=targetEl]")[0];
+						monitorTryItTabBar(coursepanel, tabBar); // This is done to correctly keep track of which tabs have been saved.
+					}
+					if (suppressClosingDialogTryIt || suppressClosingDialogCourse || smartClosingDialog) {
+						monitorBuiltInClosingDialogs(addedNodes[i]);
+					}
 				}
 			}
 		}
@@ -137,13 +169,13 @@ function onTryItUpdated(mutationList, observer) {
 	mutationList.forEach((mutation) => {
 		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
 			var addedNodes = mutation.addedNodes;
-			console.log("Try It Updated");
 			for (var i = 0; i < addedNodes.length; i++) {
+				console.log(addedNodes[i])
 				var frame1 = addedNodes[i].getElementsByTagName('iframe')[0];
 				frame1.onload = function () {
 					injectFrame(frame1);
 				};
-				console.log(frame1);
+
 			}
 		}
 	});
@@ -189,68 +221,135 @@ function onDocumentKeyDown(e) {
 
 document.addEventListener("keydown", onDocumentKeyDown)
 
+// Handling closing warning dialogs
+
+let recentlyClosedTab;
+
+function monitorTryItTabBar(coursepanel, tabBar) {
+	function onTabChange(mutationList, observer) {
+		mutationList.forEach((mutation) => {
+			if (smartClosingDialog && !suppressClosingDialogTryIt) {
+				for (var i = 0; i < mutation.addedNodes.length; i++) {
+					var closeButton = mutation.addedNodes[i].getElementsByClassName("x-tab-close-btn")[0];
+					closeButton.addEventListener("click", onCloseButtonClicked);
+				}
+			}
+			if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt || !suppressClosingDialogCourse)) {
+				for (var i = 0; i < mutation.removedNodes.length; i++) {
+					var removedTab = mutation.removedNodes[i];
+					if (tabsWithUnsavedWork[coursepanel.id].indexOf(removedTab.id) >= 0) {
+						tabsWithUnsavedWork[coursepanel.id].splice(tabsWithUnsavedWork[coursepanel.id].indexOf(removedTab.id), 1);
+					}
+				}
+			}
+		});
+	}
+
+	function onCloseButtonClicked(event) {
+		console.log("close button clicked")
+		console.log(tabsWithUnsavedWork[coursepanel.id])
+		recentlyClosedTab = event.target.parentElement;
+	}
+
+	var tabAddedObserver = new MutationObserver(onTabChange);
+	tabAddedObserver.observe(tabBar, {
+		attributes: false,
+		childList: true,
+		subtree: false
+	});
+}
+
 // Gets the current active tab (that is, the little tab button) 
 function activeTab() {
+	var activePanel = activeCoursepanel()
+	return [activePanel, activePanel.getElementsByClassName("x-tab-active")[0]]; 
+}
+
+function activeCoursepanel() {
 	var allStudentPanels = document.querySelectorAll(("[id^=coursepanel][id$=body]"));
-	var activePanel;
 	for (var k = 0; k < allStudentPanels.length; k++) {
 		if (allStudentPanels[k].parentElement.classList.contains("x-hide-offsets")) {
 			continue;
 		} else {
-			activePanel = allStudentPanels[k];
-			break;
+			return allStudentPanels[k].parentElement;
 		}
 	}
-	return activePanel.getElementsByClassName("x-tab-active")[0]; 
+	return null;
+}
+
+function isSiteAllSaved() {
+	for (let tabsWithUnsavedWorkInCourse of Object.values(tabsWithUnsavedWork)) {
+		if (tabsWithUnsavedWorkInCourse.length > 0) {
+			return false;
+		}
+	}
+	return true;
 }
 
 // Here, we deal with closing the default close dialog when there are no unsaved changes
 
-let closeDialogCreatedObserver = new MutationObserver(onBodyChildAdded); 
-let closeDialogFocusedObserver = new MutationObserver(onCloseDialogChange); 
-let tabsWithUnsavedWork = []; 
+function monitorBuiltInClosingDialogs(coursepanel) {
+	let closeDialogCreatedObserver = new MutationObserver(onBodyChildAdded); 
+	let closeDialogFocusedObserver = new MutationObserver(onCloseDialogChange); 
 
-// Observes the body's children in the hopes of catching the child that is the close dialog
-function onBodyChildAdded(mutationList, observer) {
-	mutationList.forEach((mutation) => {
-		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
-			var addedNodes = mutation.addedNodes;
-			for (var i = 0; i < addedNodes.length; i++) {
-				if (addedNodes[i].classList != null 
-					&& addedNodes[i].classList.contains("x-message-box")
-					&& addedNodes[i].textContent.includes("Are you sure")
-					) {
-						console.debug("Got close dialog"); 
-						// We've got the close dialog in addedNodes[i]
-						closeDialogFocusedObserver.observe(addedNodes[i], {
-							attributes: true,
-							attributeFilter: [ "class" ], 
-							childList: false,
-							subtree: false
-						});
-						manageCloseDialog(addedNodes[i]); 
+	// Observes the body's children in the hopes of catching the child that is the close dialog
+	function onBodyChildAdded(mutationList, observer) {
+		mutationList.forEach((mutation) => {
+			if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
+				var addedNodes = mutation.addedNodes;
+				for (var i = 0; i < addedNodes.length; i++) {
+					if (addedNodes[i].classList != null 
+						&& addedNodes[i].classList.contains("x-message-box")
+						&& addedNodes[i].textContent.includes("Are you sure")
+						) {
+							console.debug("Got close dialog"); 
+							// We've got the close dialog in addedNodes[i]
+							closeDialogFocusedObserver.observe(addedNodes[i], {
+								attributes: true,
+								attributeFilter: [ "class" ], 
+								childList: false,
+								subtree: false
+							});
+							manageCloseDialog(addedNodes[i]); 
+					}
 				}
 			}
-		}
-	});
-}
+		});
+	}
 
-// Observes for changes to the close dialog's visibility status
-function onCloseDialogChange(mutationList, observer) {
-	mutationList.forEach((mutation) => {
-		if (mutation.attributeName == "class" 
-			&& !mutation.target.classList.contains("x-hide-offsets")) {
-				manageCloseDialog(mutation.target); 
-		}
-	});
-}
+	// Observes for changes to the close dialog's visibility status
+	function onCloseDialogChange(mutationList, observer) {
+		mutationList.forEach((mutation) => {
+			if (mutation.attributeName == "class"
+				&& !mutation.target.classList.contains("x-hide-offsets")) {
+					manageCloseDialog(mutation.target); 
+			}
+		});
+	}
+	
+	function isTabSaved() {
+		return !tabsWithUnsavedWork[coursepanel.id].includes(recentlyClosedTab.id)
+	}
 
-// When the close dialog pops up, this function handles whether or not
-// it is automatically closed because the try-it contains no unsaved work. 
-function manageCloseDialog(closeDialog) {
-	console.debug("Manage close dialog"); 
-	if (!tabsWithUnsavedWork.includes(activeTab().id)) {
-		// If the tab does not have unsaved work, close the dialog & the Try-It.
+	function isCourseAllSaved() {
+		return tabsWithUnsavedWork[coursepanel.id].length <= 0;
+	}
+	
+	// When the close dialog pops up, this function handles whether or not
+	// it is automatically closed because the try-it/course contains no unsaved work. 
+	function manageCloseDialog(closeDialog) {
+		console.debug("Manage close dialog"); 
+		if (closeDialog.textContent.includes("dashboard")) { // Closing a dashboard
+			if (!suppressClosingDialogCourse && !(smartClosingDialog && isCourseAllSaved())) {
+				return; // Do not suppress the close dialog
+			}
+		} else { // This is the case where we close a Try-It
+			if (!suppressClosingDialogTryIt && !(smartClosingDialog && isTabSaved())) {
+				return; // Do not suppress the close dialog
+			}
+		}
+
+		// If the tab does not have unsaved work, close the dialog
 		var buttons = closeDialog.getElementsByClassName("x-btn");
 		for (var w = 0; w < buttons.length; w++) {
 			if (buttons[w].textContent.includes("Yes")) {
@@ -259,13 +358,13 @@ function manageCloseDialog(closeDialog) {
 			}
 		}
 	}
-}
 
-closeDialogCreatedObserver.observe(document.body, {
-	attributes: false,
-	childList: true,
-	subtree: false
-});
+	closeDialogCreatedObserver.observe(document.body, {
+		attributes: false,
+		childList: true,
+		subtree: false
+	});
+}
 
 // Checks to see if the user wants to use the classic Auto CCM theme, and implements it if they do.
 browser.runtime.sendMessage({

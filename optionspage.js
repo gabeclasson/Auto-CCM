@@ -109,7 +109,11 @@ function populateList(listElement, itemArray) {
 function save_options() {
 	var spellCheck = document.getElementById('spellCheck').checked;
 	var unsavedIndicator = document.getElementById('unsavedIndicator').checked;
-	var warningDialog = document.getElementById('warningDialog').checked;
+	var smartClosingDialog = document.getElementById('smartClosingDialog').checked;
+	var suppressClosingDialogWindow = document.getElementById('suppressClosingDialogWindow').checked;
+	var suppressClosingDialogTryIt = document.getElementById('suppressClosingDialogTryIt').checked;
+	var suppressClosingDialogCourse = document.getElementById('suppressClosingDialogCourse').checked;
+	var suppressSaveWarning = document.getElementById('suppressSaveWarning').checked;
 	var blocklist = getListElementsFromId('blocklist');
 	var allowlist = getListElementsFromId('allowlist');
 	var casileClassic = document.getElementById('casileClassic').checked
@@ -117,7 +121,11 @@ function save_options() {
 	browser.storage.sync.set({
 		spellCheck: spellCheck,
 		unsavedIndicator: unsavedIndicator,
-		warningDialog: warningDialog,
+		smartClosingDialog: smartClosingDialog,
+		suppressClosingDialogWindow: suppressClosingDialogWindow,
+		suppressClosingDialogTryIt: suppressClosingDialogTryIt,
+		suppressClosingDialogCourse: suppressClosingDialogCourse,
+		suppressSaveWarning: suppressSaveWarning,
 		blocklist: blocklist,
 		allowlist: allowlist,
 		casileClassic: casileClassic,
@@ -151,7 +159,11 @@ function restore_options() {
 	browser.storage.sync.get({
 		spellCheck: true,
 		unsavedIndicator: true,
-		warningDialog: true,
+		smartClosingDialog: true,
+		suppressClosingDialogTryIt: false,
+		suppressClosingDialogCourse: false,
+		suppressClosingDialogWindow: false,
+		suppressSaveWarning: false,
 		blocklist: [],
 		allowlist: [],
 		casileClassic: false,
@@ -159,7 +171,11 @@ function restore_options() {
 	}, function (items) {
 		document.getElementById('spellCheck').checked = items.spellCheck;
 		document.getElementById('unsavedIndicator').checked = items.unsavedIndicator;
-		document.getElementById('warningDialog').checked = items.warningDialog;
+		document.getElementById('smartClosingDialog').checked = items.smartClosingDialog;
+		document.getElementById('suppressClosingDialogWindow').checked = items.suppressClosingDialogWindow;
+		document.getElementById('suppressClosingDialogTryIt').checked = items.suppressClosingDialogTryIt;
+		document.getElementById('suppressClosingDialogCourse').checked = items.suppressClosingDialogCourse;
+		document.getElementById('suppressSaveWarning').checked = items.suppressSaveWarning;
 		populateList(document.getElementById('blocklist'), createListFromIdAndArray('block', items.blocklist));
 		populateList(document.getElementById('allowlist'), createListFromIdAndArray('allow', items.allowlist));
 		document.getElementById('casileClassic').checked = items.casileClassic;
@@ -192,21 +208,31 @@ restore_options();
 document.getElementById('save').addEventListener('click', save_options);
 document.getElementById('spellCheck').addEventListener('click', toggleSwitch);
 document.getElementById('unsavedIndicator').addEventListener('click', toggleSwitch);
-document.getElementById('warningDialog').addEventListener('click', toggleSwitch);
+document.getElementById('smartClosingDialog').addEventListener('click', toggleSwitch);
+document.getElementById('suppressClosingDialogWindow').addEventListener('click', toggleSwitch);
+document.getElementById('suppressClosingDialogTryIt').addEventListener('click', toggleSwitch);
+document.getElementById('suppressClosingDialogCourse').addEventListener('click', toggleSwitch);
+document.getElementById('suppressSaveWarning').addEventListener('click', toggleSwitch);
 document.getElementById('casileClassic').addEventListener('click', toggleSwitch);
 document.getElementById('reset').addEventListener('click', reset_options);
 document.getElementById('allowadd').addEventListener('click', allowadd);
-document.addEventListener('DOMNodeInserted', function (e) {
-	var element = e.target || e.srcElement;
-	element = element.lastChild;
-	if (element == null) {
-		return false;
-	}
-	if (element.className != null && element.className == 'remove') {
-		element.addEventListener('click', remove);
+document.getElementById('blockadd').addEventListener('click', blockadd);
+let allowBlockListAdditionObserver = new MutationObserver(function (e) {
+	for (let mutationRecord of e) {
+		for (let addedNode of mutationRecord.addedNodes) {
+			var element = addedNode.lastChild;
+			if (element == null) {
+				return false;
+			}
+			if (element.className != null && element.className == 'remove') {
+				element.addEventListener('click', remove);
+			}
+		}
 	}
 });
-document.getElementById('blockadd').addEventListener('click', blockadd);
+allowBlockListAdditionObserver.observe(document.getElementById("allowlist"), {childList: true})
+allowBlockListAdditionObserver.observe(document.getElementById("blocklist"), {childList: true})
+
 
 document.getElementById("menubackgroundcolor").addEventListener("change", updatebackgroundcolor);
 function updatebackgroundcolor() {
