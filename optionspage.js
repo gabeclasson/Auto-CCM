@@ -113,6 +113,7 @@ function save_options() {
 	var suppressClosingDialogWindow = document.getElementById('suppressClosingDialogWindow').checked;
 	var suppressClosingDialogTryIt = document.getElementById('suppressClosingDialogTryIt').checked;
 	var suppressClosingDialogCourse = document.getElementById('suppressClosingDialogCourse').checked;
+	var suppressSaveWarning = document.getElementById('suppressSaveWarning').checked;
 	var blocklist = getListElementsFromId('blocklist');
 	var allowlist = getListElementsFromId('allowlist');
 	var casileClassic = document.getElementById('casileClassic').checked
@@ -124,6 +125,7 @@ function save_options() {
 		suppressClosingDialogWindow: suppressClosingDialogWindow,
 		suppressClosingDialogTryIt: suppressClosingDialogTryIt,
 		suppressClosingDialogCourse: suppressClosingDialogCourse,
+		suppressSaveWarning: suppressSaveWarning,
 		blocklist: blocklist,
 		allowlist: allowlist,
 		casileClassic: casileClassic,
@@ -161,6 +163,7 @@ function restore_options() {
 		suppressClosingDialogTryIt: false,
 		suppressClosingDialogCourse: false,
 		suppressClosingDialogWindow: false,
+		suppressSaveWarning: false,
 		blocklist: [],
 		allowlist: [],
 		casileClassic: false,
@@ -172,6 +175,7 @@ function restore_options() {
 		document.getElementById('suppressClosingDialogWindow').checked = items.suppressClosingDialogWindow;
 		document.getElementById('suppressClosingDialogTryIt').checked = items.suppressClosingDialogTryIt;
 		document.getElementById('suppressClosingDialogCourse').checked = items.suppressClosingDialogCourse;
+		document.getElementById('suppressSaveWarning').checked = items.suppressSaveWarning;
 		populateList(document.getElementById('blocklist'), createListFromIdAndArray('block', items.blocklist));
 		populateList(document.getElementById('allowlist'), createListFromIdAndArray('allow', items.allowlist));
 		document.getElementById('casileClassic').checked = items.casileClassic;
@@ -208,6 +212,7 @@ document.getElementById('smartClosingDialog').addEventListener('click', toggleSw
 document.getElementById('suppressClosingDialogWindow').addEventListener('click', toggleSwitch);
 document.getElementById('suppressClosingDialogTryIt').addEventListener('click', toggleSwitch);
 document.getElementById('suppressClosingDialogCourse').addEventListener('click', toggleSwitch);
+document.getElementById('suppressSaveWarning').addEventListener('click', toggleSwitch);
 document.getElementById('casileClassic').addEventListener('click', toggleSwitch);
 document.getElementById('reset').addEventListener('click', reset_options);
 document.getElementById('allowadd').addEventListener('click', allowadd);

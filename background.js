@@ -68,6 +68,7 @@ browser.runtime.onMessage.addListener(
 			smartClosingDialog: true,
 			suppressClosingDialogWindow: false, 
 			suppressClosingDialogCourse: false, 
+			suppressSaveWarning: false, 
 			suppressClosingDialogTryIt: false,
 			blocklist: [],
 			allowlist: [],

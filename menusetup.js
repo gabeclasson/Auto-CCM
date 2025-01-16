@@ -11,6 +11,7 @@ var smartClosingDialog = true; // Should warning dialogs only show if a user may
 var suppressClosingDialogWindow = false; // Should all warning dialogs about the closing of the main tab be suppressed? 
 var suppressClosingDialogCourse = false; // Should all warning dialogs about leaving a course for the dashboard be suppressed? 
 var suppressClosingDialogTryIt = false; // Should all warning dialogs about the closing of individual Try-Its be suppressed? 
+var suppressSaveWarning = false; // Should the Ctrl+S save warning be suppressed? 
 var spellCheck = true; // Should spellcheck be turned on?
 
 /*
@@ -255,7 +256,11 @@ function onDocumentKeyUp(e) {
 function onDocumentKeyDown(e) {
 	if (e.key == "s" && e.ctrlKey) {
 		e.preventDefault();
-		controlS();
+		e.stopPropagation();
+			e.stopImmediatePropagation();
+		if (suppressSaveWarning || confirm("Are you sure you want to save? This will overwrite any previous saves.")) {
+			controlS();
+		}
 	}
 }
 
@@ -517,6 +522,7 @@ browser.runtime.sendMessage({
 	suppressClosingDialogWindow = items.suppressClosingDialogWindow;
 	suppressClosingDialogCourse = items.suppressClosingDialogCourse;
 	smartClosingDialog = items.smartClosingDialog;
+	suppressSaveWarning = items.suppressSaveWarning;
 	detectUnsavedChanges = unsavedIndicator || (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow || !suppressClosingDialogCourse))
 
 	if (items.spellCheck) {
