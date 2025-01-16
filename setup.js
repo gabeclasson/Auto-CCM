@@ -9,9 +9,18 @@ var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the bod
 var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
 var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
 
+let tabsWithUnsavedWork = {}; 
+
+// Temporary variables to handle messages
+var tempIndex;
+var tempActivePanel;
+var tempActiveTab;
+
 // These variables keep track of basic parameters of the program
 var smartClosingDialog;
 var suppressClosingDialogWindow;
+var suppressClosingDialogCourse;
+var suppressClosingDialogTryIt;
 
 // The body observer observes until the page fully loads, and then injects the studentPanelChangeObserver
 bodyChangeObserver.observe(document.body, {
@@ -47,11 +56,9 @@ function onBodyChange(mutationList, observer) {
 					); 
 
 				suppressClosingDialogWindow = items.suppressClosingDialogWindow;
+				suppressClosingDialogCourse = items.suppressClosingDialogCourse;
 				suppressClosingDialogTryIt = items.suppressClosingDialogTryIt;
 				smartClosingDialog = items.smartClosingDialog;
-				if (items.suppressClosingDialogTryIt || items.smartClosingDialog) {
-					monitorTryItClosingDialogs(items.suppressClosingDialogTryIt, items.smartClosingDialog);
-				}
 			}
 			);
 			hasObservedPrimaryPanel = true; 
@@ -135,15 +142,20 @@ function onStudentPanelChange(mutationList, observer) {
 			for (var i = 0; i < addedNodes.length; i++) {
 				if (addedNodes[i].id.includes("coursepanel")) {
 					// Observes for new Try-Its
+					var coursepanel = addedNodes[i];
 					var tabpanel = addedNodes[i].querySelectorAll("[id^=tabpanel][id$=body]")[0];
 					tryItUpdatedObserver.observe(tabpanel, {
 						attributes: false,
 						childList: true,
 						subtree: false
 					});
-					if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt)) {
+					if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt || !suppressClosingDialogCourse)) {
+						tabsWithUnsavedWork[coursepanel.id] = [];
 						var tabBar = addedNodes[i].querySelectorAll("[id^=tabbar][id$=targetEl]")[0];
-						monitorTryItTabBar(tabBar);
+						monitorTryItTabBar(coursepanel, tabBar); // This is done to correctly keep track of which tabs have been saved.
+					}
+					if (suppressClosingDialogTryIt || suppressClosingDialogCourse || smartClosingDialog) {
+						monitorBuiltInClosingDialogs(addedNodes[i]);
 					}
 				}
 			}
@@ -212,7 +224,7 @@ document.addEventListener("keydown", onDocumentKeyDown)
 
 let recentlyClosedTab;
 
-function monitorTryItTabBar(tabBar) {
+function monitorTryItTabBar(coursepanel, tabBar) {
 	function onTabChange(mutationList, observer) {
 		mutationList.forEach((mutation) => {
 			if (smartClosingDialog && !suppressClosingDialogTryIt) {
@@ -221,11 +233,11 @@ function monitorTryItTabBar(tabBar) {
 					closeButton.addEventListener("click", onCloseButtonClicked);
 				}
 			}
-			if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt)) {
+			if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt || !suppressClosingDialogCourse)) {
 				for (var i = 0; i < mutation.removedNodes.length; i++) {
 					var removedTab = mutation.removedNodes[i];
-					if (tabsWithUnsavedWork.indexOf(removedTab.id) >= 0) {
-						tabsWithUnsavedWork.splice(tabsWithUnsavedWork.indexOf(removedTab.id), 1);
+					if (tabsWithUnsavedWork[coursepanel.id].indexOf(removedTab.id) >= 0) {
+						tabsWithUnsavedWork[coursepanel.id].splice(tabsWithUnsavedWork[coursepanel.id].indexOf(removedTab.id), 1);
 					}
 				}
 			}
@@ -234,7 +246,7 @@ function monitorTryItTabBar(tabBar) {
 
 	function onCloseButtonClicked(event) {
 		console.log("close button clicked")
-		console.log(tabsWithUnsavedWork)
+		console.log(tabsWithUnsavedWork[coursepanel.id])
 		recentlyClosedTab = event.target.parentElement;
 	}
 
@@ -248,23 +260,34 @@ function monitorTryItTabBar(tabBar) {
 
 // Gets the current active tab (that is, the little tab button) 
 function activeTab() {
+	var activePanel = activeCoursepanel()
+	return [activePanel, activePanel.getElementsByClassName("x-tab-active")[0]]; 
+}
+
+function activeCoursepanel() {
 	var allStudentPanels = document.querySelectorAll(("[id^=coursepanel][id$=body]"));
-	var activePanel;
 	for (var k = 0; k < allStudentPanels.length; k++) {
 		if (allStudentPanels[k].parentElement.classList.contains("x-hide-offsets")) {
 			continue;
 		} else {
-			activePanel = allStudentPanels[k];
-			break;
+			return allStudentPanels[k].parentElement;
 		}
 	}
-	return activePanel.getElementsByClassName("x-tab-active")[0]; 
+	return null;
+}
+
+function isSiteAllSaved() {
+	for (let tabsWithUnsavedWorkInCourse of tabsWithUnsavedWork) {
+		if (tabsWithUnsavedWorkInCourse.length > 0) {
+			return false;
+		}
+	}
+	return true;
 }
 
 // Here, we deal with closing the default close dialog when there are no unsaved changes
-let tabsWithUnsavedWork = []; 
 
-function monitorTryItClosingDialogs(suppressClosingDialogTryIt, smartClosingDialog) {
+function monitorBuiltInClosingDialogs(coursepanel) {
 	let closeDialogCreatedObserver = new MutationObserver(onBodyChildAdded); 
 	let closeDialogFocusedObserver = new MutationObserver(onCloseDialogChange); 
 
@@ -296,25 +319,41 @@ function monitorTryItClosingDialogs(suppressClosingDialogTryIt, smartClosingDial
 	// Observes for changes to the close dialog's visibility status
 	function onCloseDialogChange(mutationList, observer) {
 		mutationList.forEach((mutation) => {
-			if (mutation.attributeName == "class" 
+			if (mutation.attributeName == "class"
 				&& !mutation.target.classList.contains("x-hide-offsets")) {
 					manageCloseDialog(mutation.target); 
 			}
 		});
 	}
+	
+	function isTabSaved() {
+		return !tabsWithUnsavedWork[coursepanel.id].includes(recentlyClosedTab.id)
+	}
 
+	function isCourseAllSaved() {
+		return tabsWithUnsavedWork[coursepanel.id].length <= 0;
+	}
+	
 	// When the close dialog pops up, this function handles whether or not
-	// it is automatically closed because the try-it contains no unsaved work. 
+	// it is automatically closed because the try-it/course contains no unsaved work. 
 	function manageCloseDialog(closeDialog) {
 		console.debug("Manage close dialog"); 
-		if (suppressClosingDialogTryIt || (smartClosingDialog && !tabsWithUnsavedWork.includes(recentlyClosedTab.id))) {
-			// If the tab does not have unsaved work, close the dialog & the Try-It.
-			var buttons = closeDialog.getElementsByClassName("x-btn");
-			for (var w = 0; w < buttons.length; w++) {
-				if (buttons[w].textContent.includes("Yes")) {
-					buttons[w].click();
-					return;
-				}
+		if (closeDialog.textContent.includes("dashboard")) { // Closing a dashboard
+			if (!suppressClosingDialogCourse && !(smartClosingDialog && isCourseAllSaved())) {
+				return; // Do not suppress the close dialog
+			}
+		} else { // This is the case where we close a Try-It
+			if (!suppressClosingDialogTryIt && !(smartClosingDialog && isTabSaved())) {
+				return; // Do not suppress the close dialog
+			}
+		}
+
+		// If the tab does not have unsaved work, close the dialog
+		var buttons = closeDialog.getElementsByClassName("x-btn");
+		for (var w = 0; w < buttons.length; w++) {
+			if (buttons[w].textContent.includes("Yes")) {
+				buttons[w].click();
+				return;
 			}
 		}
 	}

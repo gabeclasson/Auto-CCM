@@ -9,6 +9,7 @@ var detectUnsavedChanges = true; // Should unsaved changes be active detected?
 var unsavedIndicator = true; // Should a red unsaved work indicator next to the status bar be shown?
 var smartClosingDialog = true; // Should warning dialogs only show if a user may have unsaved work? 
 var suppressClosingDialogWindow = false; // Should all warning dialogs about the closing of the main tab be suppressed? 
+var suppressClosingDialogCourse = false; // Should all warning dialogs about leaving a course for the dashboard be suppressed? 
 var suppressClosingDialogTryIt = false; // Should all warning dialogs about the closing of individual Try-Its be suppressed? 
 var spellCheck = true; // Should spellcheck be turned on?
 
@@ -341,7 +342,7 @@ function setChangedState(onOff) {
 				document.getElementById("unsavedIcon").style.visibility = "hidden";
 			}
 		}
-		if (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow)) { 
+		if (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow || !suppressClosingDialogCourse)) { 
 			// Notify the parent tab as to whether there is potentially unsaved work
 			// (Important to stop unnecessary warning dialogs)
 			if (onOff) {
@@ -514,8 +515,9 @@ browser.runtime.sendMessage({
 	unsavedIndicator = items.unsavedIndicator;
 	suppressClosingDialogTryIt = items.suppressClosingDialogTryIt;
 	suppressClosingDialogWindow = items.suppressClosingDialogWindow;
+	suppressClosingDialogCourse = items.suppressClosingDialogCourse;
 	smartClosingDialog = items.smartClosingDialog;
-	detectUnsavedChanges = unsavedIndicator || (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow))
+	detectUnsavedChanges = unsavedIndicator || (smartClosingDialog && (!suppressClosingDialogTryIt || !suppressClosingDialogWindow || !suppressClosingDialogCourse))
 
 	if (items.spellCheck) {
 		// Turn on spellcheck for every existing student cell or text cell in the document
