@@ -25,10 +25,6 @@
         {
           "version": "2.7",
           "update_link": "https://github.com/gabeclasson/Auto-CCM/releases/download/v2.7/auto_ccm-2.7-fx.xpi"
-        },
-        {
-          "version": "3.0",
-          "update_link": "https://github.com/gabeclasson/Auto-CCM/releases/download/v2.7/auto_ccm-3.0-fx.xpi"
         }
       ]
     }
