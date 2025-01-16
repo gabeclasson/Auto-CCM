@@ -1,20 +1,25 @@
 # Auto CCM
-Auto CCM is a tool that streamlines formatting in CAS-ILE, an interactive learning environment that is used by University of Illinois NetMath students. With Ospiro's simple browser extension, the tedious process of formatting math in CAS-ILE is a breeze.
+Auto CCM is a tool that streamlines formatting in CAS-ILE, an interactive learning environment that is used by University of Illinois NetMath students. With this simple browser extension, the tedious process of formatting math in CAS-ILE is a breeze.
 
 Auto CCM is not associated with, nor endorsed by, the University of Illinois. "NetMath" and "CAS-ILE" are registered trademarks of the Board of Trustees of the University of Illinois.
 
-For installation instructions and information on how to use Auto CCM, please visit our webage at https://ospiro.com/products-services/auto-ccm/.
+For installation instructions and information on how to use Auto CCM, please visit our webage at https://gabeclasson.com/projects/auto-ccm/.
 
 ## Disclaimer
-Before you install Auto CCM, you must navigate to https://ospiro.com/products-services/auto-ccm/ and read our disclaimer.
+Before you install Auto CCM, you must navigate to https://gabeclasson.com/projects/auto-ccm/installation/ and read our disclaimer.
 
 ## Copyright Status of Contributions
 Auto CCM, except where noted, has been released into the public domain under the CC0 license (with a supplemental patent license). As a matter of policy, all contributors to this project are expected to forfeit the copyright to their contributions under the terms of the same license. 
 
 ## Trademark Information
-"Ospiro," "Auto CCM," and the Auto CCM logo are unregistered trademarks of Ospiro Enterprises. While Ospiro has forfeited its copyright over its employees' contributions to Auto CCM, Ospiro has reserved its trademarks under the terms of the CC0 license. You are free to modify Auto CCM in any way, shape, or form, but you should not use the Auto CCM name or logo to distribute significantly modified programs in a fashion that implies endorsement by, or association with, the original Auto CCM project. 
+"Auto CCM" and the Auto CCM logo are unregistered trademarks of the Auto CCM Project. While the developers have forfeited their copyright over their contributions to Auto CCM, the developers have reserved their trademarks under the terms of the CC0 license. You are free to modify Auto CCM in any way, shape, or form, but you should not use the Auto CCM name or logo to distribute significantly modified programs in a fashion that implies endorsement by, or association with, the original Auto CCM project. 
 
 ## Version Information
+
+### Version 2.8
+January 15, 2025
+* Comply with new Chrome Extension Store requirements
+* Fixed smart dialog warning so that, when enabled, the user will receive an unsaved work warning if and only if they may have unsaved work.
 
 ### Version 2.7
 January 26, 2021
