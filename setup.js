@@ -12,7 +12,6 @@ var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the
 // These variables keep track of basic parameters of the program
 var smartClosingDialog;
 var suppressClosingDialogWindow;
-var oldOnBeforeUnload;
 
 // The body observer observes until the page fully loads, and then injects the studentPanelChangeObserver
 bodyChangeObserver.observe(document.body, {
@@ -47,8 +46,8 @@ function onBodyChange(mutationList, observer) {
 					response.url
 					); 
 
-				oldOnBeforeUnload = window.onbeforeunload;
 				suppressClosingDialogWindow = items.suppressClosingDialogWindow;
+				suppressClosingDialogTryIt = items.suppressClosingDialogTryIt;
 				smartClosingDialog = items.smartClosingDialog;
 				if (items.suppressClosingDialogTryIt || items.smartClosingDialog) {
 					monitorTryItClosingDialogs(items.suppressClosingDialogTryIt, items.smartClosingDialog);
@@ -139,8 +138,10 @@ function onStudentPanelChange(mutationList, observer) {
 						childList: true,
 						subtree: false
 					});
-					var tabBar = addedNodes[i].querySelectorAll("[id^=tabbar][id$=targetEl]")[0];
-					monitorTryItCloseButtons(tabBar);
+					if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt)) {
+						var tabBar = addedNodes[i].querySelectorAll("[id^=tabbar][id$=targetEl]")[0];
+						monitorTryItTabBar(tabBar);
+					}
 				}
 			}
 		}
@@ -208,15 +209,21 @@ document.addEventListener("keydown", onDocumentKeyDown)
 
 let recentlyClosedTab;
 
-function monitorTryItCloseButtons(tabBar) {
-	function onTabAdded(mutationList, observer) {
+function monitorTryItTabBar(tabBar) {
+	function onTabChange(mutationList, observer) {
 		mutationList.forEach((mutation) => {
-			if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
-				var addedNodes = mutation.addedNodes;
-				console.log("Tab added");
-				for (var i = 0; i < addedNodes.length; i++) {
-					var closeButton = addedNodes[0].getElementsByClassName("x-tab-close-btn")[0];
+			if (smartClosingDialog && !suppressClosingDialogTryIt) {
+				for (var i = 0; i < mutation.addedNodes.length; i++) {
+					var closeButton = mutation.addedNodes[i].getElementsByClassName("x-tab-close-btn")[0];
 					closeButton.addEventListener("click", onCloseButtonClicked);
+				}
+			}
+			if (smartClosingDialog && (!suppressClosingDialogWindow || !suppressClosingDialogTryIt)) {
+				for (var i = 0; i < mutation.removedNodes.length; i++) {
+					var removedTab = mutation.removedNodes[i];
+					if (tabsWithUnsavedWork.indexOf(removedTab.id) >= 0) {
+						tabsWithUnsavedWork.splice(tabsWithUnsavedWork.indexOf(removedTab.id), 1);
+					}
 				}
 			}
 		});
@@ -224,11 +231,11 @@ function monitorTryItCloseButtons(tabBar) {
 
 	function onCloseButtonClicked(event) {
 		console.log("close button clicked")
-		console.log(event)
+		console.log(tabsWithUnsavedWork)
 		recentlyClosedTab = event.target.parentElement;
 	}
 
-	var tabAddedObserver = new MutationObserver(onTabAdded);
+	var tabAddedObserver = new MutationObserver(onTabChange);
 	tabAddedObserver.observe(tabBar, {
 		attributes: false,
 		childList: true,
