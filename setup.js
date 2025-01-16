@@ -78,7 +78,7 @@ function addInformationPanel(color, url) {
 	listGroup.appendChild(introItem);
 	
 
-	let versionNumber = "2.8"; 
+	let versionNumber = "3.0"; 
 	let updateItem = document.createElement("div"); 
 	updateItem.className = "list-group-item"; 
 	updateItem.appendChild(document.createTextNode("Here's what's new in "));

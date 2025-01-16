@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "Auto CCM",
-	"version": "2.8",
+	"version": "3.0",
 	"description": "Auto CCM is a tool that streamlines formatting in CAS-ILE, a website that is used by University of Illinois NetMath students.",
 	"author": "Gabe Classon and other contributors to the Auto CCM project",
 	"homepage_url": "https://gabeclasson.com/projects/auto-ccm/",
