@@ -108,10 +108,12 @@ function addInformationPanel(color, url) {
 	updateItem.appendChild(document.createTextNode(": "));
 	let updateList = document.createElement("ul"); 
 	let updates = [
-		"Removed 'Unsaved work warning' customization, which was poorly designed.",
-		"Added 'Smart closing warnings' customization, which allows users to suppress warnings when all work has been saved. This customization is on by default.",
+		"Added a formatting menu to allow users to customize font, color, etc. This can be disabled in the options menu.",
+		"Allowed users to use tab and shift+tab to navigate through Try-Its.",
+		"Updated the 'Smart closing warnings' customization, which allows users to suppress warnings when all work has been saved. This customization is on by default.",
 		"Added customizations to allow users to completely suppress all warnings when closing Try-Its, or when saving with Ctrl+S.",
 		"Complied with new Chrome Extension Store requirements, updating to Manifest v3.",
+		"Ended FireFox support.",
 		"Fixed user-defined selection criteria.",
 		"Various bug fixes."
 	]; 
