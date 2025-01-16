@@ -19,6 +19,13 @@
 				"https://courseware.illinois.edu/*", "http://courseware.illinois.edu/*"
 			],
 			"js": ["setup.js"]
+		},
+		{
+			"matches": [
+				"https://courseware.illinois.edu/*", "http://courseware.illinois.edu/*"
+			],
+			"js": ["preload.js"],
+			"run_at": "document_start" 
 		}
 	],
 	"icons": {

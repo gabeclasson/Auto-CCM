@@ -175,17 +175,29 @@ li {
 </span>
 </span>
 </div>
-<h2>Unsaved work</h2>
+<h2>Unsaved work and closing warnings</h2>
 <h3>Potential unsaved work indicator</h3>
 <p>Show a red, circular indicator next to the save button of each Try-It if you may have unsaved work.</p>
 <div style="display:inline-block" class="indent"><label class="switch">
   <input type="checkbox" id="unsavedIndicator" checked>
   <span class="slider round"></span>
 </label></div>
-<h3>Warning dialog</h3>
-<p>Receive a prompt to confirm your decision to close a Try-It or to leave CAS-ILE if you may have unsaved work in any open Try-Its.</p>
+<h3>Smart closing warnings</h3>
+<p>Suppress "Are you sure you want to close this lesson?" warning when all work in a Try-It is saved. (The default behavior of CAS-ILE is to show you a warning whenever your close a Try-It, even if all work is saved.)</p>
 <div style="display:inline-block" class="indent"><label class="switch">
-  <input type="checkbox" id="warningDialog" checked>
+  <input type="checkbox" id="smartClosingDialog" checked>
+  <span class="slider round"></span>
+</label></div>
+<h3>Suppress Try-It closing warnings</h3>
+<p>Suppress all "Are you sure you want to close this lesson?" warnings when closing an individual Try-It.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="suppressClosingDialogTryIt">
+  <span class="slider round"></span>
+</label></div>
+<h3>Suppress CAS-ILE closing warning</h3>
+<p>Suppress the "Are you sure you want to close this lesson?" warning when closing the CAS-ILE tab.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="suppressClosingDialogWindow">
   <span class="slider round"></span>
 </label></div>
 <h2>Spell check</h2>

@@ -2,11 +2,17 @@
 Author: Gabe Classon
 This script is run on the CAS-ILE tab immediately as it loads. Its primary purpose is to detect when Try-Its are opened so that they can be injected with menusetup.js.
  */
+
 var browser = browser || chrome; // To ensure compatability between Firefox and Chrome
 // These mutation observers exist to deliver a final payload to each iFrame: code that allow Ctrl+' to deformat math.
 var bodyChangeObserver = new MutationObserver(onBodyChange); // Observes the body of the page
 var studentPanelChangeObserver = new MutationObserver(onStudentPanelChange); // Observes the student panel of the page to see when a course is opened
 var tryItUpdatedObserver = new MutationObserver(onTryItUpdated); // Observes the try-it section of the page to see when a try-it is opened
+
+// These variables keep track of basic parameters of the program
+var smartClosingDialog;
+var suppressClosingDialogWindow;
+var oldOnBeforeUnload;
 
 // The body observer observes until the page fully loads, and then injects the studentPanelChangeObserver
 bodyChangeObserver.observe(document.body, {
@@ -40,8 +46,12 @@ function onBodyChange(mutationList, observer) {
 					items.menubackgroundcolor,
 					response.url
 					); 
-				if (items.suppressWindowDialog) {
-					window.onbeforeunload = null;
+
+				oldOnBeforeUnload = window.onbeforeunload;
+				suppressClosingDialogWindow = items.suppressClosingDialogWindow;
+				smartClosingDialog = items.smartClosingDialog;
+				if (items.suppressClosingDialogTryIt || items.smartClosingDialog) {
+					monitorTryItClosingDialogs(items.suppressClosingDialogTryIt, items.smartClosingDialog);
 				}
 			}
 			);
@@ -140,13 +150,12 @@ function onTryItUpdated(mutationList, observer) {
 	mutationList.forEach((mutation) => {
 		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
 			var addedNodes = mutation.addedNodes;
-			console.log("Try It Updated");
 			for (var i = 0; i < addedNodes.length; i++) {
 				var frame1 = addedNodes[i].getElementsByTagName('iframe')[0];
 				frame1.onload = function () {
 					injectFrame(frame1);
 				};
-				console.log(frame1);
+				refreshWindowOnBeforeUnload();
 			}
 		}
 	});
@@ -208,67 +217,68 @@ function activeTab() {
 }
 
 // Here, we deal with closing the default close dialog when there are no unsaved changes
-
-let closeDialogCreatedObserver = new MutationObserver(onBodyChildAdded); 
-let closeDialogFocusedObserver = new MutationObserver(onCloseDialogChange); 
 let tabsWithUnsavedWork = []; 
 
-// Observes the body's children in the hopes of catching the child that is the close dialog
-function onBodyChildAdded(mutationList, observer) {
-	mutationList.forEach((mutation) => {
-		if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
-			var addedNodes = mutation.addedNodes;
-			for (var i = 0; i < addedNodes.length; i++) {
-				if (addedNodes[i].classList != null 
-					&& addedNodes[i].classList.contains("x-message-box")
-					&& addedNodes[i].textContent.includes("Are you sure")
-					) {
-						console.debug("Got close dialog"); 
-						// We've got the close dialog in addedNodes[i]
-						closeDialogFocusedObserver.observe(addedNodes[i], {
-							attributes: true,
-							attributeFilter: [ "class" ], 
-							childList: false,
-							subtree: false
-						});
-						manageCloseDialog(addedNodes[i]); 
+function monitorTryItClosingDialogs(suppressClosingDialogTryIt, smartClosingDialog) {
+	let closeDialogCreatedObserver = new MutationObserver(onBodyChildAdded); 
+	let closeDialogFocusedObserver = new MutationObserver(onCloseDialogChange); 
+	// Observes the body's children in the hopes of catching the child that is the close dialog
+	function onBodyChildAdded(mutationList, observer) {
+		mutationList.forEach((mutation) => {
+			if (mutation.addedNodes != null && mutation.addedNodes.length > 0) {
+				var addedNodes = mutation.addedNodes;
+				for (var i = 0; i < addedNodes.length; i++) {
+					if (addedNodes[i].classList != null 
+						&& addedNodes[i].classList.contains("x-message-box")
+						&& addedNodes[i].textContent.includes("Are you sure")
+						) {
+							console.debug("Got close dialog"); 
+							// We've got the close dialog in addedNodes[i]
+							closeDialogFocusedObserver.observe(addedNodes[i], {
+								attributes: true,
+								attributeFilter: [ "class" ], 
+								childList: false,
+								subtree: false
+							});
+							manageCloseDialog(addedNodes[i]); 
+					}
+				}
+			}
+		});
+	}
+
+	// Observes for changes to the close dialog's visibility status
+	function onCloseDialogChange(mutationList, observer) {
+		mutationList.forEach((mutation) => {
+			if (mutation.attributeName == "class" 
+				&& !mutation.target.classList.contains("x-hide-offsets")) {
+					manageCloseDialog(mutation.target); 
+			}
+		});
+	}
+
+	// When the close dialog pops up, this function handles whether or not
+	// it is automatically closed because the try-it contains no unsaved work. 
+	function manageCloseDialog(closeDialog) {
+		console.debug("Manage close dialog"); 
+		if (suppressClosingDialogTryIt || (smartClosingDialog && !tabsWithUnsavedWork.includes(activeTab().id))) {
+			// If the tab does not have unsaved work, close the dialog & the Try-It.
+			var buttons = closeDialog.getElementsByClassName("x-btn");
+			for (var w = 0; w < buttons.length; w++) {
+				if (buttons[w].textContent.includes("Yes")) {
+					buttons[w].click();
+					return;
 				}
 			}
 		}
-	});
-}
-
-// Observes for changes to the close dialog's visibility status
-function onCloseDialogChange(mutationList, observer) {
-	mutationList.forEach((mutation) => {
-		if (mutation.attributeName == "class" 
-			&& !mutation.target.classList.contains("x-hide-offsets")) {
-				manageCloseDialog(mutation.target); 
-		}
-	});
-}
-
-// When the close dialog pops up, this function handles whether or not
-// it is automatically closed because the try-it contains no unsaved work. 
-function manageCloseDialog(closeDialog) {
-	console.debug("Manage close dialog"); 
-	if (!tabsWithUnsavedWork.includes(activeTab().id)) {
-		// If the tab does not have unsaved work, close the dialog & the Try-It.
-		var buttons = closeDialog.getElementsByClassName("x-btn");
-		for (var w = 0; w < buttons.length; w++) {
-			if (buttons[w].textContent.includes("Yes")) {
-				buttons[w].click();
-				return;
-			}
-		}
 	}
-}
 
-closeDialogCreatedObserver.observe(document.body, {
-	attributes: false,
-	childList: true,
-	subtree: false
-});
+	closeDialogCreatedObserver.observe(document.body, {
+		attributes: false,
+		childList: true,
+		subtree: false
+	});
+}
 
 // Checks to see if the user wants to use the classic Auto CCM theme, and implements it if they do.
 browser.runtime.sendMessage({
