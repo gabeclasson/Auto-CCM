@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:cc="http://creativecommons.org/ns#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  width="200mm"
+  height="200mm"
+  viewBox="0 0 200 200"
+  version="1.1"
+  id="svg8"
+  sodipodi:docname="strikethroughicon.svg"
+  inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+ <defs
+   id="defs2" />
+ <sodipodi:namedview
+   id="base"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:zoom="0.35"
+   inkscape:cx="-1962.1"
+   inkscape:cy="-62.202"
+   inkscape:document-units="mm"
+   inkscape:current-layer="text818"
+   showgrid="false"
+   inkscape:window-width="2560"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1" />
+ <metadata
+   id="metadata5">
+  <rdf:RDF>
+   <cc:Work
+     rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type
+      rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:title></dc:title>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g
+   inkscape:label="Layer 1"
+   inkscape:groupmode="layer"
+   id="layer1"
+   transform="translate(0,-97)">
+  <g
+    aria-label="π"
+    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:259.0481px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:6.4762"
+    id="text817">
+   <g
+     aria-label="↷"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:212.12425px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:34.34391"
+     id="text816">
+    <g
+      aria-label="B"
+      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:175.00137px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;stroke-width:150.25575"
+      id="text818">
+     <g
+       aria-label="S"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:168.68564px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat weight=255';letter-spacing:0px;word-spacing:0px;fill:#6b6b6b;fill-opacity:1;stroke:none;stroke-width:633.64972"
+       id="text821"
+       transform="matrix(1.0679,0,0,1.0018,-6.7916,-0.3546)">
+      <path
+        d="M 139.22,173.72 Q 129.77,168.15 118.98,164.61 108.35,161.07 101.1,161.07 95.361,161.07 91.987,163.26 88.782,165.29 88.782,169.34 88.782,173.22 91.65,175.91 94.518,178.44 98.735,180.13 102.95,181.65 111.22,184.18 123.53,187.72 131.46,191.26 139.56,194.81 145.29,202.23 151.03,209.48 151.03,221.29 151.03,233.1 144.79,241.53 138.54,249.8 127.58,254.02 116.78,258.23 103.46,258.23 88.782,258.23 74.107,253.17 59.6,247.94 48.973,239 L 60.949,214.88 Q 69.89,222.81 82.035,227.87 94.349,232.93 103.8,232.93 110.71,232.93 114.59,230.4 118.64,227.87 118.64,222.98 118.64,218.93 115.6,216.23 112.74,213.53 108.18,212.01 103.8,210.33 95.699,208.13 83.553,204.76 75.625,201.39 67.697,197.84 61.961,190.93 56.395,183.84 56.395,172.2 56.395,161.24 62.13,152.97 68.034,144.71 78.661,140.32 89.457,135.77 103.63,135.77 116.45,135.77 128.93,139.48 141.41,143.02 150.86,149.09 Z"
+        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Montserrat;-inkscape-font-specification:'Montserrat Bold';fill:#6b6b6b;fill-opacity:1;stroke-width:633.64972"
+        id="path825"
+        inkscape:connector-curvature="0" />
+     </g>
+     <rect
+       style="opacity:1;vector-effect:none;fill:#6b6b6b;fill-opacity:1;stroke:none;stroke-width:4.57457;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.34961;stroke-opacity:1;paint-order:fill markers stroke"
+       id="rect823"
+       width="143.7"
+       height="18.555"
+       x="28.15"
+       y="187.72" />
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

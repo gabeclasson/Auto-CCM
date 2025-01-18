@@ -1,18 +1,17 @@
 {
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"name": "Auto CCM",
-	"version": "2.7",
+	"version": "3.0",
 	"description": "Auto CCM is a tool that streamlines formatting in CAS-ILE, a website that is used by University of Illinois NetMath students.",
-	"author": "Ospiro Enterprises and the other gracious contributors to the Auto CCM project",
-	"homepage_url": "https://ospiro.com/products-services/auto-ccm/",
+	"author": "Gabe Classon and other contributors to the Auto CCM project",
+	"homepage_url": "https://gabeclasson.com/projects/auto-ccm/",
 	"background": {
-		"scripts": ["background.js"],
-		"persistent": false
+		"service_worker": "background.js",
+		"type": "module"
 	},
 	"options_ui": {
 		"page": "optionspage.html",
 		"browser_style": false,
-		"chrome_style": false,
 		"open_in_tab": true
 	},
 	"content_scripts": [{
@@ -20,14 +19,29 @@
 				"https://courseware.illinois.edu/*", "http://courseware.illinois.edu/*"
 			],
 			"js": ["setup.js"]
+		},
+		{
+			"matches": [
+				"https://courseware.illinois.edu/*", "http://courseware.illinois.edu/*"
+			],
+			"js": ["preload.js"],
+			"run_at": "document_start" 
 		}
 	],
 	"icons": {
 		"128": "storeicon.png"
 	},
 	"web_accessible_resources": [
-		"icons/*",
-		"classicTheme/*"
+		{
+			"resources": [
+				"icons/*",
+				"classicTheme/*"
+			], 
+			"matches": [
+				"https://courseware.illinois.edu/*", 
+				"http://courseware.illinois.edu/*"
+			]
+		}
 	],
 	"permissions": [
 		"activeTab",
@@ -35,6 +49,9 @@
 		"webNavigation",
 		"tabs",
 		"storage",
+		"scripting"
+	],
+	"host_permissions": [
 		"https://courseware.illinois.edu/*",
 		"http://courseware.illinois.edu/*"
 	],
@@ -42,11 +59,5 @@
 		"ids": ["*"],
 		"matches": ["https://courseware.illinois.edu/*", "http://courseware.illinois.edu/*"],
 		"accepts_tls_channel_id": false
-	},
-	"browser_specific_settings": {
-		"gecko": {
-			"update_url": "https://raw.githubusercontent.com/mr-yman/Auto-CCM/master/updates.json",
-			"id": "{a083c994-6801-4dc2-91ab-b8abbc2db6c5}"
-		}
 	}
 }

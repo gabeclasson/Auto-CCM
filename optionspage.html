@@ -175,17 +175,41 @@ li {
 </span>
 </span>
 </div>
-<h2>Unsaved work</h2>
+<h2>Saved/unsaved work warnings</h2>
 <h3>Potential unsaved work indicator</h3>
 <p>Show a red, circular indicator next to the save button of each Try-It if you may have unsaved work.</p>
 <div style="display:inline-block" class="indent"><label class="switch">
   <input type="checkbox" id="unsavedIndicator" checked>
   <span class="slider round"></span>
 </label></div>
-<h3>Warning dialog</h3>
-<p>Receive a prompt to confirm your decision to close a Try-It or to leave CAS-ILE if you may have unsaved work in any open Try-Its.</p>
+<h3>Smart closing warnings</h3>
+<p>Suppress unnecessary closing warnings that occur even when all work has been saved. Applies to closing Try-Its, returning to the dashboard, and closing the browser tab.</p>
 <div style="display:inline-block" class="indent"><label class="switch">
-  <input type="checkbox" id="warningDialog" checked>
+  <input type="checkbox" id="smartClosingDialog" checked>
+  <span class="slider round"></span>
+</label></div>
+<h3>Suppress Try-It closing warnings</h3>
+<p>Suppress all "Are you sure you want to close this lesson?" warnings when closing an individual Try-It.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="suppressClosingDialogTryIt">
+  <span class="slider round"></span>
+</label></div>
+<h3>Suppress return to dashboard warning</h3>
+<p>Suppress all warnings about unsaved work when returning to the dashboard.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="suppressClosingDialogCourse">
+  <span class="slider round"></span>
+</label></div>
+<h3>Suppress CAS-ILE closing warning</h3>
+<p>Suppress the "Are you sure you want to close this lesson?" warning when closing the CAS-ILE browser tab.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="suppressClosingDialogWindow">
+  <span class="slider round"></span>
+</label></div>
+<h3>Suppress Ctrl+S warning</h3>
+<p>Suppress the "Are you sure you want to save?" warning when saving with Ctrl+S.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="suppressSaveWarning">
   <span class="slider round"></span>
 </label></div>
 <h2>Spell check</h2>
@@ -194,6 +218,16 @@ li {
   <input type="checkbox" id="spellCheck" checked>
   <span class="slider round"></span>
 </label></div>
+<h2>Text formatting menu</h2>
+<p>Allow extended text formatting through a menu at the bottom of each Try-It.</p>
+<div style="display:inline-block" class="indent"><label class="switch">
+  <input type="checkbox" id="textStyleMenu" checked>
+  <span class="slider round"></span>
+</label></div>
+<h3>Font options</h3>
+<p>Modify the list of fonts available in the text formatting menu. Please note that many fonts do <em>not</em> have wide support across platforms, so please only use fonts that have wide support. You also can and should provide fallback fonts for each style separated by commas. For example: <tt>Gontserrat, Montserrat, sans-serif"</tt>.</p>
+<ul id="fontlist" class="indent"></ul>
+<input id="fontinput" class="indent"></input><button id="fontadd">Add</button>
 <h2>Theme</h2>
 <h3>Courseware Classic</h3>
 <p>Enable the classic look of Courseware.</p>
@@ -206,7 +240,7 @@ li {
 <h3>Preview</h3>
 <img src="/icons/formaticon.svg" class="indent preview" id="preview" width="25px"/>
 <h2>User-defined selection criteria</h2>
-<p>These settings are for advanced users who want to specifically instruct Auto CCM to select certain allowed terms or to specifically forbid Auto CCM from selecting certain blocked terms. The entries in these lists must be in the form of <a href="https://www.rexegg.com/regex-quickstart.html">regular expressions</a>. Do not enter a regular expression in the form of <tt>/grog/g</tt>; leave out the surrounding forward slashes, the expression flag, anchors, and boundaries. If you are generally disappointed that Auto CCM is overselecting or underselecting certain expressions, consider <a href="https://ospiro.com/contact">contacting Ospiro Enterprises</a> with your issue so that we can continue to improve the quality of Auto CCM.</p>
+<p>These settings are for advanced users who want to specifically instruct Auto CCM to select certain allowed terms or to specifically forbid Auto CCM from selecting certain blocked terms. The entries in these lists must be in the form of <a href="https://www.rexegg.com/regex-quickstart.html">regular expressions</a>. Do not enter a regular expression in the form of <tt>/grog/g</tt>; leave out the surrounding forward slashes, the expression flag, anchors, and boundaries. If you are generally disappointed that Auto CCM is overselecting or underselecting certain expressions, consider <a href="https://gabeclasson.com/connect/">contacting the developers</a> with your issue so that we can continue to improve the quality of Auto CCM.</p>
 <h3>Allowlist</h3>
 <p>Add terms to this list to instruct Auto CCM to always select them. For example, adding <tt>grog\d?</tt> to the allowlist would result in Auto CCM selecting <tt>grog</tt>, <tt>grog14!</tt>, and <tt>54 - grog1</tt>, but not <tt>fgrog</tt>, <tt>grog5.4</tt>, or <tt>I like to eat grogs</tt>. </p>
 <ul id="allowlist" class="indent"></ul>

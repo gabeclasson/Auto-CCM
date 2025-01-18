@@ -7,24 +7,24 @@ var browser = browser || chrome; // To ensure compatability between Firefox and 
 /*
 Creates shortcuts (context menus) that appear when the the Auto CCM icon is clicked.
  */
-browser.runtime.onInstalled.addListener(function () {
+browser.runtime.onInstalled.addListener(async () => {
 	// How to use Auto CCM
 	browser.contextMenus.create({
 		"id": "how2use",
 		"title": "How to Use Auto CCM",
-		"contexts": ["page_action"]
+		"contexts": ["action"]
 	});
 	// Courseware (CAS-ILE)
 	browser.contextMenus.create({
 		"id": "courseware",
 		"title": "CAS-ILE",
-		"contexts": ["page_action"]
+		"contexts": ["action"]
 	});
 	// Wolfram language documentation
 	browser.contextMenus.create({
 		"id": "doc",
 		"title": "Mathematica Documentation",
-		"contexts": ["page_action"]
+		"contexts": ["action"]
 	});
 });
 
@@ -36,7 +36,7 @@ browser.contextMenus.onClicked.addListener(function (info, tab) {
 	// How to use Auto CCM
 	if (info.menuItemId === "how2use") {
 		browser.tabs.create({
-			url: "https://ospiro.com/products-services/auto-ccm/#how2use"
+			url: "https://gabeclasson.com/projects/auto-ccm/usage/"
 		});
 		// Courseware (CAS-ILE)
 	} else if (info.menuItemId === "courseware") {
@@ -65,11 +65,32 @@ browser.runtime.onMessage.addListener(
 		browser.storage.sync.get({
 			spellCheck: true,
 			unsavedIndicator: true,
-			warningDialog: true,
+			smartClosingDialog: true,
+			suppressClosingDialogWindow: false, 
+			suppressClosingDialogCourse: false, 
+			suppressSaveWarning: false, 
+			suppressClosingDialogTryIt: false,
 			blocklist: [],
 			allowlist: [],
+			fontlist: [
+				"Source Sans Pro, sans-serif",
+				"Arial, sans-serif",
+				"Arial Black, sans-serif",
+				"Verdana, sans-serif",
+				"Tahoma, sans-serif",
+				"Trebuchet MS, sans-serif",
+				"Impact, sans-serif",
+				"Times New Roman, serif",
+				"Georgia, serif",
+				"Consolas, monospace",
+				"Courier, monospace",
+				"Lucida Console, monospace",
+				"Brush Script MT, cursive",
+				"Comic Sans MS, cursive"
+			],
 			casileClassic: false,
-			menubackgroundcolor: "#663333"
+			menubackgroundcolor: "#663333",
+			textStyleMenu: true
 		}, function (items) {
 			sendResponse({
 				items: items,
@@ -77,15 +98,15 @@ browser.runtime.onMessage.addListener(
 			});
 		});
 	} else if (request.className == "notifyNotebookUnsavedWork") {
-		browser.tabs.executeScript(
-			sender.tab.id, {
-			file: "notifyNotebookUnsavedWork.js"
+		browser.scripting.executeScript({
+			target: {tabId: sender.tab.id}, 
+			files: ["notifyNotebookUnsavedWork.js"]
 		});
 		sendResponse();
 	} else if (request.className == "notifyNotebookSavedWork") {
-		browser.tabs.executeScript(
-			sender.tab.id, {
-			file: "notifyNotebookSavedWork.js"
+		browser.scripting.executeScript({
+			target: {tabId: sender.tab.id}, 
+			files: ["notifyNotebookSavedWork.js"]
 		});
 		sendResponse();
 	} else if (request.className == "injectMenuSetup") {
@@ -97,10 +118,9 @@ browser.runtime.onMessage.addListener(
 			function (details) {
 			for (var k = 0; k < details.length; k++) {
 				if (details[k].url == frameUrl) {
-					browser.tabs.executeScript(
-						tabId, {
-						file: "menusetup.js",
-						frameId: details[k].frameId
+					browser.scripting.executeScript({
+						target: {tabId: tabId, frameIds: [details[k].frameId]},
+						files: ["menusetup.js"]
 					});
 					break;
 				}
@@ -110,10 +130,9 @@ browser.runtime.onMessage.addListener(
 	} else if (request.className == "injectAutoCtrlM") {
 		var tabId = sender.tab.id;
 		var frameId = sender.frameId;
-		browser.tabs.executeScript(
-			tabId, {
-			file: "autoctrlm.js",
-			frameId: frameId
+		browser.scripting.executeScript({
+			target: {tabId: tabId, frameIds: [frameId]},
+			files: ["autoctrlm.js"]
 		});
 		sendResponse();
 	} else if (request.className == "getUrl") {
@@ -125,10 +144,9 @@ browser.runtime.onMessage.addListener(
 			casileClassic: false,
 		}, function (items) {
 			if (items.casileClassic) {
-				browser.tabs.executeScript(
-					tabId, {
-					file: "classicThemeTab.js",
-					frameId: frameId
+				browser.scripting.executeScript({
+					target: {tabId: tabId, frameIds: [frameId]},
+					files: ["classicThemeTab.js"]
 				});
 			}
 		});
@@ -138,9 +156,9 @@ browser.runtime.onMessage.addListener(
 			casileClassic: false,
 		}, function (items) {
 			if (items.casileClassic) {
-				browser.tabs.executeScript(
-					sender.tab.id, {
-					file: "classicThemeMain.js"
+				browser.scripting.executeScript({
+					target: {tabId: sender.tab.id}, 
+					files: ["classicThemeMain.js"]
 				});
 			}
 		});
